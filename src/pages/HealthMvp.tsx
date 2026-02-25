@@ -17,6 +17,8 @@ timeline
     Sprint 4 Notificaciones y QA : 2 sem
   section Fase 3
     Lanzamiento e iteración : 2 sem
+  section Fase 4 (Roadmap fase 2)
+    App mobile + tele-video consultas : Post-MVP
 `.trim()
 
 export default function HealthMvp() {
@@ -31,7 +33,7 @@ export default function HealthMvp() {
       </ContentBox>
 
       {/* Funcionalidades Usuario (Paciente) */}
-      <TwoColumnSection title="Funcionalidades – Usuario (Paciente)">
+      <TwoColumnSection title="Funcionalidades – Usuario (Paciente)" withBar={false}>
         <ul className="list-disc pl-5 space-y-2">
           <li>Registro e ingreso a la plataforma</li>
           <li>Solicitud de un servicio: on-demand (según disponibilidad) o programado mediante calendario</li>
@@ -45,7 +47,7 @@ export default function HealthMvp() {
       </TwoColumnSection>
 
       {/* Funcionalidades Profesionales */}
-      <TwoColumnSection title="Funcionalidades – Profesionales">
+      <TwoColumnSection title="Funcionalidades – Profesionales" withBar={false}>
         <ul className="list-disc pl-5 space-y-2">
           <li>Registro con validación de identidad</li>
           <li>Carga de: título profesional, identificación</li>
@@ -71,7 +73,7 @@ export default function HealthMvp() {
       />
 
       {/* Administración */}
-      <TwoColumnSection title="Administración">
+      <TwoColumnSection title="Administración" withBar={false}>
         <ul className="list-disc pl-5 space-y-2">
           <li><strong>Panel de Administrador</strong></li>
           <li><strong>Panel de Super Admin (cliente):</strong> visualización completa de usuarios y profesionales, gestión de validaciones, control general de la plataforma</li>
@@ -82,11 +84,13 @@ export default function HealthMvp() {
       <ContentBox title="Propuesta – Estilo Marco Polo">
         <p className="font-medium mb-2">Objetivo del proyecto</p>
         <p className="mb-4">
-          Diseñar y desarrollar un MVP Web App que valide el modelo de conexión entre pacientes y profesionales de la salud, priorizando velocidad de salida a mercado, trazabilidad y escalabilidad futura.
+          Diseñar y desarrollar un MVP con una única plataforma Web App que conecte a todos los usuarios
+          (pacientes, profesionales y administradores), validando el modelo de servicio con foco en
+          velocidad de salida a mercado, trazabilidad y escalabilidad futura.
         </p>
         <p className="font-medium mb-2">Alcance del MVP (fase 1)</p>
-        <p className="mb-2"><strong>Incluye:</strong> Web App responsive, sistema de usuarios (pacientes) y profesionales, lógica de demanda on-demand y programada, integración de pagos (tarjeta), sistema de calificaciones, carga de estudios en PDF, panel administrador + super admin, agenda externa (Calendly o similar), link externo de videollamada cargado desde admin, notificaciones básicas (mail / push simple).</p>
-        <p><strong>No incluye (por ahora):</strong> Videollamada integrada, receta digital integrada oficialmente (queda como nice to have), apps nativas (iOS / Android).</p>
+        <p className="mb-2"><strong>Incluye:</strong> una sola plataforma Web App responsive que centraliza la operación completa entre pacientes, profesionales y admins; sistema de usuarios y profesionales, lógica de demanda on-demand y programada, integración de pagos (tarjeta), sistema de calificaciones, carga de estudios en PDF, panel administrador + super admin, agenda externa (Calendly o similar), link externo de videollamada cargado desde admin, notificaciones básicas (mail / push simple).</p>
+        <p><strong>No incluye (por ahora):</strong> Videollamada integrada dentro de la plataforma, receta digital integrada oficialmente (queda como nice to have), apps nativas (iOS / Android) — estas últimas quedan para la fase 2 del roadmap.</p>
       </ContentBox>
 
       {/* Supuestos y puntos a confirmar */}
@@ -105,7 +109,6 @@ export default function HealthMvp() {
       <section className="mb-14 md:mb-20">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14">
           <div className="md:col-span-4 flex flex-col">
-            <div className="w-1 h-12 bg-[var(--marco-accent-light)] rounded mb-4" aria-hidden />
             <h2 className="font-thunder text-2xl md:text-3xl lg:text-4xl uppercase text-[var(--marco-accent)]">
               Roadmap y timeline
             </h2>
@@ -119,7 +122,8 @@ export default function HealthMvp() {
               <li><strong>Fase 0 – Research & Definición (2 semanas):</strong> User research, definición de personas (Paciente, Profesional, Admin), user journeys, feature prioritization, definición legal / validaciones (SISA, MCO – exploratorio).</li>
               <li><strong>Fase 1 – Diseño UX/UI (2–3 semanas):</strong> Arquitectura de información, flujos principales, wireframes, diseño visual MVP, prototipo navegable.</li>
               <li><strong>Fase 2 – Desarrollo MVP (6–8 semanas):</strong> Sprint 1 (Auth, perfiles, panel admin base); Sprint 2 (Agenda, on-demand, algoritmo de asignación); Sprint 3 (Pagos, calificaciones, carga PDF); Sprint 4 (Notificaciones, seguridad básica, QA).</li>
-              <li><strong>Fase 3 – Lanzamiento & Iteración:</strong> Deploy, testing real con usuarios, ajustes post-MVP, definición roadmap v2.</li>
+              <li><strong>Fase 3 – Lanzamiento & Iteración:</strong> Deploy, testing real con usuarios, ajustes post-MVP, definición detallada de roadmap fase 2.</li>
+              <li><strong>Fase 4 – Roadmap fase 2 (Post-MVP):</strong> Desarrollo de app mobile para iOS/Android, que será el canal para gestionar las tele-video comunicaciones.</li>
             </ul>
           </div>
         </div>
