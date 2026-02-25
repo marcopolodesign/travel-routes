@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+/* Thunder – headings (copy Thunder-BoldLC.woff2 / .woff to public/fonts/) */
+@font-face {
+  font-family: 'Thunder Bold';
+  src: url('/fonts/Thunder-BoldLC.woff2') format('woff2'),
+       url('/fonts/Thunder-BoldLC.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --marco-accent: #e66065;
+  --marco-accent-light: #f5b5b8;
+  --marco-black: #000;
+  --marco-white: #fff;
+  --marco-gray: #999;
+  --marco-bg: #f8f8f8;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--marco-white);
+  color: var(--marco-black);
+}
+
+.font-thunder {
+  font-family: 'Thunder Bold', system-ui, sans-serif;
+}
