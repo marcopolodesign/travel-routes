@@ -1,10 +1,29 @@
 @import "tailwindcss";
 
-/* Thunder – headings (copy Thunder-BoldLC.woff2 / .woff to public/fonts/) */
+/* Thunder – headings */
 @font-face {
   font-family: 'Thunder Bold';
   src: url('/fonts/Thunder-BoldLC.woff2') format('woff2'),
        url('/fonts/Thunder-BoldLC.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* TT Interphases Pro – body text (like Focus project) */
+@font-face {
+  font-family: 'TT Interphases Pro';
+  src: url('/fonts/TTInterphasesPro-Rg.woff2') format('woff2'),
+       url('/fonts/TTInterphasesPro-Rg.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Interphases Pro';
+  src: url('/fonts/TTInterphasesPro-DmBd.woff2') format('woff2'),
+       url('/fonts/TTInterphasesPro-DmBd.woff') format('woff');
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -16,7 +35,10 @@
   --marco-black: #000;
   --marco-white: #fff;
   --marco-gray: #999;
+  --marco-border: #d1d5db;
   --marco-bg: #f8f8f8;
+  --font-thunder: 'Thunder Bold', system-ui, sans-serif;
+  --font-interphases: 'TT Interphases Pro', system-ui, sans-serif;
 }
 
 * {
@@ -25,11 +47,15 @@
 }
 
 body {
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-interphases);
   background-color: var(--marco-white);
   color: var(--marco-black);
 }
 
 .font-thunder {
-  font-family: 'Thunder Bold', system-ui, sans-serif;
+  font-family: var(--font-thunder);
+}
+
+.font-interphases {
+  font-family: var(--font-interphases);
 }

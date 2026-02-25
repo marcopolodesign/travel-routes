@@ -1,6 +1,23 @@
 import ContentBox from '../components/ContentBox'
 import BoxedListSection from '../components/BoxedListSection'
 import TwoColumnSection from '../components/TwoColumnSection'
+import MermaidDiagram from '../components/MermaidDiagram'
+
+const ROADMAP_TIMELINE = `
+timeline
+  title MVP Salud – Timeline (2 a 3 meses)
+  section Fase 0
+    Research y Definición : 2 sem
+  section Fase 1
+    Diseño UX/UI : 2-3 sem
+  section Fase 2
+    Sprint 1 Auth y perfiles : 2 sem
+    Sprint 2 Agenda y on-demand : 2 sem
+    Sprint 3 Pagos y calificaciones : 2 sem
+    Sprint 4 Notificaciones y QA : 2 sem
+  section Fase 3
+    Lanzamiento e iteración : 2 sem
+`.trim()
 
 export default function HealthMvp() {
   return (
@@ -84,15 +101,29 @@ export default function HealthMvp() {
         ]}
       />
 
-      {/* Roadmap y timeline */}
-      <TwoColumnSection title="Roadmap y timeline">
-        <ul className="space-y-4">
-          <li><strong>Fase 0 – Research & Definición (2 semanas):</strong> User research, definición de personas (Paciente, Profesional, Admin), user journeys, feature prioritization, definición legal / validaciones (SISA, MCO – exploratorio).</li>
-          <li><strong>Fase 1 – Diseño UX/UI (2–3 semanas):</strong> Arquitectura de información, flujos principales, wireframes, diseño visual MVP, prototipo navegable.</li>
-          <li><strong>Fase 2 – Desarrollo MVP (6–8 semanas):</strong> Sprint 1 (Auth, perfiles, panel admin base); Sprint 2 (Agenda, on-demand, algoritmo de asignación); Sprint 3 (Pagos, calificaciones, carga PDF); Sprint 4 (Notificaciones, seguridad básica, QA).</li>
-          <li><strong>Fase 3 – Lanzamiento & Iteración:</strong> Deploy, testing real con usuarios, ajustes post-MVP, definición roadmap v2.</li>
-        </ul>
-      </TwoColumnSection>
+      {/* Roadmap y timeline – Mermaid gantt */}
+      <section className="mb-14 md:mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14">
+          <div className="md:col-span-4 flex flex-col">
+            <div className="w-1 h-12 bg-[var(--marco-accent-light)] rounded mb-4" aria-hidden />
+            <h2 className="font-thunder text-2xl md:text-3xl lg:text-4xl uppercase text-[var(--marco-accent)]">
+              Roadmap y timeline
+            </h2>
+          </div>
+          <div className="md:col-span-8 space-y-8">
+            <MermaidDiagram
+              chart={ROADMAP_TIMELINE}
+              className="min-h-[280px] rounded-lg border border-[var(--marco-border)] bg-[var(--marco-bg)] p-6"
+            />
+            <ul className="space-y-3 text-black font-interphases">
+              <li><strong>Fase 0 – Research & Definición (2 semanas):</strong> User research, definición de personas (Paciente, Profesional, Admin), user journeys, feature prioritization, definición legal / validaciones (SISA, MCO – exploratorio).</li>
+              <li><strong>Fase 1 – Diseño UX/UI (2–3 semanas):</strong> Arquitectura de información, flujos principales, wireframes, diseño visual MVP, prototipo navegable.</li>
+              <li><strong>Fase 2 – Desarrollo MVP (6–8 semanas):</strong> Sprint 1 (Auth, perfiles, panel admin base); Sprint 2 (Agenda, on-demand, algoritmo de asignación); Sprint 3 (Pagos, calificaciones, carga PDF); Sprint 4 (Notificaciones, seguridad básica, QA).</li>
+              <li><strong>Fase 3 – Lanzamiento & Iteración:</strong> Deploy, testing real con usuarios, ajustes post-MVP, definición roadmap v2.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
 
       {/* Cierre */}
       <ContentBox title="Cierre">
