@@ -6,7 +6,7 @@ type Payment = {
 type BudgetItem = {
   name: string
   amount: number | string
-  status: 'paid' | 'partial'
+  status: 'paid' | 'partial' | 'pending'
   payments?: Payment[]
 }
 
@@ -21,12 +21,16 @@ function formatCurrency(value: number | string): string {
   return `$${value.toLocaleString('en-US')}`
 }
 
-function getStatusLabel(status: 'paid' | 'partial'): string {
-  return status === 'paid' ? 'Paid in full' : 'Partially paid'
+function getStatusLabel(status: 'paid' | 'partial' | 'pending'): string {
+  if (status === 'paid') return 'Paid in full'
+  if (status === 'pending') return 'Pending'
+  return 'Partially paid'
 }
 
-function getStatusColor(status: 'paid' | 'partial'): string {
-  return status === 'paid' ? 'text-green-700 bg-green-100' : 'text-amber-700 bg-amber-100'
+function getStatusColor(status: 'paid' | 'partial' | 'pending'): string {
+  if (status === 'paid') return 'text-green-700 bg-green-100'
+  if (status === 'pending') return 'text-red-700 bg-red-100'
+  return 'text-amber-700 bg-amber-100'
 }
 
 export default function BudgetRemainderSection({ title, total, items }: BudgetRemainderSectionProps) {
@@ -34,7 +38,7 @@ export default function BudgetRemainderSection({ title, total, items }: BudgetRe
     if (item.status === 'paid') {
       return sum + (typeof item.amount === 'number' ? item.amount : 0)
     }
-    if (item.payments) {
+    if (item.status === 'partial' && item.payments) {
       return sum + item.payments.reduce((s, p) => s + p.amount, 0)
     }
     return sum
