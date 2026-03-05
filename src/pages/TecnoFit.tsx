@@ -5,7 +5,7 @@ export default function TecnoFit() {
     <>
       <BudgetRemainderSection
         title="TecnoFit – Budget & Remainder"
-        total={21500}
+        total={22000}
         items={[
           {
             name: 'Website',
