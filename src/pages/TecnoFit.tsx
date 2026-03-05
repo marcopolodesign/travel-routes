@@ -41,6 +41,21 @@ export default function TecnoFit() {
             amount: 'A definir',
             status: 'pending',
           },
+          {
+            name: 'App – Development',
+            amount: 13500,
+            status: 'pending',
+          },
+          {
+            name: 'Central Integration',
+            amount: 200,
+            status: 'pending',
+          },
+          {
+            name: 'Fitness Integration',
+            amount: 'A definir',
+            status: 'pending',
+          },
         ]}
       />
     </>
