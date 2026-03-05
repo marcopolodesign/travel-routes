@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import BudgetTemplate from './components/BudgetTemplate'
 import HealthMvp from './pages/HealthMvp'
+import TecnoFit from './pages/TecnoFit'
 import Home from './pages/Home'
 
 export default function App() {
@@ -16,6 +17,14 @@ export default function App() {
             whatLabel="Propuesta"
           >
             <HealthMvp />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/tecnofit" element={
+          <BudgetTemplate
+            title="TecnoFit"
+            whatLabel="Budget & Remainder"
+          >
+            <TecnoFit />
           </BudgetTemplate>
         } />
       </Routes>
