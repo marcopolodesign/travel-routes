@@ -8,6 +8,12 @@ const budgets = [
     description: 'Web App que conecta pacientes con profesionales de la salud. Consultas on-demand y programadas.',
     timeline: '2 a 3 meses',
   },
+  {
+    slug: 'tecnofit',
+    title: 'TecnoFit',
+    description: 'Website, Admin panel, and App (design + coding). Budget tracking with payment history.',
+    timeline: 'Ongoing',
+  },
 ]
 
 export default function Home() {
