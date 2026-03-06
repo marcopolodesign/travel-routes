@@ -20,7 +20,7 @@ export default function TecnoFit() {
           {
             name: 'Admin',
             amount: 4000,
-            status: 'paid',
+            status: 'partial',
             payments: [
               { label: 'Wire transfer', amount: 2000 },
             ],
