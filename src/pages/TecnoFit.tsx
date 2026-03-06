@@ -23,7 +23,6 @@ export default function TecnoFit() {
             status: 'paid',
             payments: [
               { label: 'Wire transfer', amount: 2000 },
-              { label: 'Given in person (household)', amount: 2000 },
             ],
           },
           {
