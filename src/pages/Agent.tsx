@@ -11,9 +11,25 @@ interface Message {
 
 type Status = 'idle' | 'listening' | 'processing' | 'speaking'
 
-const SpeechRecognition =
-  (window as unknown as { SpeechRecognition?: typeof window.SpeechRecognition; webkitSpeechRecognition?: typeof window.SpeechRecognition }).SpeechRecognition ??
-  (window as unknown as { webkitSpeechRecognition?: typeof window.SpeechRecognition }).webkitSpeechRecognition
+interface SpeechRecognitionAlternative { transcript: string }
+interface SpeechRecognitionResult { length: number; [index: number]: SpeechRecognitionAlternative }
+interface SpeechRecognitionResultList { length: number; [index: number]: SpeechRecognitionResult }
+interface ISpeechRecognitionEvent extends Event { results: SpeechRecognitionResultList }
+interface ISpeechRecognitionErrorEvent extends Event { error: string }
+interface ISpeechRecognition {
+  continuous: boolean
+  interimResults: boolean
+  lang: string
+  start(): void
+  stop(): void
+  onresult: ((e: ISpeechRecognitionEvent) => void) | null
+  onerror: ((e: ISpeechRecognitionErrorEvent) => void) | null
+  onend: (() => void) | null
+}
+type SpeechRecognitionCtor = new () => ISpeechRecognition
+
+const win = window as Record<string, unknown>
+const SpeechRecognition = (win.SpeechRecognition ?? win.webkitSpeechRecognition) as SpeechRecognitionCtor | undefined
 
 export default function Agent() {
   const [status, setStatus] = useState<Status>('idle')
@@ -21,7 +37,7 @@ export default function Agent() {
   const [toolEvents, setToolEvents] = useState<ToolEvent[]>([])
   const [noSpeechSupport, setNoSpeechSupport] = useState(false)
 
-  const recognitionRef = useRef<InstanceType<typeof SpeechRecognition> | null>(null)
+  const recognitionRef = useRef<ISpeechRecognition | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const messagesRef = useRef<Message[]>([])
   const activeRef = useRef(false)
@@ -112,14 +128,12 @@ export default function Agent() {
     recognition.interimResults = false
     recognition.lang = 'en-US'
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = Array.from(event.results)
-        .map(r => r[0].transcript)
-        .join('')
+    recognition.onresult = (event: ISpeechRecognitionEvent) => {
+      const transcript = Array.from({ length: event.results.length }, (_, i) => event.results[i][0].transcript).join('')
       handleTranscript(transcript)
     }
 
-    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+    recognition.onerror = (event: ISpeechRecognitionErrorEvent) => {
       if (event.error === 'no-speech' && activeRef.current) {
         startListening()
       }

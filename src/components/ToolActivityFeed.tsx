@@ -42,7 +42,7 @@ function EventCard({ event }: { event: ToolEvent }) {
         </span>
         <span className="flex-1 text-xs text-white/70 truncate font-interphases">
           {typeof event.params === 'object' && event.params !== null
-            ? (event.params as Record<string, unknown>).action ?? 'call'
+            ? String((event.params as Record<string, unknown>).action ?? 'call')
             : 'call'}
         </span>
         <span className="text-[10px] text-white/40 shrink-0">{timeAgo(event.ts)}</span>
@@ -56,7 +56,7 @@ function EventCard({ event }: { event: ToolEvent }) {
 
       {open && (
         <div className="px-4 pb-4 border-t border-[var(--marco-border)]/40 pt-3 space-y-2">
-          {event.params && (
+          {event.params != null && (
             <div>
               <p className="text-[10px] uppercase text-white/40 font-thunder mb-1">Params</p>
               <pre className="text-[11px] text-white/70 bg-black/30 rounded p-2 overflow-x-auto font-mono leading-relaxed">
@@ -64,7 +64,7 @@ function EventCard({ event }: { event: ToolEvent }) {
               </pre>
             </div>
           )}
-          {event.result && (
+          {event.result != null && (
             <div>
               <p className="text-[10px] uppercase text-white/40 font-thunder mb-1">Result</p>
               <pre className="text-[11px] text-white/70 bg-black/30 rounded p-2 overflow-x-auto font-mono leading-relaxed">

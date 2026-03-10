@@ -1,4 +1,4 @@
-type OrbStatus = 'idle' | 'listening' | 'speaking'
+type OrbStatus = 'idle' | 'listening' | 'processing' | 'speaking'
 
 interface VoiceOrbProps {
   status: OrbStatus
