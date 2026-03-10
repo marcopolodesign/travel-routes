@@ -6,6 +6,7 @@ type BudgetTemplateProps = {
   timeline?: string
   stack?: string
   whatLabel?: string
+  hideBack?: boolean
   children: React.ReactNode
 }
 
@@ -14,14 +15,21 @@ export default function BudgetTemplate({
   timeline = '—',
   stack = '—',
   whatLabel = 'WHAT',
+  hideBack = false,
   children,
 }: BudgetTemplateProps) {
   return (
     <div className="min-h-screen bg-white text-black">
-      <header className="border-b border-[var(--marco-border)] px-[4vw] py-5 md:px-[10.5vw] md:py-6 flex items-center justify-between">
-        <Link to="/" className="text-[var(--marco-accent)] hover:opacity-80 transition-opacity" aria-label="Marco Polo Home">
-          <MarcopoloLogo className="h-6 w-auto" />
-        </Link>
+      <header className="sticky top-0 z-30 bg-white border-b border-[var(--marco-border)] px-[4vw] md:px-[10.5vw] h-16 flex items-center justify-between">
+        {hideBack ? (
+          <div className="text-[var(--marco-accent)]" aria-label="Marco Polo">
+            <MarcopoloLogo className="h-6 w-auto" />
+          </div>
+        ) : (
+          <Link to="/" className="text-[var(--marco-accent)] hover:opacity-80 transition-opacity" aria-label="Marco Polo Home">
+            <MarcopoloLogo className="h-6 w-auto" />
+          </Link>
+        )}
       </header>
 
       {/* Top bar – TIMELINE | STACK | WHAT (Figma slide 1) */}

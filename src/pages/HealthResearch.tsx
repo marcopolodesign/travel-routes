@@ -93,7 +93,7 @@ export default function HealthResearch() {
           SECCIÓN 1 — INVESTIGACIÓN DE MERCADO
           ═══════════════════════════════════════════ */}
 
-      <ContentBox title="1. Panorama de Mercado y Oportunidad">
+      <ContentBox id="panorama" title="1. Panorama de Mercado y Oportunidad">
         <p className="font-medium mb-3 text-2xl">Mercado global de SaaS en salud</p>
         <ul className="list-disc pl-5 space-y-2 mb-5">
           <li><strong>Healthcare SaaS:</strong> USD 38.5B (2025) → USD 74.7B (2030), CAGR 18.5%. Impulsado por la digitalización post-pandemia y la adopción de modelos cloud-first en clínicas y hospitales.</li>
@@ -124,7 +124,7 @@ export default function HealthResearch() {
           SECCIÓN 2 — LANDSCAPE COMPETITIVO
           ═══════════════════════════════════════════ */}
 
-      <TwoColumnSection title="2. Landscape Competitivo" withBar>
+      <TwoColumnSection id="landscape" title="2. Landscape Competitivo" withBar>
         <p className="mb-6 text-black/80">Análisis de 6 competidores relevantes a nivel global y regional, con fortalezas y debilidades de cada uno.</p>
 
         {/* Zocdoc */}
@@ -288,7 +288,7 @@ export default function HealthResearch() {
           SECCIÓN 3 — HALLAZGOS DE INVESTIGACIÓN
           ═══════════════════════════════════════════ */}
 
-      <TwoColumnSection title="3. Hallazgos de Investigación (Simulados)" withBar>
+      <TwoColumnSection id="hallazgos" title="3. Hallazgos de Investigación (Simulados)" withBar>
         <p className="text-black/70 mb-6">Basado en entrevistas simuladas con 12 pacientes y 8 profesionales de salud en Argentina y LATAM, complementado con análisis de reviews públicos de apps competidoras y datos de mercado.</p>
 
         <div className="border-l-4 border-[var(--marco-accent)] pl-5 mb-8">
@@ -349,6 +349,7 @@ export default function HealthResearch() {
           ═══════════════════════════════════════════ */}
 
       <BoxedListSection
+        id="pain-pacientes"
         title="4A. Pain Points Clave — Pacientes"
         items={[
           'Encontrar al profesional adecuado: no hay un directorio confiable, filtrable y con reviews verificados que cubra salud + bienestar.',
@@ -361,6 +362,7 @@ export default function HealthResearch() {
       />
 
       <BoxedListSection
+        id="pain-profesionales"
         title="4B. Pain Points Clave — Profesionales"
         items={[
           'Gestión de agenda manual: coordinar disponibilidad, confirmar turnos y enviar recordatorios consume horas semanales.',
@@ -373,6 +375,7 @@ export default function HealthResearch() {
       />
 
       <BoxedListSection
+        id="necesidades"
         title="4C. Necesidades Insatisfechas (Oportunidades)"
         items={[
           'Plataforma unificada salud + bienestar: ningún competidor cubre médicos, nutricionistas, psicólogos y trainers en un solo lugar.',
@@ -388,7 +391,7 @@ export default function HealthResearch() {
           SECCIÓN 5 — PERSONAS DE USUARIO
           ═══════════════════════════════════════════ */}
 
-      <TwoColumnSection title="5. Personas de Usuario" withBar>
+      <TwoColumnSection id="personas" title="5. Personas de Usuario" withBar>
         {/* Persona 1 — Paciente */}
         <div className="border border-[var(--marco-border)] rounded-lg p-6 mb-6 bg-white">
           <div className="flex items-start gap-4 mb-4">
@@ -825,7 +828,7 @@ export default function HealthResearch() {
       </section>
 
       {/* Cierre del reporte */}
-      <ContentBox title="Resumen Ejecutivo">
+      <ContentBox id="resumen" title="Resumen Ejecutivo">
         <p className="mb-3">
           Este reporte documenta la fase de Research y Definición (Fase 0) del MVP Salud y Bienestar, cubriendo
           los cuatro pilares fundamentales para el diseño exitoso de la plataforma:

@@ -9,12 +9,6 @@ const budgets = [
     timeline: '2 a 3 meses',
   },
   {
-    slug: 'health-research',
-    title: 'MVP Salud – Research & Diseño',
-    description: 'Investigación de mercado, personas, flujos de usuario y definición de pantallas para la plataforma de salud y bienestar.',
-    timeline: 'Fase 0',
-  },
-  {
     slug: 'tecnofit',
     title: 'TecnoFit',
     description: 'Website, Admin panel, and App (design + coding). Budget tracking with payment history.',
@@ -34,6 +28,18 @@ export default function Home() {
       <header className="border-b border-[var(--marco-border)] px-[4vw] py-5 md:px-[10.5vw] md:py-6 flex items-center justify-between">
         <Link to="/" className="text-[var(--marco-accent)]" aria-label="Marco Polo Travel Routes">
           <MarcopoloLogo className="h-6 w-auto" />
+        </Link>
+        <Link
+          to="/agent"
+          className="flex items-center gap-2 text-sm font-interphases px-4 py-2 rounded-full border border-[var(--marco-border)] hover:border-[var(--marco-accent)] hover:text-[var(--marco-accent)] transition-colors text-black/60"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="9" y="2" width="6" height="12" rx="3" />
+            <path d="M5 10a7 7 0 0 0 14 0" />
+            <line x1="12" y1="19" x2="12" y2="22" />
+            <line x1="8" y1="22" x2="16" y2="22" />
+          </svg>
+          Voice Agent
         </Link>
       </header>
 
