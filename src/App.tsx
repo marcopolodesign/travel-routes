@@ -3,6 +3,7 @@ import BudgetTemplate from './components/BudgetTemplate'
 import HealthMvp from './pages/HealthMvp'
 import HealthResearch from './pages/HealthResearch'
 import TecnoFit from './pages/TecnoFit'
+import Ronzio from './pages/Ronzio'
 import Home from './pages/Home'
 
 export default function App() {
@@ -36,6 +37,16 @@ export default function App() {
             whatLabel="Budget & Remainder"
           >
             <TecnoFit />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/ronzio" element={
+          <BudgetTemplate
+            title="Ronzio"
+            timeline="45–60 días"
+            stack="Landing + CRM · React · Vercel"
+            whatLabel="Propuesta"
+          >
+            <Ronzio />
           </BudgetTemplate>
         } />
       </Routes>
