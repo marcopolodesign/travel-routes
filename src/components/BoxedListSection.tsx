@@ -8,7 +8,7 @@ type BoxedListSectionProps = {
 export default function BoxedListSection({ title, items, subtitle }: BoxedListSectionProps) {
   return (
     <div className="border border-[var(--marco-border)] rounded-lg p-7 md:p-8 mb-8 bg-[var(--marco-accent-light)]/30">
-      <h3 className="font-thunder text-lg md:text-xl uppercase text-[var(--marco-accent)] border-b-2 border-[var(--marco-accent)] pb-3 mb-5">
+      <h3 className="font-thunder text-2xl md:text-4xl uppercase text-[var(--marco-accent)] border-b-2 border-[var(--marco-accent)] pb-3 mb-5">
         {title}
       </h3>
       {subtitle && <p className="text-sm text-black/80 mb-3">{subtitle}</p>}

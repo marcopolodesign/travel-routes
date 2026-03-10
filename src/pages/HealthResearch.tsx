@@ -94,14 +94,14 @@ export default function HealthResearch() {
           ═══════════════════════════════════════════ */}
 
       <ContentBox title="1. Panorama de Mercado y Oportunidad">
-        <p className="font-medium mb-3 text-lg">Mercado global de SaaS en salud</p>
+        <p className="font-medium mb-3 text-2xl">Mercado global de SaaS en salud</p>
         <ul className="list-disc pl-5 space-y-2 mb-5">
           <li><strong>Healthcare SaaS:</strong> USD 38.5B (2025) → USD 74.7B (2030), CAGR 18.5%. Impulsado por la digitalización post-pandemia y la adopción de modelos cloud-first en clínicas y hospitales.</li>
           <li><strong>Plataformas de salud digital:</strong> USD 420B (2025) → USD 1.17T (2035). Incluye telemedicina, wearables, IA diagnóstica y marketplaces de salud.</li>
           <li><strong>Telemedicina:</strong> USD 186B (2025) → USD 1.27T (2034), CAGR 24.6%. El segmento de mayor crecimiento, acelerado por regulaciones favorables y demanda de acceso remoto.</li>
         </ul>
 
-        <p className="font-medium mb-3 text-lg">Tendencias clave</p>
+        <p className="font-medium mb-3 text-2xl">Tendencias clave</p>
         <ul className="list-disc pl-5 space-y-2 mb-5">
           <li><strong>IA como primer filtro (triage):</strong> chatbots y asistentes que evalúan síntomas antes de derivar al profesional adecuado, reduciendo tiempos de espera y consultas innecesarias.</li>
           <li><strong>Modelo híbrido presencial + virtual:</strong> los pacientes esperan poder elegir entre consulta presencial y teleconsulta según conveniencia, no por limitación de la plataforma.</li>
@@ -110,7 +110,7 @@ export default function HealthResearch() {
           <li><strong>Bienestar integral:</strong> crecimiento de 40% anual en demanda de nutricionistas, psicólogos y coaches de salud a través de plataformas digitales.</li>
         </ul>
 
-        <p className="font-medium mb-3 text-lg">Oportunidad específica para LATAM</p>
+        <p className="font-medium mb-3 text-2xl">Oportunidad específica para LATAM</p>
         <ul className="list-disc pl-5 space-y-2">
           <li>Fragmentación extrema: no existe un "Zocdoc de Latinoamérica" dominante.</li>
           <li>Alta penetración mobile (85%+ en Argentina, Chile, Colombia) facilita adopción de apps de salud.</li>
@@ -129,7 +129,7 @@ export default function HealthResearch() {
 
         {/* Zocdoc */}
         <div className="border border-[var(--marco-border)] rounded-lg p-5 mb-4">
-          <h4 className="font-thunder text-lg uppercase text-[var(--marco-accent)] mb-2">Zocdoc</h4>
+          <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">Zocdoc</h4>
           <p className="text-sm text-black/70 mb-3">EE.UU. · Marketplace de turnos médicos · Fundado 2007</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -155,7 +155,7 @@ export default function HealthResearch() {
 
         {/* Doctolib */}
         <div className="border border-[var(--marco-border)] rounded-lg p-5 mb-4">
-          <h4 className="font-thunder text-lg uppercase text-[var(--marco-accent)] mb-2">Doctolib</h4>
+          <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">Doctolib</h4>
           <p className="text-sm text-black/70 mb-3">Europa · Gestión de turnos y teleconsulta · Fundado 2013</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -181,7 +181,7 @@ export default function HealthResearch() {
 
         {/* Practo */}
         <div className="border border-[var(--marco-border)] rounded-lg p-5 mb-4">
-          <h4 className="font-thunder text-lg uppercase text-[var(--marco-accent)] mb-2">Practo</h4>
+          <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">Practo</h4>
           <p className="text-sm text-black/70 mb-3">India / Global · Marketplace de salud · Fundado 2008</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -207,7 +207,7 @@ export default function HealthResearch() {
 
         {/* Healthgrades */}
         <div className="border border-[var(--marco-border)] rounded-lg p-5 mb-4">
-          <h4 className="font-thunder text-lg uppercase text-[var(--marco-accent)] mb-2">Healthgrades</h4>
+          <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">Healthgrades</h4>
           <p className="text-sm text-black/70 mb-3">EE.UU. · Directorio y reviews médicos · Fundado 1998</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -233,7 +233,7 @@ export default function HealthResearch() {
 
         {/* Amwell */}
         <div className="border border-[var(--marco-border)] rounded-lg p-5 mb-4">
-          <h4 className="font-thunder text-lg uppercase text-[var(--marco-accent)] mb-2">Amwell</h4>
+          <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">Amwell</h4>
           <p className="text-sm text-black/70 mb-3">EE.UU. · Telemedicina 24/7 · Fundado 2006</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -259,7 +259,7 @@ export default function HealthResearch() {
 
         {/* Sesame */}
         <div className="border border-[var(--marco-border)] rounded-lg p-5">
-          <h4 className="font-thunder text-lg uppercase text-[var(--marco-accent)] mb-2">Sesame</h4>
+          <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">Sesame</h4>
           <p className="text-sm text-black/70 mb-3">EE.UU. · Marketplace de salud con precios directos · Fundado 2019</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -292,7 +292,7 @@ export default function HealthResearch() {
         <p className="text-black/70 mb-6">Basado en entrevistas simuladas con 12 pacientes y 8 profesionales de salud en Argentina y LATAM, complementado con análisis de reviews públicos de apps competidoras y datos de mercado.</p>
 
         <div className="border-l-4 border-[var(--marco-accent)] pl-5 mb-8">
-          <h4 className="font-thunder text-lg uppercase text-black mb-3">Hallazgos — Pacientes</h4>
+          <h4 className="font-thunder text-2xl uppercase text-black mb-3">Hallazgos — Pacientes</h4>
           <ul className="space-y-3">
             <li>
               <p className="font-medium">Dificultad para encontrar el profesional correcto</p>
@@ -318,7 +318,7 @@ export default function HealthResearch() {
         </div>
 
         <div className="border-l-4 border-[var(--marco-accent)] pl-5">
-          <h4 className="font-thunder text-lg uppercase text-black mb-3">Hallazgos — Profesionales</h4>
+          <h4 className="font-thunder text-2xl uppercase text-black mb-3">Hallazgos — Profesionales</h4>
           <ul className="space-y-3">
             <li>
               <p className="font-medium">Carga administrativa excesiva</p>
@@ -526,7 +526,7 @@ export default function HealthResearch() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14">
           <div className="md:col-span-4 flex flex-col">
             <div className="w-1 h-12 bg-[var(--marco-accent-light)] rounded mb-5" aria-hidden />
-            <h2 className="font-thunder text-2xl md:text-3xl lg:text-4xl uppercase text-[var(--marco-accent)]">
+            <h2 className="font-thunder text-3xl md:text-4xl uppercase text-[var(--marco-accent)]">
               6. Flujos de Usuario
             </h2>
           </div>
@@ -534,7 +534,7 @@ export default function HealthResearch() {
 
             {/* Flow 1 */}
             <div>
-              <h4 className="font-thunder text-lg uppercase text-[var(--marco-accent)] mb-2">6.1 Onboarding del paciente y primera reserva</h4>
+              <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">6.1 Onboarding del paciente y primera reserva</h4>
               <p className="text-sm text-black/70 mb-4">Desde la descarga hasta la primera consulta confirmada. Objetivo: completar en menos de 5 minutos.</p>
               <MermaidDiagram
                 chart={FLOW_PATIENT_ONBOARDING}
@@ -544,7 +544,7 @@ export default function HealthResearch() {
 
             {/* Flow 2 */}
             <div>
-              <h4 className="font-thunder text-lg uppercase text-[var(--marco-accent)] mb-2">6.2 Onboarding del profesional y setup de perfil</h4>
+              <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">6.2 Onboarding del profesional y setup de perfil</h4>
               <p className="text-sm text-black/70 mb-4">Registro, verificación de credenciales, configuración de perfil público y agenda. Incluye flujo de aprobación/rechazo.</p>
               <MermaidDiagram
                 chart={FLOW_PROFESSIONAL_ONBOARDING}
@@ -554,7 +554,7 @@ export default function HealthResearch() {
 
             {/* Flow 3 */}
             <div>
-              <h4 className="font-thunder text-lg uppercase text-[var(--marco-accent)] mb-2">6.3 Búsqueda, filtros y descubrimiento</h4>
+              <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">6.3 Búsqueda, filtros y descubrimiento</h4>
               <p className="text-sm text-black/70 mb-4">Cómo el paciente encuentra al profesional adecuado. Incluye búsqueda, filtrado, ordenamiento y guardado en favoritos.</p>
               <MermaidDiagram
                 chart={FLOW_SEARCH_DISCOVERY}
@@ -564,7 +564,7 @@ export default function HealthResearch() {
 
             {/* Flow 4 */}
             <div>
-              <h4 className="font-thunder text-lg uppercase text-[var(--marco-accent)] mb-2">6.4 Reserva y confirmación de turno</h4>
+              <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">6.4 Reserva y confirmación de turno</h4>
               <p className="text-sm text-black/70 mb-4">Flujo completo de booking, diferenciando on-demand vs. programado. Incluye pago y notificaciones.</p>
               <MermaidDiagram
                 chart={FLOW_BOOKING}
@@ -574,7 +574,7 @@ export default function HealthResearch() {
 
             {/* Flow 5 */}
             <div>
-              <h4 className="font-thunder text-lg uppercase text-[var(--marco-accent)] mb-2">6.5 Post-consulta y calificación</h4>
+              <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">6.5 Post-consulta y calificación</h4>
               <p className="text-sm text-black/70 mb-4">Desde el cierre de la consulta por el profesional hasta la review del paciente y el archivado en historial.</p>
               <MermaidDiagram
                 chart={FLOW_POST_APPOINTMENT}
@@ -587,279 +587,242 @@ export default function HealthResearch() {
       </section>
 
       {/* ═══════════════════════════════════════════
-          SECCIÓN 7 — DEFINICIÓN DE PANTALLAS
+          SECCIÓN 7 — INVENTARIO DE PANTALLAS
           ═══════════════════════════════════════════ */}
 
-      <TwoColumnSection title="7A. Pantallas — App del Paciente" withBar>
-        <div className="space-y-4">
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.1 Splash / Bienvenida</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Primera impresión y acceso rápido</p>
-            <p className="text-sm mb-2">Pantalla de carga con branding de la plataforma. Redirige automáticamente al login o al home si ya hay sesión activa.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Logo animado, indicador de carga, redirección automática.</p>
+      <section className="mb-14 md:mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14 mb-10">
+          <div className="md:col-span-4 flex flex-col">
+            <div className="w-1 h-12 bg-[var(--marco-accent-light)] rounded mb-5" aria-hidden />
+            <h2 className="font-thunder text-3xl md:text-4xl uppercase text-[var(--marco-accent)]">
+              7. Inventario de Pantallas
+            </h2>
           </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.2 Registro</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Crear cuenta en menos de 60 segundos</p>
-            <p className="text-sm mb-2">Registro simplificado con opciones de email, Google y Apple. Mínimos campos requeridos para empezar.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Formulario (nombre, email, contraseña), botones SSO (Google, Apple), link a login, términos y condiciones.</p>
+          <div className="md:col-span-8 text-black space-y-4">
+            <p className="text-black/80">Listado completo de pantallas definidas para cada tipo de usuario. <strong>41 pantallas totales</strong> — 19 paciente, 16 profesional, 6 compartidas/admin.</p>
           </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.3 Login</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Acceder a la cuenta rápidamente</p>
-            <p className="text-sm mb-2">Login con email/contraseña o SSO. Incluye recuperación de contraseña.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Formulario (email, contraseña), botones SSO, "Olvidé mi contraseña", link a registro.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.4 Onboarding Quiz</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Personalizar la experiencia desde el inicio</p>
-            <p className="text-sm mb-2">3-4 preguntas rápidas sobre objetivos de salud, tipos de profesionales de interés y preferencias (presencial vs. virtual). Permite saltar.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Preguntas tipo card swipe, barra de progreso, botón "Saltar", selección múltiple, CTA "Empezar".</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.5 Home / Dashboard</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Hub central con acceso rápido a todas las acciones</p>
-            <p className="text-sm mb-2">Pantalla principal post-login. Muestra próximas citas, profesionales recomendados, acciones rápidas y alertas.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Saludo personalizado, próxima cita (card), barra de búsqueda, categorías de profesionales (horizontal scroll), profesionales recomendados, banner de recordatorio si no hay citas programadas.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.6 Búsqueda y Descubrimiento</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Encontrar al profesional adecuado en menos de 2 minutos</p>
-            <p className="text-sm mb-2">Pantalla de búsqueda con filtros avanzados, resultados en lista o mapa, y ordenamiento.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Barra de búsqueda, filtros (especialidad, ubicación, precio, rating, disponibilidad, modalidad), toggle lista/mapa, cards de resultados (foto, nombre, especialidad, rating, precio, disponibilidad), ordenamiento (relevancia, precio, rating, distancia).</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.7 Perfil del Profesional</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Evaluar al profesional y decidir si reservar</p>
-            <p className="text-sm mb-2">Perfil completo del profesional con toda la información necesaria para tomar una decisión.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Foto, nombre, especialidad, badge de verificación, bio, formación y experiencia, tarifas, modalidades (presencial/virtual), ubicación con mapa, reviews y calificaciones, horarios disponibles (preview), botón "Reservar turno", botón "Guardar en favoritos".</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.8 Calendario de Reserva</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Seleccionar fecha y hora de consulta</p>
-            <p className="text-sm mb-2">Vista de calendario con slots disponibles del profesional seleccionado. Diferencia consulta programada vs. on-demand.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Calendario mensual/semanal, slots disponibles por día, toggle presencial/virtual, selección de duración (si aplica), resumen de selección, botón "Continuar".</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.9 Confirmación de Reserva</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Revisar y confirmar los detalles antes de pagar</p>
-            <p className="text-sm mb-2">Resumen completo de la cita antes del pago. Última oportunidad de modificar.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Resumen (profesional, fecha, hora, modalidad, duración), costo desglosado, motivo de consulta (campo de texto), adjuntar estudios previos (opcional), botón "Modificar", botón "Confirmar y pagar".</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.10 Pago</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Completar el pago de forma segura</p>
-            <p className="text-sm mb-2">Pantalla de pago con tarjeta de crédito. Incluye resumen del monto y datos de seguridad.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Monto total, formulario de tarjeta (o tarjetas guardadas), selección de método de pago, checkbox de política de cancelación, botón "Pagar", indicador de seguridad (SSL/encriptación).</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.11 Confirmación de Turno</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Confirmar que la reserva fue exitosa</p>
-            <p className="text-sm mb-2">Pantalla de éxito post-pago con todos los detalles de la cita y acciones de seguimiento.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Checkmark de éxito, resumen completo de la cita, "Agregar al calendario" (integración), comprobante de pago, botón "Ver mis turnos", botón "Volver al inicio".</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.12 Detalle de Turno</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Ver información completa de una cita futura o pasada</p>
-            <p className="text-sm mb-2">Vista detallada de un turno específico con opciones de gestión.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Info del profesional, fecha/hora/modalidad, link de videollamada (si virtual), motivo de consulta, estudios adjuntos, estado (confirmado/completado/cancelado), botón "Cancelar turno" (con política), botón "Reprogramar", notas post-consulta (si completado).</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.13 Sala de Espera Virtual</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Preparar y acceder a la teleconsulta</p>
-            <p className="text-sm mb-2">Pantalla previa a la teleconsulta. Muestra cuenta regresiva y link de acceso.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Countdown al inicio, info del profesional, link externo de videollamada (configurable por admin), checklist pre-consulta (cámara, micrófono), botón "Unirse a la consulta".</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.14 Calificación Post-Consulta</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Evaluar la experiencia para ayudar a otros pacientes</p>
-            <p className="text-sm mb-2">Formulario de review presentado después de cada consulta completada.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Rating por estrellas (1-5), categorías (puntualidad, profesionalismo, claridad, trato), comentario escrito (opcional), toggle "Publicar como anónimo", botón "Enviar calificación", botón "Calificar después".</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.15 Historial de Consultas</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Acceder al historial completo de atención</p>
-            <p className="text-sm mb-2">Lista cronológica de todas las consultas pasadas con filtros y acceso a detalles.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Lista de consultas (fecha, profesional, especialidad, estado), filtros (por profesional, por fecha, por tipo), acceso a notas y recetas, botón "Reservar de nuevo" en cada entrada.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.16 Documentos Médicos</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Centralizar y gestionar documentación de salud</p>
-            <p className="text-sm mb-2">Repositorio de estudios, análisis y documentos médicos subidos por el paciente.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Lista de documentos (nombre, fecha, tipo), upload de archivos (PDF), preview de documentos, categorización (análisis, estudios, recetas, otros), compartir con profesional específico, eliminar documentos.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.17 Perfil y Configuración</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Gestionar cuenta y preferencias</p>
-            <p className="text-sm mb-2">Configuración de la cuenta del paciente, datos personales y preferencias.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Datos personales (editar), foto de perfil, obra social / seguro (editar), métodos de pago guardados, preferencias de notificaciones, idioma, profesionales favoritos, política de cancelación, cerrar sesión, eliminar cuenta.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.18 Notificaciones</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Mantener al paciente informado y engaged</p>
-            <p className="text-sm mb-2">Centro de notificaciones con alertas de turnos, recordatorios y novedades.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Lista de notificaciones (ordenadas por fecha), tipos: recordatorio de turno, confirmación de reserva, review pendiente, recordatorio de inactividad, mensaje del profesional. Marcar como leída, acceso directo a la acción correspondiente.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7A.19 Ayuda y Soporte</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Paciente · Objetivo: Resolver dudas y problemas rápidamente</p>
-            <p className="text-sm mb-2">Centro de ayuda con FAQ, contacto y reporte de problemas.</p>
-            <p className="text-sm"><strong>Elementos:</strong> FAQ categorizado, barra de búsqueda, formulario de contacto, chat de soporte (si disponible), reportar un problema con turno/profesional.</p>
-          </div>
-
         </div>
-      </TwoColumnSection>
 
-      <TwoColumnSection title="7B. Pantallas — Dashboard Profesional" withBar>
-        <div className="space-y-4">
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.1 Bienvenida / Registro Profesional</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Iniciar el proceso de alta en la plataforma</p>
-            <p className="text-sm mb-2">Pantalla de registro específica para profesionales con información sobre beneficios de la plataforma.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Propuesta de valor para profesionales, formulario de registro (nombre, email, especialidad), requisitos de documentación, botón "Comenzar registro".</p>
+        {/* 7A — Paciente */}
+        <div className="mb-12">
+          <h3 className="font-thunder text-2xl md:text-3xl uppercase text-black mb-6 border-b-2 border-[var(--marco-accent)] pb-3">
+            7A. App del Paciente <span className="text-[var(--marco-accent)]">— 19 pantallas</span>
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { id: '7A.1', name: 'Splash / Bienvenida', desc: 'Carga con branding, redirección automática.' },
+              { id: '7A.2', name: 'Registro', desc: 'Email, Google, Apple. Cuenta en menos de 60s.' },
+              { id: '7A.3', name: 'Login', desc: 'Email/contraseña o SSO. Recuperación de contraseña.' },
+              { id: '7A.4', name: 'Onboarding Quiz', desc: '3-4 preguntas sobre objetivos de salud y preferencias.' },
+              { id: '7A.5', name: 'Home / Dashboard', desc: 'Próximas citas, búsqueda rápida, recomendaciones.' },
+              { id: '7A.6', name: 'Búsqueda y Descubrimiento', desc: 'Filtros avanzados, lista/mapa, ordenamiento.' },
+              { id: '7A.7', name: 'Perfil del Profesional', desc: 'Bio, tarifas, reviews, disponibilidad, reservar.' },
+              { id: '7A.8', name: 'Calendario de Reserva', desc: 'Slots disponibles, on-demand vs. programada.' },
+              { id: '7A.9', name: 'Confirmación de Reserva', desc: 'Resumen, costo, motivo, adjuntos, pagar.' },
+              { id: '7A.10', name: 'Pago', desc: 'Tarjeta, métodos guardados, política de cancelación.' },
+              { id: '7A.11', name: 'Confirmación de Turno', desc: 'Éxito, agregar al calendario, comprobante.' },
+              { id: '7A.12', name: 'Detalle de Turno', desc: 'Info completa, videollamada, cancelar/reprogramar.' },
+              { id: '7A.13', name: 'Sala de Espera Virtual', desc: 'Countdown, checklist pre-consulta, unirse.' },
+              { id: '7A.14', name: 'Calificación Post-Consulta', desc: 'Estrellas, categorías, comentario opcional.' },
+              { id: '7A.15', name: 'Historial de Consultas', desc: 'Lista cronológica, filtros, reservar de nuevo.' },
+              { id: '7A.16', name: 'Documentos Médicos', desc: 'Upload, categorización, compartir con profesional.' },
+              { id: '7A.17', name: 'Perfil y Configuración', desc: 'Datos, obra social, pagos, notificaciones.' },
+              { id: '7A.18', name: 'Notificaciones', desc: 'Recordatorios, confirmaciones, mensajes.' },
+              { id: '7A.19', name: 'Ayuda y Soporte', desc: 'FAQ, contacto, reportar problema.' },
+            ].map((screen) => (
+              <div key={screen.id} className="group border border-[var(--marco-border)] rounded-lg p-4 hover:border-[var(--marco-accent)] hover:bg-[var(--marco-accent-light)]/10 transition-all">
+                <div className="flex items-start gap-3">
+                  <span className="shrink-0 w-9 h-9 rounded-md bg-[var(--marco-accent)] text-white font-thunder text-xs flex items-center justify-center">
+                    {screen.id.replace('7A.', '')}
+                  </span>
+                  <div className="min-w-0">
+                    <h4 className="font-thunder text-base uppercase text-black group-hover:text-[var(--marco-accent)] transition-colors leading-tight mb-1">{screen.name}</h4>
+                    <p className="text-xs text-black/60 leading-snug">{screen.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.2 Carga de Credenciales</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Verificar identidad y habilitación profesional</p>
-            <p className="text-sm mb-2">Formulario de carga de documentación requerida para validación.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Upload de título profesional (foto/PDF), upload de DNI/identificación, número de matrícula / registro SISA, selección de especialidad(es), barra de progreso de verificación, estado de cada documento (pendiente/aprobado/rechazado).</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.3 Setup de Perfil Público</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Crear un perfil atractivo para captar pacientes</p>
-            <p className="text-sm mb-2">Configuración del perfil visible para pacientes. Preview en tiempo real.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Foto profesional (upload + crop), bio/descripción, formación académica, experiencia, especialidades y servicios ofrecidos, tarifas por tipo de consulta, modalidades (presencial/virtual), dirección del consultorio (si aplica), preview del perfil público, botón "Publicar perfil".</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.4 Dashboard Home</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Vista general del día y métricas clave</p>
-            <p className="text-sm mb-2">Panel principal con resumen del día, próximas citas, métricas rápidas y alertas.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Resumen del día (citas confirmadas, pendientes), próximas citas (lista), métricas rápidas (ingresos del mes, rating promedio, total pacientes), solicitudes on-demand pendientes (si aplica), alertas y notificaciones recientes, acceso rápido a calendario y perfil.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.5 Calendario y Disponibilidad</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Gestionar agenda y definir horarios de atención</p>
-            <p className="text-sm mb-2">Calendario completo con gestión de slots, horarios recurrentes y bloqueos.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Vista semanal/mensual del calendario, configuración de horarios recurrentes (ej. lunes a viernes 9-18), bloquear horarios específicos, ver citas confirmadas/pendientes, duración de consulta por defecto, tiempo entre consultas (buffer), sincronización con Google Calendar (opcional).</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.6 Solicitud On-Demand</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Recibir y aceptar/rechazar consultas inmediatas</p>
-            <p className="text-sm mb-2">Pantalla de notificación para consultas on-demand cuando el profesional está disponible.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Notificación push/in-app, info del paciente (nombre, motivo breve), countdown para aceptar, botón "Aceptar consulta", botón "Rechazar", historial de solicitudes on-demand.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.7 Detalle de Cita</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Ver toda la información de una cita específica</p>
-            <p className="text-sm mb-2">Vista completa de una cita con información del paciente, motivo y documentos.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Info del paciente (nombre, edad, historial en plataforma), motivo de consulta, estudios adjuntos por el paciente, fecha/hora/modalidad, link de videollamada, notas de consultas anteriores con ese paciente, botón "Iniciar consulta", botón "Cancelar/Reprogramar".</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.8 Perfil del Paciente (Vista Profesional)</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Acceder al historial del paciente para mejor atención</p>
-            <p className="text-sm mb-2">Vista del historial del paciente dentro de la plataforma (solo lo compartido por el paciente).</p>
-            <p className="text-sm"><strong>Elementos:</strong> Datos básicos del paciente, historial de consultas previas (con este profesional), documentos compartidos por el paciente, notas de consultas anteriores, alergias o condiciones relevantes (si el paciente las cargó).</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.9 Notas y Cierre de Consulta</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Documentar la consulta y cerrar formalmente</p>
-            <p className="text-sm mb-2">Formulario post-consulta para notas clínicas y cierre formal. Campo obligatorio de receta.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Campo de notas clínicas (texto libre), toggle "Requiere receta" / "No requiere receta", adjuntar receta (si aplica), recomendaciones al paciente, sugerir próxima consulta (fecha), validación biométrica (Face ID) para confirmar cierre, botón "Cerrar consulta".</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.10 Workflow de Receta</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Generar y enviar receta al paciente</p>
-            <p className="text-sm mb-2">Flujo de generación de receta post-consulta (nice to have en MVP, puede ser adjunto manual).</p>
-            <p className="text-sm"><strong>Elementos:</strong> Template de receta, campos (medicamento, dosis, frecuencia, duración), preview de receta, adjuntar como PDF, enviar al paciente, guardar en historial.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.11 Ingresos y Pagos</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Visualizar ingresos y gestionar cobros</p>
-            <p className="text-sm mb-2">Dashboard financiero con ingresos, pagos pendientes y configuración de cobros.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Resumen de ingresos (semanal/mensual/anual), gráfico de ingresos en el tiempo, detalle por consulta (fecha, paciente, monto, comisión, neto), estado de pagos (depositado/pendiente), configuración de cuenta bancaria para depósitos, historial de transferencias.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.12 Reviews y Calificaciones</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Monitorear reputación y feedback</p>
-            <p className="text-sm mb-2">Vista de todas las calificaciones recibidas con métricas agregadas.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Rating promedio general, rating por categoría (puntualidad, profesionalismo, etc.), lista de reviews (con fecha y texto), tendencia del rating en el tiempo, responder a reviews (opcional), reportar review inapropiado.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.13 Configuración del Perfil</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Actualizar información profesional y configuración</p>
-            <p className="text-sm mb-2">Edición del perfil público, configuración de la cuenta y preferencias operativas.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Editar perfil público (bio, foto, tarifas, servicios), actualizar credenciales, configuración de notificaciones, preferencias de consulta (duración, buffer, on-demand sí/no), datos fiscales, cambiar contraseña, cerrar sesión.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.14 Notificaciones</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Estar al tanto de citas, pagos y alertas</p>
-            <p className="text-sm mb-2">Centro de notificaciones del profesional con alertas operativas.</p>
-            <p className="text-sm"><strong>Elementos:</strong> Lista de notificaciones (nueva reserva, cancelación, solicitud on-demand, pago recibido, nueva review, recordatorio de cita), marcar como leída, acceso directo a la acción, filtros por tipo.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.15 Ayuda y Soporte</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Resolver dudas operativas y técnicas</p>
-            <p className="text-sm mb-2">Centro de ayuda adaptado a profesionales con FAQ, guías y contacto de soporte.</p>
-            <p className="text-sm"><strong>Elementos:</strong> FAQ para profesionales, guías de uso de la plataforma, contacto con soporte, reportar problema técnico, sugerir mejora.</p>
-          </div>
-
-          <div className="border border-[var(--marco-border)] rounded-lg p-5">
-            <h4 className="font-thunder text-base uppercase text-[var(--marco-accent)] mb-1">7B.16 Analytics</h4>
-            <p className="text-xs text-black/50 mb-2">Usuario: Profesional · Objetivo: Entender el rendimiento de la práctica en la plataforma</p>
-            <p className="text-sm mb-2">Panel de métricas detalladas para el profesional (disponible post-MVP o versión básica en MVP).</p>
-            <p className="text-sm"><strong>Elementos:</strong> Consultas por período, tasa de ocupación, tasa de no-show, ingresos acumulados, distribución por tipo de consulta (on-demand vs. programada, presencial vs. virtual), pacientes nuevos vs. recurrentes, horarios de mayor demanda.</p>
-          </div>
-
         </div>
-      </TwoColumnSection>
 
-      {/* Pantallas compartidas / Admin */}
-      <BoxedListSection
-        title="7C. Pantallas Compartidas y Admin"
-        subtitle="Pantallas que sirven a ambos tipos de usuario o al equipo administrativo."
-        items={[
-          'Panel de Administrador: gestión de usuarios, profesionales, validaciones de credenciales, reportes de contenido, configuración de plataforma. (Usuario: Admin)',
-          'Panel Super Admin: dashboard ejecutivo con métricas globales (usuarios, consultas, ingresos, NPS), gestión completa de la plataforma, roles y permisos. (Usuario: Super Admin / Cliente)',
-          'Landing Page / Marketing: página de presentación de la plataforma para captación orgánica, con CTA para registro de pacientes y profesionales. (Usuario: Visitante)',
-          'Términos y Condiciones / Política de Privacidad: páginas legales accesibles desde registro y configuración. (Usuario: Todos)',
-          'Pantalla de Error / 404: manejo elegante de errores y rutas no encontradas. (Usuario: Todos)',
-          'Pantalla de Mantenimiento: aviso de mantenimiento programado con información de tiempo estimado. (Usuario: Todos)',
-        ]}
-      />
+        {/* 7B — Profesional */}
+        <div className="mb-12">
+          <h3 className="font-thunder text-2xl md:text-3xl uppercase text-black mb-6 border-b-2 border-[var(--marco-accent)] pb-3">
+            7B. Dashboard Profesional <span className="text-[var(--marco-accent)]">— 16 pantallas</span>
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { id: '7B.1', name: 'Registro Profesional', desc: 'Propuesta de valor, formulario, requisitos.' },
+              { id: '7B.2', name: 'Carga de Credenciales', desc: 'Título, DNI, matrícula, estado de verificación.' },
+              { id: '7B.3', name: 'Setup de Perfil Público', desc: 'Foto, bio, tarifas, servicios, preview.' },
+              { id: '7B.4', name: 'Dashboard Home', desc: 'Resumen del día, métricas, alertas, citas.' },
+              { id: '7B.5', name: 'Calendario y Disponibilidad', desc: 'Horarios recurrentes, bloqueos, sync Google.' },
+              { id: '7B.6', name: 'Solicitud On-Demand', desc: 'Push notification, aceptar/rechazar consulta.' },
+              { id: '7B.7', name: 'Detalle de Cita', desc: 'Info paciente, motivo, documentos, iniciar.' },
+              { id: '7B.8', name: 'Perfil del Paciente', desc: 'Historial compartido, notas, condiciones.' },
+              { id: '7B.9', name: 'Notas y Cierre', desc: 'Notas clínicas, receta, recomendaciones, cierre.' },
+              { id: '7B.10', name: 'Workflow de Receta', desc: 'Template, medicamentos, PDF, enviar.' },
+              { id: '7B.11', name: 'Ingresos y Pagos', desc: 'Dashboard financiero, comisiones, depósitos.' },
+              { id: '7B.12', name: 'Reviews y Calificaciones', desc: 'Rating promedio, tendencia, responder.' },
+              { id: '7B.13', name: 'Configuración del Perfil', desc: 'Editar perfil, credenciales, preferencias.' },
+              { id: '7B.14', name: 'Notificaciones', desc: 'Reservas, cancelaciones, pagos, reviews.' },
+              { id: '7B.15', name: 'Ayuda y Soporte', desc: 'FAQ, guías, contacto, reportar problema.' },
+              { id: '7B.16', name: 'Analytics', desc: 'Ocupación, no-shows, ingresos, tendencias.' },
+            ].map((screen) => (
+              <div key={screen.id} className="group border border-[var(--marco-border)] rounded-lg p-4 hover:border-[var(--marco-accent)] hover:bg-[var(--marco-accent-light)]/10 transition-all">
+                <div className="flex items-start gap-3">
+                  <span className="shrink-0 w-9 h-9 rounded-md bg-black text-white font-thunder text-xs flex items-center justify-center">
+                    {screen.id.replace('7B.', '')}
+                  </span>
+                  <div className="min-w-0">
+                    <h4 className="font-thunder text-base uppercase text-black group-hover:text-[var(--marco-accent)] transition-colors leading-tight mb-1">{screen.name}</h4>
+                    <p className="text-xs text-black/60 leading-snug">{screen.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 7C — Compartidas / Admin */}
+        <div>
+          <h3 className="font-thunder text-2xl md:text-3xl uppercase text-black mb-6 border-b-2 border-[var(--marco-accent)] pb-3">
+            7C. Compartidas y Admin <span className="text-[var(--marco-accent)]">— 6 pantallas</span>
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { id: 'C1', name: 'Panel de Administrador', desc: 'Gestión de usuarios, validaciones, reportes.' },
+              { id: 'C2', name: 'Panel Super Admin', desc: 'Métricas globales, roles, permisos, NPS.' },
+              { id: 'C3', name: 'Landing Page', desc: 'Captación orgánica, CTA pacientes y profesionales.' },
+              { id: 'C4', name: 'Términos y Privacidad', desc: 'Páginas legales accesibles desde registro.' },
+              { id: 'C5', name: 'Error / 404', desc: 'Manejo elegante de errores y rutas.' },
+              { id: 'C6', name: 'Mantenimiento', desc: 'Aviso de mantenimiento con tiempo estimado.' },
+            ].map((screen) => (
+              <div key={screen.id} className="group border border-[var(--marco-border)] rounded-lg p-4 hover:border-[var(--marco-accent)] hover:bg-[var(--marco-accent-light)]/10 transition-all">
+                <div className="flex items-start gap-3">
+                  <span className="shrink-0 w-9 h-9 rounded-md bg-[var(--marco-gray)] text-white font-thunder text-xs flex items-center justify-center">
+                    {screen.id.replace('C', '')}
+                  </span>
+                  <div className="min-w-0">
+                    <h4 className="font-thunder text-base uppercase text-black group-hover:text-[var(--marco-accent)] transition-colors leading-tight mb-1">{screen.name}</h4>
+                    <p className="text-xs text-black/60 leading-snug">{screen.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          SECCIÓN 8 — FLUJOS POR PANTALLA
+          ═══════════════════════════════════════════ */}
+
+      <section className="mb-14 md:mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14">
+          <div className="md:col-span-4 flex flex-col">
+            <div className="w-1 h-12 bg-[var(--marco-accent-light)] rounded mb-5" aria-hidden />
+            <h2 className="font-thunder text-3xl md:text-4xl uppercase text-[var(--marco-accent)]">
+              8. Flujos por Pantalla
+            </h2>
+          </div>
+          <div className="md:col-span-8 space-y-10">
+            <p className="text-black/80 mb-2">Mapeo de flujos de usuario a las pantallas propuestas. Cada nodo del diagrama corresponde a una pantalla específica del inventario (Sección 7).</p>
+
+            {/* Flow A — Paciente: Primera reserva */}
+            <div>
+              <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">8.1 Paciente — Onboarding a primera reserva</h4>
+              <p className="text-sm text-black/70 mb-1">Pantallas involucradas: 7A.1 → 7A.2 → 7A.4 → 7A.5 → 7A.6 → 7A.7 → 7A.8 → 7A.9 → 7A.10 → 7A.11</p>
+              <p className="text-xs text-black/50 mb-4">Flujo completo desde la descarga de la app hasta la primera consulta confirmada y pagada.</p>
+              <MermaidDiagram
+                chart={`flowchart TD
+  A["7A.1 Splash"] --> B["7A.2 Registro"]
+  B --> C["7A.4 Onboarding Quiz"]
+  C --> D["7A.5 Home / Dashboard"]
+  D --> E["7A.6 Búsqueda"]
+  E --> F["7A.7 Perfil Profesional"]
+  F --> G["7A.8 Calendario de Reserva"]
+  G --> H["7A.9 Confirmación"]
+  H --> I["7A.10 Pago"]
+  I --> J["7A.11 Turno Confirmado"]`}
+                className="min-h-[280px] rounded-lg border border-[var(--marco-border)] bg-[var(--marco-bg)] p-4"
+              />
+            </div>
+
+            {/* Flow B — Paciente: Teleconsulta */}
+            <div>
+              <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">8.2 Paciente — Flujo de teleconsulta</h4>
+              <p className="text-sm text-black/70 mb-1">Pantallas involucradas: 7A.18 → 7A.12 → 7A.13 → 7A.14 → 7A.15</p>
+              <p className="text-xs text-black/50 mb-4">Desde el recordatorio de turno hasta la calificación post-consulta y archivo en historial.</p>
+              <MermaidDiagram
+                chart={`flowchart TD
+  A["7A.18 Notificación: recordatorio"] --> B["7A.12 Detalle de Turno"]
+  B --> C["7A.13 Sala de Espera Virtual"]
+  C --> D["Teleconsulta en curso"]
+  D --> E["7A.14 Calificación"]
+  E --> F["7A.15 Historial"]`}
+                className="min-h-[280px] rounded-lg border border-[var(--marco-border)] bg-[var(--marco-bg)] p-4"
+              />
+            </div>
+
+            {/* Flow C — Profesional: Onboarding */}
+            <div>
+              <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">8.3 Profesional — Onboarding y activación</h4>
+              <p className="text-sm text-black/70 mb-1">Pantallas involucradas: 7B.1 → 7B.2 → 7B.3 → 7B.5 → 7B.4</p>
+              <p className="text-xs text-black/50 mb-4">Desde el registro hasta la activación del perfil público y la primera vista del dashboard.</p>
+              <MermaidDiagram
+                chart={`flowchart TD
+  A["7B.1 Registro Profesional"] --> B["7B.2 Carga de Credenciales"]
+  B --> C{"Aprobado?"}
+  C -- Sí --> D["7B.3 Setup Perfil Público"]
+  C -- No --> E["Corrección / Rechazo"]
+  E --> B
+  D --> F["7B.5 Calendario y Disponibilidad"]
+  F --> G["7B.4 Dashboard Home"]`}
+                className="min-h-[280px] rounded-lg border border-[var(--marco-border)] bg-[var(--marco-bg)] p-4"
+              />
+            </div>
+
+            {/* Flow D — Profesional: Atención de consulta */}
+            <div>
+              <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">8.4 Profesional — Atención de consulta</h4>
+              <p className="text-sm text-black/70 mb-1">Pantallas involucradas: 7B.14 → 7B.7 → 7B.8 → 7B.9 → 7B.10 → 7B.12</p>
+              <p className="text-xs text-black/50 mb-4">Desde la notificación de nueva cita hasta el cierre con notas, receta y review recibida.</p>
+              <MermaidDiagram
+                chart={`flowchart TD
+  A["7B.14 Notificación: nueva cita"] --> B["7B.7 Detalle de Cita"]
+  B --> C["7B.8 Perfil del Paciente"]
+  C --> D["Consulta en curso"]
+  D --> E["7B.9 Notas y Cierre"]
+  E --> F{"Requiere receta?"}
+  F -- Sí --> G["7B.10 Workflow de Receta"]
+  F -- No --> H["Cierre directo"]
+  G --> I["7B.12 Review recibida"]
+  H --> I`}
+                className="min-h-[280px] rounded-lg border border-[var(--marco-border)] bg-[var(--marco-bg)] p-4"
+              />
+            </div>
+
+            {/* Flow E — Profesional: On-Demand */}
+            <div>
+              <h4 className="font-thunder text-2xl uppercase text-[var(--marco-accent)] mb-2">8.5 Profesional — Consulta on-demand</h4>
+              <p className="text-sm text-black/70 mb-1">Pantallas involucradas: 7B.6 → 7B.7 → 7B.9 → 7B.11</p>
+              <p className="text-xs text-black/50 mb-4">Flujo alternativo cuando el profesional acepta una consulta inmediata.</p>
+              <MermaidDiagram
+                chart={`flowchart TD
+  A["7B.6 Solicitud On-Demand"] --> B{"Acepta?"}
+  B -- Sí --> C["7B.7 Detalle de Cita"]
+  B -- No --> D["Vuelve al Dashboard"]
+  C --> E["Consulta en curso"]
+  E --> F["7B.9 Notas y Cierre"]
+  F --> G["7B.11 Ingresos: pago recibido"]`}
+                className="min-h-[280px] rounded-lg border border-[var(--marco-border)] bg-[var(--marco-bg)] p-4"
+              />
+            </div>
+
+          </div>
+        </div>
+      </section>
 
       {/* Cierre del reporte */}
       <ContentBox title="Resumen Ejecutivo">

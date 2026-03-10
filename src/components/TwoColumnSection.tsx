@@ -13,7 +13,7 @@ export default function TwoColumnSection({ title, children, withBar = true }: Tw
           {withBar && (
             <div className="w-1 h-12 bg-[var(--marco-accent-light)] rounded mb-5" aria-hidden />
           )}
-          <h2 className="font-thunder text-2xl md:text-3xl lg:text-4xl uppercase text-[var(--marco-accent)]">
+          <h2 className="font-thunder text-3xl md:text-4xl uppercase text-[var(--marco-accent)]">
             {title}
           </h2>
         </div>

@@ -3,8 +3,28 @@ import mermaid from 'mermaid'
 
 mermaid.initialize({
   startOnLoad: false,
-  theme: 'neutral',
+  theme: 'base',
   securityLevel: 'loose',
+  themeVariables: {
+    primaryColor: '#e66065',
+    primaryTextColor: '#fff',
+    primaryBorderColor: '#c44a4f',
+    lineColor: '#000',
+    secondaryColor: '#f5b5b8',
+    secondaryTextColor: '#000',
+    secondaryBorderColor: '#e66065',
+    tertiaryColor: '#fff',
+    tertiaryTextColor: '#000',
+    tertiaryBorderColor: '#d1d5db',
+    noteBkgColor: '#f5b5b8',
+    noteTextColor: '#000',
+    noteBorderColor: '#e66065',
+    edgeLabelBackground: '#fff',
+    clusterBkg: '#f5b5b8',
+    clusterBorder: '#e66065',
+    fontFamily: 'system-ui, sans-serif',
+    fontSize: '14px',
+  },
 })
 
 type MermaidDiagramProps = {
