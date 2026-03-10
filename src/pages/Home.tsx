@@ -9,6 +9,12 @@ const budgets = [
     timeline: '2 a 3 meses',
   },
   {
+    slug: 'health-research',
+    title: 'MVP Salud – Research & Diseño',
+    description: 'Investigación de mercado, personas, flujos de usuario y definición de pantallas para la plataforma de salud y bienestar.',
+    timeline: 'Fase 0',
+  },
+  {
     slug: 'tecnofit',
     title: 'TecnoFit',
     description: 'Website, Admin panel, and App (design + coding). Budget tracking with payment history.',
