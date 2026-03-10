@@ -14,6 +14,12 @@ const budgets = [
     description: 'Website, Admin panel, and App (design + coding). Budget tracking with payment history.',
     timeline: 'Ongoing',
   },
+  {
+    slug: 'ronzio',
+    title: 'Ronzio',
+    description: 'Revisión de landing page, CRM a medida para tracking de leads, UTMs y ciclo de vida del usuario.',
+    timeline: '45–60 días',
+  },
 ]
 
 export default function Home() {
