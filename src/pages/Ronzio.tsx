@@ -100,8 +100,13 @@ export default function Ronzio() {
             status: 'pending',
           },
           {
+            name: 'Análisis de pauta y creatividades (anuncios)',
+            amount: 1500,
+            status: 'pending',
+          },
+          {
             name: 'CRM – Admin Panel',
-            amount: 15500,
+            amount: 14000,
             status: 'pending',
           },
           {
