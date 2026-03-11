@@ -92,13 +92,13 @@ export default function Ronzio() {
         total={27500}
         items={[
           {
-            name: 'Landing Page – Auditoría y Rediseño',
-            amount: 5000,
+            name: 'Landing Form and Page – Auditoría y Rediseño',
+            amount: 1500,
             status: 'pending',
           },
           {
             name: 'CRM – Admin Panel',
-            amount: 12000,
+            amount: 15500,
             status: 'pending',
           },
           {
