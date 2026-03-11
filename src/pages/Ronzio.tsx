@@ -6,7 +6,7 @@ import MermaidDiagram from '../components/MermaidDiagram'
 
 const ROADMAP_TIMELINE = `
 timeline
-  title Ronzio – Timeline (45-60 días + 2 meses follow-up)
+  title Ronzio – Timeline (45-60 días + 75 días follow-ups)
   section Fase 0
     Auditoría Landing Actual : 1 sem
   section Fase 1
@@ -18,7 +18,7 @@ timeline
   section Fase 4
     Launch + Iteración : 1 sem
   section Fase 5
-    Follow-up (CRM + flujo por uso) : 8 sem
+    Follow-ups (CRM + flujo por uso) : 75 días
 `.trim()
 
 export default function Ronzio() {
@@ -84,7 +84,7 @@ export default function Ronzio() {
               <li><strong>Fase 2 – CRM Dev + Integraciones (2–3 semanas):</strong> Desarrollo del panel admin, pipeline de leads, tracking de UTMs, dashboard de métricas, integración con GA4/GTM.</li>
               <li><strong>Fase 3 – UTM, Analytics + QA (1 semana):</strong> Testing end-to-end del flujo landing → form → CRM, validación de UTM tracking, QA general.</li>
               <li><strong>Fase 4 – Launch + Iteración (1 semana):</strong> Deploy, monitoreo inicial, ajustes post-launch, setup de A/B testing.</li>
-              <li><strong>Fase 5 – Follow-up (2 meses):</strong> Ajustes y cambios en el CRM, optimización del flujo de implementación según uso real, comportamiento de usuarios y resultados operativos.</li>
+              <li><strong>Fase 5 – Follow-ups (75 días):</strong> Ajustes y cambios en el CRM, optimización del flujo de implementación según uso real, comportamiento de usuarios y resultados operativos.</li>
             </ul>
           </div>
         </div>
@@ -130,7 +130,7 @@ export default function Ronzio() {
       <ContentBox title="Notas">
         <p>
           El presupuesto estimado es de <strong>$25,000 – $30,000</strong> (estimado final: $27,500).
-          El timeline estimado es de <strong>45 a 60 días + 2 meses de follow-up</strong>. El CRM se desarrolla a medida para Ronzio,
+          El timeline estimado es de <strong>45 a 60 días + 75 días de follow-ups</strong>. El CRM se desarrolla a medida para Ronzio,
           priorizando velocidad de implementación y escalabilidad con asistencia de AI.
           Ajustes de scope pueden impactar el presupuesto final dentro del rango estimado.
         </p>
