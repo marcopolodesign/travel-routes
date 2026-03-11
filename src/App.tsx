@@ -32,7 +32,7 @@ export default function App() {
         <Route path="/budget/ronzio" element={
           <BudgetTemplate
             title="Ronzio"
-            timeline="45–60 días"
+            timeline="45–60 días + 2 meses follow-up"
             stack="Landing + CRM · React · Vercel"
             whatLabel="Propuesta"
           >
