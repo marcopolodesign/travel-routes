@@ -106,12 +106,12 @@ export default function Ronzio() {
           },
           {
             name: 'CRM – Admin Panel',
-            amount: 14000,
+            amount: 17000,
             status: 'pending',
           },
           {
             name: 'Integraciones (UTM, GA4, GTM, Emails)',
-            amount: 4500,
+            amount: 1500,
             status: 'pending',
           },
           {
