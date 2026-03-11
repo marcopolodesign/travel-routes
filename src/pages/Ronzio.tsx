@@ -26,7 +26,7 @@ export default function Ronzio() {
         <p>
           Revisión integral de la landing page actual de Ronzio, optimización de conversión,
           y desarrollo de un CRM a medida para trackear leads, UTMs y ciclo de vida del usuario.
-          La base del admin se reutiliza del sistema TAG Admin, adaptado a las necesidades de Ronzio.
+          El panel de administración se diseña específicamente para las necesidades de Ronzio.
         </p>
       </ContentBox>
 
@@ -42,7 +42,7 @@ export default function Ronzio() {
 
       <TwoColumnSection title="CRM – Lead Management" withBar={false}>
         <ul className="list-disc pl-5 space-y-2">
-          <li>Panel admin basado en TAG Admin (adaptado a Ronzio)</li>
+          <li>Panel admin diseñado para el flujo operativo de Ronzio</li>
           <li>Captura de leads desde formulario de landing</li>
           <li>Tracking de UTMs por cada lead (source, medium, campaign)</li>
           <li>Pipeline de estados: nuevo → contactado → en negociación → cerrado</li>
@@ -78,7 +78,7 @@ export default function Ronzio() {
             />
             <ul className="space-y-3 text-black font-interphases">
               <li><strong>Fase 0 – Auditoría (1 semana):</strong> Revisión de la landing actual, análisis de métricas existentes, definición de objetivos de conversión y requerimientos del CRM.</li>
-              <li><strong>Fase 1 – Rediseño Landing + CRM Setup (2–3 semanas):</strong> Rediseño de la landing orientado a conversión, setup de infraestructura del CRM (base TAG Admin), modelo de datos para leads y UTMs.</li>
+              <li><strong>Fase 1 – Rediseño Landing + CRM Setup (2–3 semanas):</strong> Rediseño de la landing orientado a conversión, setup de infraestructura del CRM y modelo de datos para leads y UTMs.</li>
               <li><strong>Fase 2 – CRM Dev + Integraciones (2–3 semanas):</strong> Desarrollo del panel admin, pipeline de leads, tracking de UTMs, dashboard de métricas, integración con GA4/GTM.</li>
               <li><strong>Fase 3 – UTM, Analytics + QA (1 semana):</strong> Testing end-to-end del flujo landing → form → CRM, validación de UTM tracking, QA general.</li>
               <li><strong>Fase 4 – Launch + Iteración (1 semana):</strong> Deploy, monitoreo inicial, ajustes post-launch, setup de A/B testing.</li>
@@ -97,7 +97,7 @@ export default function Ronzio() {
             status: 'pending',
           },
           {
-            name: 'CRM – Admin Panel (base TAG Admin)',
+            name: 'CRM – Admin Panel',
             amount: 12000,
             status: 'pending',
           },
@@ -122,8 +122,8 @@ export default function Ronzio() {
       <ContentBox title="Notas">
         <p>
           El presupuesto estimado es de <strong>$25,000 – $30,000</strong> (estimado final: $27,500).
-          El timeline estimado es de <strong>45 a 60 días</strong>. El CRM se basa en la arquitectura de TAG Admin,
-          lo que permite reutilizar la base y acelerar el desarrollo significativamente con asistencia de AI.
+          El timeline estimado es de <strong>45 a 60 días</strong>. El CRM se desarrolla a medida para Ronzio,
+          priorizando velocidad de implementación y escalabilidad con asistencia de AI.
           Ajustes de scope pueden impactar el presupuesto final dentro del rango estimado.
         </p>
       </ContentBox>
