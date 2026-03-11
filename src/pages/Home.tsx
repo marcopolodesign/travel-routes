@@ -18,7 +18,7 @@ const budgets = [
     slug: 'ronzio',
     title: 'Ronzio',
     description: 'Revisión de landing page, CRM a medida para tracking de leads, UTMs y ciclo de vida del usuario.',
-    timeline: '45–60 días',
+    timeline: '45–60 días + 2 meses follow-up',
   },
 ]
 
