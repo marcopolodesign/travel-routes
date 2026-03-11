@@ -28,8 +28,13 @@ interface ISpeechRecognition {
 }
 type SpeechRecognitionCtor = new () => ISpeechRecognition
 
-const win = window as Record<string, unknown>
-const SpeechRecognition = (win.SpeechRecognition ?? win.webkitSpeechRecognition) as SpeechRecognitionCtor | undefined
+type SpeechRecognitionWindow = Window & {
+  SpeechRecognition?: SpeechRecognitionCtor
+  webkitSpeechRecognition?: SpeechRecognitionCtor
+}
+
+const speechWindow = typeof window !== 'undefined' ? (window as SpeechRecognitionWindow) : undefined
+const SpeechRecognition = speechWindow?.SpeechRecognition ?? speechWindow?.webkitSpeechRecognition
 
 export default function Agent() {
   const [status, setStatus] = useState<Status>('idle')
