@@ -20,15 +20,19 @@ export default function TecnoFit() {
           {
             name: 'Admin',
             amount: 4000,
-            status: 'partial',
+            status: 'paid',
             payments: [
               { label: 'Wire transfer', amount: 2000 },
+              { label: 'Household payment', amount: 2000 },
             ],
           },
           {
             name: 'App – Development',
             amount: 13500,
-            status: 'pending',
+            status: 'partial',
+            payments: [
+              { label: 'Household payment', amount: 3000 },
+            ],
           },
           {
             name: 'Central Integration',
