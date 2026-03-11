@@ -76,7 +76,7 @@ export default function Ronzio() {
           <div className="md:col-span-8 space-y-8">
             <MermaidDiagram
               chart={ROADMAP_TIMELINE}
-              className="min-h-[280px] rounded-lg border border-[var(--marco-border)] bg-[var(--marco-bg)] p-6"
+              className="min-h-[420px] rounded-xl border-2 border-[var(--marco-border)] bg-white p-6 md:p-8 shadow-sm [&_svg]:max-w-none [&_svg]:min-w-[960px] [&_svg]:h-auto"
             />
             <ul className="space-y-3 text-black font-interphases">
               <li><strong>Fase 0 – Auditoría (1 semana):</strong> Revisión de la landing actual, análisis de métricas existentes, definición de objetivos de conversión y requerimientos del CRM.</li>
