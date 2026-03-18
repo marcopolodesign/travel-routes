@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import MarcopoloLogo from './MarcopoloLogo'
 
 type BudgetTemplateProps = {
@@ -26,9 +25,9 @@ export default function BudgetTemplate({
             <MarcopoloLogo className="h-6 w-auto" />
           </div>
         ) : (
-          <Link to="/" className="text-[var(--marco-accent)] hover:opacity-80 transition-opacity" aria-label="Marco Polo Home">
+          <div className="text-[var(--marco-accent)]" aria-label="Marco Polo Home">
             <MarcopoloLogo className="h-6 w-auto" />
-          </Link>
+          </div>
         )}
       </header>
 

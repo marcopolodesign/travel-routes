@@ -1,5 +1,4 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import MarcopoloLogo from '../components/MarcopoloLogo'
 import VoiceOrb from '../components/VoiceOrb'
 import ToolActivityFeed, { type ToolEvent } from '../components/ToolActivityFeed'
@@ -181,9 +180,9 @@ export default function Agent() {
         className="flex items-center justify-between px-[4vw] py-5 md:px-[10.5vw] md:py-6 border-b"
         style={{ borderColor: 'rgba(255,255,255,0.08)' }}
       >
-        <Link to="/" className="text-[var(--marco-accent)]" aria-label="Marco Polo">
+        <div className="text-[var(--marco-accent)]" aria-label="Marco Polo">
           <MarcopoloLogo className="h-6 w-auto" />
-        </Link>
+        </div>
         <div className="flex items-center gap-3">
           <span
             className="h-2 w-2 rounded-full transition-colors"

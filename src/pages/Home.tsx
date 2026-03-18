@@ -26,9 +26,9 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       <header className="border-b border-[var(--marco-border)] px-[4vw] py-5 md:px-[10.5vw] md:py-6 flex items-center justify-between">
-        <Link to="/" className="text-[var(--marco-accent)]" aria-label="Marco Polo Travel Routes">
+        <div className="text-[var(--marco-accent)]" aria-label="Marco Polo Travel Routes">
           <MarcopoloLogo className="h-6 w-auto" />
-        </Link>
+        </div>
         <Link
           to="/agent"
           className="flex items-center gap-2 text-sm font-interphases px-4 py-2 rounded-full border border-[var(--marco-border)] hover:border-[var(--marco-accent)] hover:text-[var(--marco-accent)] transition-colors text-black/60"
