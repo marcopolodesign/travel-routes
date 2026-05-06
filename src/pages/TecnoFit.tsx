@@ -32,22 +32,8 @@ export default function TecnoFit() {
             status: 'partial',
             payments: [
               { label: 'Household payment', amount: 3000 },
+              { label: 'Cash — March 10', amount: 5000 },
             ],
-          },
-          {
-            name: 'Central Integration',
-            amount: 200,
-            status: 'pending',
-          },
-          {
-            name: 'Fitness Integration',
-            amount: 'A definir',
-            status: 'pending',
-          },
-          {
-            name: 'App – Development',
-            amount: 13500,
-            status: 'pending',
           },
           {
             name: 'Central Integration',
