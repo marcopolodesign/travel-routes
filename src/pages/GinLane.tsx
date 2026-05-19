@@ -106,11 +106,11 @@ export default function GinLane() {
 
       <BudgetRemainderSection
         title="Gin Lane – Budget"
-        total={3500}
+        total={2650}
         items={[
           {
             name: 'Landing Page',
-            amount: 3500,
+            amount: 2650,
             status: 'pending',
           },
           {
@@ -128,7 +128,7 @@ export default function GinLane() {
 
       <ContentBox title="Notas">
         <p>
-          El presupuesto total es de <strong>$3,500</strong> — incluye diseño y desarrollo completo
+          El presupuesto total a abonar es de <strong>$2,650</strong> — incluye diseño y desarrollo completo
           más <strong>$500 de urgency fee</strong> por entrega en 1 semana, con un descuento de $500 aplicado.
           El timeline puede ajustarse según velocidad de feedback del cliente en cada fase.
         </p>
