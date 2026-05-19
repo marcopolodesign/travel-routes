@@ -6,7 +6,7 @@ type Payment = {
 type BudgetItem = {
   name: string
   amount: number | string
-  status: 'paid' | 'partial' | 'pending'
+  status: 'paid' | 'partial' | 'pending' | 'approved'
   payments?: Payment[]
 }
 
@@ -21,15 +21,17 @@ function formatCurrency(value: number | string): string {
   return `$${value.toLocaleString('en-US')}`
 }
 
-function getStatusLabel(status: 'paid' | 'partial' | 'pending'): string {
+function getStatusLabel(status: 'paid' | 'partial' | 'pending' | 'approved'): string {
   if (status === 'paid') return 'Paid in full'
   if (status === 'pending') return 'Pending'
+  if (status === 'approved') return 'Approved'
   return 'Partially paid'
 }
 
-function getStatusColor(status: 'paid' | 'partial' | 'pending'): string {
+function getStatusColor(status: 'paid' | 'partial' | 'pending' | 'approved'): string {
   if (status === 'paid') return 'text-green-700 bg-green-100'
   if (status === 'pending') return 'text-red-700 bg-red-100'
+  if (status === 'approved') return 'text-blue-700 bg-blue-100'
   return 'text-amber-700 bg-amber-100'
 }
 
