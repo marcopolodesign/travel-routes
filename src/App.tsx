@@ -3,6 +3,7 @@ import BudgetTemplate from './components/BudgetTemplate'
 import HealthMvp from './pages/HealthMvp'
 import TecnoFit from './pages/TecnoFit'
 import Ronzio from './pages/Ronzio'
+import GinLane from './pages/GinLane'
 import Home from './pages/Home'
 import Agent from './pages/Agent'
 
@@ -37,6 +38,16 @@ export default function App() {
             whatLabel="Propuesta"
           >
             <Ronzio />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/gin-lane" element={
+          <BudgetTemplate
+            title="Gin Lane"
+            timeline="1 semana"
+            stack="Landing One-Pager · React · Vercel"
+            whatLabel="Propuesta"
+          >
+            <GinLane />
           </BudgetTemplate>
         } />
         <Route path="/agent" element={<Agent />} />
