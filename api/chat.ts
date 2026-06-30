@@ -185,7 +185,7 @@ async function runArca(args: Record<string, unknown>): Promise<unknown> {
         { tipo: 12, nombre: 'Nota Débito C' },
         { tipo: 13, nombre: 'Nota Crédito C' },
       ]
-      const ptoVta = (args.ptoVta as number) ?? 1
+      const ptoVta = (args.ptoVta as number) ?? 2
       const results: Array<{ tipo: string; facturas: Array<{ numero: number; fecha: string; total: number; receptor?: string }>; subtotal: number }> = []
       let totalGeneral = 0
 
@@ -246,7 +246,7 @@ async function runArca(args: Record<string, unknown>): Promise<unknown> {
 
     case 'getLastInvoices': {
       const limit = (args.limit as number) ?? 10
-      const ptoVta = (args.ptoVta as number) ?? 1
+      const ptoVta = (args.ptoVta as number) ?? 2
       const tipo = (args.tipo as number) ?? 11
       const lastXml = await wsfeCall(
         'FECompUltimoAutorizado',
