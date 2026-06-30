@@ -114,7 +114,9 @@ async function getArcaToken(service: string, certPem: string, keyPem: string, pr
 </soapenv:Envelope>`
 
   const xml = await afipPost(wsaaUrl, soapBody, { 'Content-Type': 'text/xml; charset=utf-8', SOAPAction: '' })
+  // WSAA returns the inner XML as HTML-encoded text inside loginCmsReturn — decode before parsing
   const innerXml = extractXmlTag(xml, 'loginCmsReturn')
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&apos;/g, "'")
   const token = extractXmlTag(innerXml, 'token')
   const sign = extractXmlTag(innerXml, 'sign')
   const expirationTime = extractXmlTag(innerXml, 'expirationTime')
