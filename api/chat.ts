@@ -1,10 +1,43 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import Anthropic from '@anthropic-ai/sdk'
 import forge from 'node-forge'
+import https from 'node:https'
+import crypto from 'node:crypto'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 // ── ARCA / AFIP integration ────────────────────────────────────────────────
+
+// AFIP/ARCA servers use weak DH keys — must use legacy SSL cipher level
+const afipAgent = new https.Agent({
+  ciphers: 'DEFAULT:@SECLEVEL=0',
+  secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
+})
+
+function afipPost(url: string, body: string, headers: Record<string, string>): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const parsed = new URL(url)
+    const reqHeaders: Record<string, string | number> = {
+      ...headers,
+      'Content-Length': Buffer.byteLength(body, 'utf8'),
+    }
+    const req = https.request({
+      hostname: parsed.hostname,
+      port: parseInt(parsed.port || '443', 10),
+      path: parsed.pathname + parsed.search,
+      method: 'POST',
+      headers: reqHeaders,
+      agent: afipAgent,
+    }, (res) => {
+      const chunks: Buffer[] = []
+      res.on('data', (chunk: Buffer) => chunks.push(chunk))
+      res.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')))
+    })
+    req.on('error', reject)
+    req.write(body, 'utf8')
+    req.end()
+  })
+}
 
 const arcaTokenCache = new Map<string, { token: string; sign: string; expiresAt: number }>()
 
@@ -80,12 +113,7 @@ async function getArcaToken(service: string, certPem: string, keyPem: string, pr
   <soapenv:Body><wsaa:loginCms><wsaa:in0>${cms}</wsaa:in0></wsaa:loginCms></soapenv:Body>
 </soapenv:Envelope>`
 
-  const r = await fetch(wsaaUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/xml; charset=utf-8', SOAPAction: '' },
-    body: soapBody,
-  })
-  const xml = await r.text()
+  const xml = await afipPost(wsaaUrl, soapBody, { 'Content-Type': 'text/xml; charset=utf-8', SOAPAction: '' })
   const innerXml = extractXmlTag(xml, 'loginCmsReturn')
   const token = extractXmlTag(innerXml, 'token')
   const sign = extractXmlTag(innerXml, 'sign')
@@ -103,12 +131,7 @@ async function wsfeCall(method: string, innerXml: string, token: string, sign: s
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ar="http://ar.gov.afip.dif.FEV1/">
   <soapenv:Body><ar:${method}>${auth}${innerXml}</ar:${method}></soapenv:Body>
 </soapenv:Envelope>`
-  const r = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/xml; charset=utf-8', SOAPAction: `http://ar.gov.afip.dif.FEV1/${method}` },
-    body,
-  })
-  return r.text()
+  return afipPost(url, body, { 'Content-Type': 'text/xml; charset=utf-8', SOAPAction: `http://ar.gov.afip.dif.FEV1/${method}` })
 }
 
 async function runArca(args: Record<string, unknown>): Promise<unknown> {
@@ -135,11 +158,11 @@ async function runArca(args: Record<string, unknown>): Promise<unknown> {
 
   switch (args.action) {
     case 'getStatus': {
-      const xml = await fetch(production ? WSFE_PROD : WSFE_TEST, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/xml; charset=utf-8', SOAPAction: 'http://ar.gov.afip.dif.FEV1/FEDummy' },
-        body: `<?xml version="1.0"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ar="http://ar.gov.afip.dif.FEV1/"><soapenv:Body><ar:FEDummy/></soapenv:Body></soapenv:Envelope>`,
-      }).then(r => r.text())
+      const xml = await afipPost(
+        production ? WSFE_PROD : WSFE_TEST,
+        `<?xml version="1.0"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ar="http://ar.gov.afip.dif.FEV1/"><soapenv:Body><ar:FEDummy/></soapenv:Body></soapenv:Envelope>`,
+        { 'Content-Type': 'text/xml; charset=utf-8', SOAPAction: 'http://ar.gov.afip.dif.FEV1/FEDummy' }
+      )
       return {
         appserver: extractXmlTag(xml, 'AppServer'),
         dbserver: extractXmlTag(xml, 'DbServer'),
