@@ -5,3 +5,5 @@ dist
 *.log
 .DS_Store
 .vercel
+arca/certs/private.key
+arca/certs/solicitud.csr
