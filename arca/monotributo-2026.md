@@ -17,7 +17,8 @@
 | 0002-00000162 | 29/04/2026 | CARRIQUIRI IGNACIO FEDERICO | 20-33032756-2 | $2.840.000,00 |
 | 0002-00000163 | 21/05/2026 | HEKTOR S.R.L. | 30-71401537-7 | $381.446,00 |
 | 0002-00000164 | 22/06/2026 | HEKTOR S.R.L. | 30-71401537-7 | $454.296,00 |
-| **TOTAL** | | | | **$7.775.378,24** |
+| 0003-00000001 | 01/07/2026 | MOSERINI SAS | 30-71614040-3 | $1.053.500,00 |
+| **TOTAL** | | | | **$8.828.878,24** |
 
 ### Por cliente
 | Razón Social | Facturas | Total |
@@ -52,11 +53,11 @@
 
 | | |
 |---|---|
-| **Facturado ene–jun 2026** | $7.775.378,24 |
+| **Facturado ene–jun 2026 (pto 2)** | $7.775.378,24 |
+| **Facturado jul 2026 (pto 3)** | $1.053.500,00 |
+| **Total acumulado 2026** | $8.828.878,24 |
 | **Límite Cat A** | $10.277.988 |
-| **Queda para agotar Cat A** | $2.502.610 |
-| **Promedio mensual (6 meses)** | ~$1.296.000 |
-| **Proyección anual (× 2)** | ~$15.550.756 |
+| **Queda para agotar Cat A** | $1.449.110 |
 
 ### Proyección a fin de año
 A ritmo constante de ~$1.296.000/mes:
