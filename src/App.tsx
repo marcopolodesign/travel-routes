@@ -6,6 +6,7 @@ import Ronzio from './pages/Ronzio'
 import GinLane from './pages/GinLane'
 import Home from './pages/Home'
 import Agent from './pages/Agent'
+import Monotributo from './pages/Monotributo'
 
 export default function App() {
   return (
@@ -51,6 +52,7 @@ export default function App() {
           </BudgetTemplate>
         } />
         <Route path="/agent" element={<Agent />} />
+        <Route path="/monotributo" element={<Monotributo />} />
       </Routes>
     </div>
   )
