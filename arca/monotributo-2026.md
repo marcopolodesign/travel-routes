@@ -97,3 +97,4 @@ Herramientas disponibles en el asistente:
 - `getBillingSummary` — total facturado por año y punto de venta (solo pto 3 via API)
 - `getLastInvoices` — últimas facturas emitidas por el punto de venta WS
 - `getMonotributoLimits` — categorías y límites vigentes (actualizados 1/02/2026)
+- `createInvoice` — emite Factura C real con CAE autorizado por ARCA. Parámetros: `receptorCuit`, `receptorRazonSocial`, `importe`, `descripcion`, `concepto` (default: 2=Servicios), `fecha` (default: hoy). Retorna CAE + `pdfUrl` para descargar la factura en PDF con branding Marco Polo y QR AFIP.
