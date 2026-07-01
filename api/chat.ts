@@ -306,6 +306,31 @@ async function runArca(args: Record<string, unknown>): Promise<unknown> {
       const docTipo = receptorCuit ? 80 : 99
       const docNro = receptorCuit || '0'
 
+      // Concepto 2/3 (Servicios) requires FchServDesde, FchServHasta, FchVtoPago
+      // Default: full previous calendar month, payment due on emission date
+      let fchServDesde = args.fchServDesde as string | undefined
+      let fchServHasta = args.fchServHasta as string | undefined
+      let fchVtoPago = args.fchVtoPago as string | undefined
+      if (concepto !== 1 && (!fchServDesde || !fchServHasta || !fchVtoPago)) {
+        const d = new Date(
+          parseInt(fechaStr.slice(0, 4), 10),
+          parseInt(fechaStr.slice(4, 6), 10) - 1,
+          1
+        )
+        d.setMonth(d.getMonth() - 1)
+        const y = d.getFullYear()
+        const m = String(d.getMonth() + 1).padStart(2, '0')
+        const lastDay = new Date(y, d.getMonth() + 1, 0).getDate()
+        fchServDesde ??= `${y}${m}01`
+        fchServHasta ??= `${y}${m}${String(lastDay).padStart(2, '0')}`
+        fchVtoPago ??= fechaStr
+      }
+
+      const servFields = concepto !== 1 ? `
+        <ar:FchServDesde>${fchServDesde}</ar:FchServDesde>
+        <ar:FchServHasta>${fchServHasta}</ar:FchServHasta>
+        <ar:FchVtoPago>${fchVtoPago}</ar:FchVtoPago>` : ''
+
       const cabRequest = `<ar:FeCabReq>
         <ar:CantReg>1</ar:CantReg>
         <ar:PtoVta>${ptoVta}</ar:PtoVta>
@@ -318,7 +343,7 @@ async function runArca(args: Record<string, unknown>): Promise<unknown> {
         <ar:DocNro>${docNro}</ar:DocNro>
         <ar:CbteDesde>${nextNro}</ar:CbteDesde>
         <ar:CbteHasta>${nextNro}</ar:CbteHasta>
-        <ar:CbteFch>${fechaStr}</ar:CbteFch>
+        <ar:CbteFch>${fechaStr}</ar:CbteFch>${servFields}
         <ar:ImpTotal>${importe.toFixed(2)}</ar:ImpTotal>
         <ar:ImpTotConc>0.00</ar:ImpTotConc>
         <ar:ImpNeto>${importe.toFixed(2)}</ar:ImpNeto>
@@ -716,6 +741,9 @@ const TOOLS: Anthropic.Tool[] = [
         concepto: { type: 'number', description: 'Concepto: 1=Productos, 2=Servicios, 3=Productos y Servicios (default: 2)' },
         descripcion: { type: 'string', description: 'Descripción del servicio o producto para createInvoice' },
         fecha: { type: 'string', description: 'Fecha de emisión YYYYMMDD (default: hoy)' },
+        fchServDesde: { type: 'string', description: 'Fecha inicio del período de servicio YYYYMMDD (default: primer día del mes anterior)' },
+        fchServHasta: { type: 'string', description: 'Fecha fin del período de servicio YYYYMMDD (default: último día del mes anterior)' },
+        fchVtoPago: { type: 'string', description: 'Fecha de vencimiento del pago YYYYMMDD (default: fecha de emisión)' },
       },
       required: ['action'],
     },
