@@ -1,7 +1,7 @@
 {
   "functions": {
-    "api/payment-request.tsx": { "includeFiles": ["api/fonts/**", "api/package.json"] },
-    "api/factura.tsx": { "includeFiles": ["api/fonts/**", "api/package.json"] }
+    "api/payment-request.tsx": { "includeFiles": "api/**" },
+    "api/factura.tsx": { "includeFiles": "api/**" }
   },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
