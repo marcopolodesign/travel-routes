@@ -1,4 +1,8 @@
 {
+  "functions": {
+    "api/payment-request.tsx": { "includeFiles": "api/fonts/**" },
+    "api/factura.tsx": { "includeFiles": "api/fonts/**" }
+  },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/((?!.*\\.[^/]*$).*)", "destination": "/index.html" }
