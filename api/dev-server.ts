@@ -9,6 +9,7 @@ config({ path: resolve(process.cwd(), '.env') })
 import chatHandler from './chat.js'
 import speakHandler from './speak.js'
 import paymentRequestHandler from './payment-request.js'
+import facturaHandler from './factura.js'
 import figmaHandler from './tools/figma.js'
 import linearHandler from './tools/linear.js'
 import calendarHandler from './tools/calendar.js'
@@ -23,6 +24,7 @@ app.use(express.json())
 app.post('/api/chat', (req, res) => chatHandler(req as never, res as never))
 app.post('/api/speak', (req, res) => speakHandler(req as never, res as never))
 app.post('/api/payment-request', (req, res) => paymentRequestHandler(req as never, res as never))
+app.all('/api/factura', (req, res) => facturaHandler(req as never, res as never))
 app.all('/api/tools/figma', (req, res) => figmaHandler(req as never, res as never))
 app.all('/api/tools/linear', (req, res) => linearHandler(req as never, res as never))
 app.all('/api/tools/calendar', (req, res) => calendarHandler(req as never, res as never))

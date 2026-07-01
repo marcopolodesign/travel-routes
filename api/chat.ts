@@ -279,8 +279,103 @@ async function runArca(args: Record<string, unknown>): Promise<unknown> {
       return { cuit, facturas, ultimoNumero: lastNro }
     }
 
+    case 'createInvoice': {
+      const ptoVta = (args.ptoVta as number) ?? 3
+      const tipo = 11 // Factura C
+      const receptorCuit = (args.receptorCuit as string | undefined)?.replace(/\D/g, '') ?? ''
+      const receptorRazonSocial = (args.receptorRazonSocial as string) ?? 'Consumidor Final'
+      const importe = args.importe as number
+      const concepto = (args.concepto as number) ?? 2 // 2=Servicios
+      const descripcion = (args.descripcion as string) ?? ''
+
+      // Build today's date YYYYMMDD
+      const now = new Date()
+      const fechaStr = (args.fecha as string) ??
+        `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`
+
+      // Get next invoice number
+      const lastXml = await wsfeCall(
+        'FECompUltimoAutorizado',
+        `<ar:PtoVta>${ptoVta}</ar:PtoVta><ar:CbteTipo>${tipo}</ar:CbteTipo>`,
+        token, sign, cuit, production
+      )
+      const lastNro = parseInt(extractXmlTag(lastXml, 'CbteNro') || '0', 10)
+      const nextNro = lastNro + 1
+
+      // DocTipo: 80=CUIT, 99=Consumidor Final
+      const docTipo = receptorCuit ? 80 : 99
+      const docNro = receptorCuit || '0'
+
+      const cabRequest = `<ar:FeCabReq>
+        <ar:CantReg>1</ar:CantReg>
+        <ar:PtoVta>${ptoVta}</ar:PtoVta>
+        <ar:CbteTipo>${tipo}</ar:CbteTipo>
+      </ar:FeCabReq>`
+
+      const detRequest = `<ar:FeDetReq><ar:FECAEDetRequest>
+        <ar:Concepto>${concepto}</ar:Concepto>
+        <ar:DocTipo>${docTipo}</ar:DocTipo>
+        <ar:DocNro>${docNro}</ar:DocNro>
+        <ar:CbteDesde>${nextNro}</ar:CbteDesde>
+        <ar:CbteHasta>${nextNro}</ar:CbteHasta>
+        <ar:CbteFch>${fechaStr}</ar:CbteFch>
+        <ar:ImpTotal>${importe.toFixed(2)}</ar:ImpTotal>
+        <ar:ImpTotConc>0.00</ar:ImpTotConc>
+        <ar:ImpNeto>${importe.toFixed(2)}</ar:ImpNeto>
+        <ar:ImpOpEx>0.00</ar:ImpOpEx>
+        <ar:ImpIVA>0.00</ar:ImpIVA>
+        <ar:ImpTrib>0.00</ar:ImpTrib>
+        <ar:MonId>PES</ar:MonId>
+        <ar:MonCotiz>1</ar:MonCotiz>
+      </ar:FECAEDetRequest></ar:FeDetReq>`
+
+      const respXml = await wsfeCall(
+        'FECAESolicitar',
+        `<ar:FeCAEReq>${cabRequest}${detRequest}</ar:FeCAEReq>`,
+        token, sign, cuit, production
+      )
+
+      const resultado = extractXmlTag(respXml, 'Resultado')
+      if (resultado !== 'A') {
+        const errMsg = extractXmlTag(respXml, 'Msg')
+        const errCode = extractXmlTag(respXml, 'Code')
+        return { error: 'ARCA rechazó la solicitud de CAE', resultado, codigo: errCode, mensaje: errMsg, rawXml: respXml }
+      }
+
+      const cae = extractXmlTag(respXml, 'CAE')
+      const caeFchVto = extractXmlTag(respXml, 'CAEFchVto') // YYYYMMDD
+
+      const invoiceData = {
+        numero: nextNro,
+        ptoVta,
+        tipo,
+        tipoNombre: 'Factura C',
+        fecha: fechaStr,
+        cuit,
+        receptorCuit: docNro,
+        receptorRazonSocial,
+        importe,
+        concepto,
+        descripcion,
+        cae,
+        caeFchVto,
+      }
+
+      const encoded = Buffer.from(JSON.stringify(invoiceData)).toString('base64url')
+      const baseUrl = production ? 'https://travels.marcopolo.agency' : 'http://localhost:3001'
+
+      return {
+        success: true,
+        numeroFactura: `${String(ptoVta).padStart(4, '0')}-${String(nextNro).padStart(8, '0')}`,
+        cae,
+        caeFchVto: `${caeFchVto.slice(0, 4)}-${caeFchVto.slice(4, 6)}-${caeFchVto.slice(6, 8)}`,
+        pdfUrl: `${baseUrl}/api/factura?data=${encoded}`,
+        datos: invoiceData,
+      }
+    }
+
     default:
-      return { error: `Acción desconocida: ${args.action}. Opciones: getStatus, getBillingSummary, getLastInvoices, getMonotributoLimits` }
+      return { error: `Acción desconocida: ${args.action}. Opciones: getStatus, getBillingSummary, getLastInvoices, getMonotributoLimits, createInvoice` }
   }
 }
 
@@ -601,20 +696,26 @@ const TOOLS: Anthropic.Tool[] = [
   },
   {
     name: 'arca',
-    description: 'Consultar facturación electrónica en ARCA/AFIP Argentina. Permite ver total facturado en el año, últimas facturas emitidas, límites de categoría de Monotributo, y estado de los servidores de ARCA.',
+    description: 'Facturación electrónica ARCA/AFIP Argentina. Consultar facturas, totales facturados, límites de categoría Monotributo, y emitir Facturas C (createInvoice) con autorización CAE en tiempo real.',
     input_schema: {
       type: 'object',
       properties: {
         action: {
           type: 'string',
-          enum: ['getStatus', 'getBillingSummary', 'getLastInvoices', 'getMonotributoLimits'],
-          description: 'getStatus=estado servidores, getBillingSummary=total facturado en el año, getLastInvoices=últimas N facturas, getMonotributoLimits=tabla de límites por categoría',
+          enum: ['getStatus', 'getBillingSummary', 'getLastInvoices', 'getMonotributoLimits', 'createInvoice'],
+          description: 'getStatus=estado servidores, getBillingSummary=total facturado en el año, getLastInvoices=últimas N facturas, getMonotributoLimits=tabla límites categoría, createInvoice=emitir Factura C con CAE',
         },
-        cuit: { type: 'string', description: 'CUIT sin guiones (default: 20372179369)' },
+        cuit: { type: 'string', description: 'CUIT del emisor sin guiones (default: 20372179369)' },
         year: { type: 'number', description: 'Año fiscal a consultar (default: año actual)' },
-        ptoVta: { type: 'number', description: 'Punto de venta (default: 1)' },
+        ptoVta: { type: 'number', description: 'Punto de venta (default: 3)' },
         tipo: { type: 'number', description: 'Tipo de comprobante: 11=Factura C, 12=Nota Débito C, 13=Nota Crédito C (default: 11)' },
         limit: { type: 'number', description: 'Cantidad de facturas a retornar en getLastInvoices (default: 10)' },
+        receptorCuit: { type: 'string', description: 'CUIT del receptor para createInvoice (sin guiones). Omitir para Consumidor Final.' },
+        receptorRazonSocial: { type: 'string', description: 'Razón social del receptor para createInvoice' },
+        importe: { type: 'number', description: 'Importe total en ARS para createInvoice (sin IVA, monotributista)' },
+        concepto: { type: 'number', description: 'Concepto: 1=Productos, 2=Servicios, 3=Productos y Servicios (default: 2)' },
+        descripcion: { type: 'string', description: 'Descripción del servicio o producto para createInvoice' },
+        fecha: { type: 'string', description: 'Fecha de emisión YYYYMMDD (default: hoy)' },
       },
       required: ['action'],
     },
