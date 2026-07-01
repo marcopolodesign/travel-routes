@@ -15,6 +15,7 @@ const INVOICES = [
   { num: '0002-00000163', date: '2026-05-21', client: 'HEKTOR S.R.L.', amount: 381446 },
   { num: '0002-00000164', date: '2026-06-22', client: 'HEKTOR S.R.L.', amount: 454296 },
   { num: '0003-00000001', date: '2026-07-01', client: 'MOSERINI SAS', amount: 1053500 },
+  { num: '0003-00000002', date: '2026-07-01', client: 'MOSERINI SAS', amount: 3562500 },
 ]
 
 const CATS = [
