@@ -46,19 +46,20 @@ const WSAA_TEST = 'https://wsaahomo.afip.gov.ar/ws/services/LoginCms'
 const WSFE_PROD = 'https://servicios1.afip.gov.ar/wsfev1/service.asmx'
 const WSFE_TEST = 'https://wswhomo.afip.gov.ar/wsfev1/service.asmx'
 
-// Monotributo 2025/2026 category limits (ARS brutos anuales)
+// Monotributo — valores vigentes desde 1/02/2026 (fuente: arca.gob.ar/monotributo/categorias.asp)
+// cuotaMensual = total mensual para locaciones y prestaciones de servicios (impuesto + SIPA + obra social)
 const MONOTRIBUTO_CATEGORIAS: Record<string, { limite: number; cuotaMensual: number }> = {
-  A: { limite: 2_600_000,  cuotaMensual: 14_500 },
-  B: { limite: 3_890_000,  cuotaMensual: 16_270 },
-  C: { limite: 5_470_000,  cuotaMensual: 20_560 },
-  D: { limite: 6_800_000,  cuotaMensual: 24_730 },
-  E: { limite: 8_700_000,  cuotaMensual: 29_850 },
-  F: { limite: 11_200_000, cuotaMensual: 38_060 },
-  G: { limite: 13_000_000, cuotaMensual: 47_280 },
-  H: { limite: 16_200_000, cuotaMensual: 68_860 },
-  I: { limite: 18_800_000, cuotaMensual: 73_760 },
-  J: { limite: 21_500_000, cuotaMensual: 82_600 },
-  K: { limite: 30_000_000, cuotaMensual: 96_460 },
+  A: { limite: 10_277_988,  cuotaMensual: 42_387 },
+  B: { limite: 15_058_448,  cuotaMensual: 48_251 },
+  C: { limite: 21_113_697,  cuotaMensual: 56_502 },
+  D: { limite: 26_212_853,  cuotaMensual: 72_414 },
+  E: { limite: 30_833_964,  cuotaMensual: 102_538 },
+  F: { limite: 38_642_048,  cuotaMensual: 129_045 },
+  G: { limite: 46_211_109,  cuotaMensual: 197_108 },
+  H: { limite: 70_113_407,  cuotaMensual: 447_347 },
+  I: { limite: 78_479_212,  cuotaMensual: 824_802 },
+  J: { limite: 89_872_640,  cuotaMensual: 999_008 },
+  K: { limite: 108_357_084, cuotaMensual: 1_381_688 },
 }
 
 function extractXmlTag(xml: string, tag: string): string {
