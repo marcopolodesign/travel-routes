@@ -1,7 +1,8 @@
 {
   "functions": {
     "api/payment-request.tsx": { "includeFiles": "api/**" },
-    "api/factura.tsx": { "includeFiles": "api/**" }
+    "api/factura.tsx": { "includeFiles": "api/**" },
+    "api/invoices.ts": { "includeFiles": "api/**" }
   },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
