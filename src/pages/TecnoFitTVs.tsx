@@ -3,6 +3,7 @@ import TwoColumnSection from '../components/TwoColumnSection'
 import BoxedListSection from '../components/BoxedListSection'
 import Timeline from '../components/Timeline'
 import MermaidDiagram from '../components/MermaidDiagram'
+import MarcopoloLogo from '../components/MarcopoloLogo'
 
 const EXPERIENCE_FLOW = `
 flowchart TD
@@ -41,6 +42,20 @@ flowchart TD
 export default function TecnoFitTVs() {
   return (
     <>
+      {/* Cover */}
+      <div className="mb-20 md:mb-32">
+        <h1 className="font-thunder text-[15vw] md:text-[8.5vw] leading-[0.88] uppercase text-[var(--marco-accent)] text-balance">
+          Lista de<br />Espera + TVs
+        </h1>
+        <div className="font-thunder text-lg md:text-2xl uppercase tracking-[0.08em] text-black mt-4 md:mt-6">
+          TecnoFit
+        </div>
+        <p className="mt-8 md:mt-10 text-black/80 text-lg md:text-xl max-w-xl">
+          Motor de cola en tiempo real, pantallas del piso y CMS de rutinas y video.
+        </p>
+        <hr className="mt-10 md:mt-14 border-t border-[var(--marco-border)]" />
+      </div>
+
       <ContentBox title="Visión general">
         <p>
           Un motor de cola en tiempo real que ordena y muestra en vivo quién entra a cada box,
@@ -155,14 +170,26 @@ export default function TecnoFitTVs() {
       </section>
 
       <ContentBox title="Inversión">
-        <div className="flex flex-col md:flex-row gap-10 md:gap-16 mb-6">
-          <div>
-            <span className="text-xs uppercase tracking-wide text-black/60">Inversión total estimada</span>
-            <p className="font-thunder text-3xl md:text-5xl text-[var(--marco-accent)] mt-1">U$18.000 – U$20.000</p>
-          </div>
-          <div>
-            <span className="text-xs uppercase tracking-wide text-black/60">Duración estimada</span>
-            <p className="font-thunder text-3xl md:text-5xl text-black mt-1">8 semanas · 4 sprints</p>
+        <div className="flex flex-col md:flex-row md:items-start gap-8 md:gap-14 mb-6">
+          <svg viewBox="0 0 200 200" className="w-20 h-20 md:w-28 md:h-28 shrink-0" fill="none" aria-hidden>
+            <circle cx="100" cy="100" r="100" fill="var(--marco-accent-light)" opacity="0.6" />
+            <path
+              d="M100 40 V160 M124 62c0-14-11-22-24-22-15 0-27 9-27 22 0 30 51 15 51 44 0 14-13 24-27 24-14 0-25-8-26-23"
+              stroke="var(--marco-accent)"
+              strokeWidth="8"
+              strokeLinecap="round"
+              fill="none"
+            />
+          </svg>
+          <div className="flex flex-col gap-6 min-w-0">
+            <div>
+              <span className="text-xs uppercase tracking-wide text-black/60">Inversión total estimada</span>
+              <p className="font-thunder text-3xl md:text-5xl text-[var(--marco-accent)] mt-1">U$18.000 – U$20.000</p>
+            </div>
+            <div>
+              <span className="text-xs uppercase tracking-wide text-black/60">Duración estimada</span>
+              <p className="font-thunder text-3xl md:text-5xl text-black mt-1">8 semanas · 4 sprints</p>
+            </div>
           </div>
         </div>
         <p>
@@ -179,6 +206,35 @@ export default function TecnoFitTVs() {
           o como una fase aparte.
         </p>
       </ContentBox>
+
+      {/* Contacto — full bleed */}
+      <div className="mx-[-4vw] md:mx-[-10.5vw] mb-14 md:mb-20">
+        <div className="bg-[var(--marco-accent)] px-[4vw] md:px-[10.5vw] py-16 md:py-24">
+          <div className="flex flex-wrap items-center justify-between gap-10 md:gap-16">
+            <h2 className="font-thunder text-4xl md:text-6xl lg:text-7xl uppercase text-black">
+              ¿Dudas?
+            </h2>
+            <div className="flex flex-wrap gap-10 md:gap-16">
+              <div>
+                <p className="font-thunder text-lg md:text-xl uppercase text-black">Mateo Aldao</p>
+                <p className="text-black/70 text-sm mt-2">m@marcopolo.agency<br />Director</p>
+              </div>
+              <div>
+                <p className="font-thunder text-lg md:text-xl uppercase text-black">Marco Polo — General</p>
+                <p className="text-black/70 text-sm mt-2">hi@marcopolo.agency<br />Av. Del Libertador 7766</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Contraportada */}
+      <div className="flex flex-col items-center justify-center gap-6 py-16 md:py-24">
+        <MarcopoloLogo className="h-8 md:h-10 w-auto text-[var(--marco-accent)]" />
+        <p className="text-sm tracking-wide text-black/50">
+          www.marcopolo.agency · Av. Del Libertador 7766
+        </p>
+      </div>
     </>
   )
 }
