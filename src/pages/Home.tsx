@@ -15,6 +15,12 @@ const budgets = [
     timeline: 'Ongoing',
   },
   {
+    slug: 'tecnofit-tvs',
+    title: 'TecnoFit — TVs & Lista de Espera',
+    description: 'Motor de cola en tiempo real, 10 TVs en el piso y CMS de rutinas y video.',
+    timeline: '8 semanas · 4 sprints',
+  },
+  {
     slug: 'ronzio',
     title: 'Ronzio',
     description: 'Revisión de landing page, CRM a medida para tracking de leads, UTMs y ciclo de vida del usuario.',

@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import BudgetTemplate from './components/BudgetTemplate'
 import HealthMvp from './pages/HealthMvp'
 import TecnoFit from './pages/TecnoFit'
+import TecnoFitTVs from './pages/TecnoFitTVs'
 import Ronzio from './pages/Ronzio'
 import GinLane from './pages/GinLane'
 import Home from './pages/Home'
@@ -29,6 +30,16 @@ export default function App() {
             whatLabel="Budget & Remainder"
           >
             <TecnoFit />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/tecnofit-tvs" element={
+          <BudgetTemplate
+            title="TecnoFit — TVs & Lista de Espera"
+            timeline="8 semanas · 4 sprints"
+            stack="Supabase · Realtime · pg_cron"
+            whatLabel="Timeline & Propuesta"
+          >
+            <TecnoFitTVs />
           </BudgetTemplate>
         } />
         <Route path="/budget/ronzio" element={

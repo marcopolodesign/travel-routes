@@ -1,8 +1,15 @@
+import { Link } from 'react-router-dom'
 import BudgetRemainderSection from '../components/BudgetRemainderSection'
 
 export default function TecnoFit() {
   return (
     <>
+      <Link
+        to="/budget/tecnofit-tvs"
+        className="inline-flex items-center gap-2 mb-10 text-sm font-interphases text-[var(--marco-accent)] hover:underline"
+      >
+        Ver propuesta: TVs + Lista de Espera + CMS de rutinas →
+      </Link>
       <BudgetRemainderSection
         title="TecnoFit – Budget & Remainder"
         total={26700}
