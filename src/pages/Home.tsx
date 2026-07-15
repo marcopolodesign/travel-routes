@@ -16,7 +16,7 @@ const budgets = [
   },
   {
     slug: 'tecnofit-tvs',
-    title: 'TecnoFit — TVs & Lista de Espera',
+    title: 'Fitness Central — TecnoFit',
     description: 'Motor de cola en tiempo real, 10 TVs en el piso y CMS de rutinas y video.',
     timeline: '8 semanas · 4 sprints',
   },

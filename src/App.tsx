@@ -34,7 +34,7 @@ export default function App() {
         } />
         <Route path="/budget/tecnofit-tvs" element={
           <BudgetTemplate
-            title="TecnoFit — TVs & Lista de Espera"
+            title="Fitness Central — TecnoFit"
             timeline="8 semanas · 4 sprints"
             stack="Supabase · Realtime · pg_cron"
             whatLabel="Timeline & Propuesta"

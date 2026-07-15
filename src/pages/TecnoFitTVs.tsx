@@ -45,7 +45,7 @@ export default function TecnoFitTVs() {
       {/* Cover */}
       <div className="mb-20 md:mb-32">
         <h1 className="font-thunder text-[15vw] md:text-[8.5vw] leading-[0.88] uppercase text-[var(--marco-accent)] text-balance">
-          Lista de<br />Espera + TVs
+          Fitness<br />Central
         </h1>
         <div className="font-thunder text-lg md:text-2xl uppercase tracking-[0.08em] text-black mt-4 md:mt-6">
           TecnoFit
@@ -184,7 +184,7 @@ export default function TecnoFitTVs() {
           <div className="flex flex-col gap-6 min-w-0">
             <div>
               <span className="text-xs uppercase tracking-wide text-black/60">Inversión total estimada</span>
-              <p className="font-thunder text-3xl md:text-5xl text-[var(--marco-accent)] mt-1">U$18.000 – U$20.000</p>
+              <p className="font-thunder text-3xl md:text-5xl text-[var(--marco-accent)] mt-1">U$20.000 – U$25.000</p>
             </div>
             <div>
               <span className="text-xs uppercase tracking-wide text-black/60">Duración estimada</span>
@@ -202,7 +202,7 @@ export default function TecnoFitTVs() {
         </p>
         <p className="text-sm text-black/60 pt-2">
           Nota: la edición de rutina desde la app y los tags NFC son scope agregado después de esta estimación —
-          todavía no están reflejados en el rango de arriba. Falta definir si van dentro de estos U$18.000–20.000
+          todavía no están reflejados en el rango de arriba. Falta definir si van dentro de estos U$20.000–25.000
           o como una fase aparte.
         </p>
       </ContentBox>
