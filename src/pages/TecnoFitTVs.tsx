@@ -104,6 +104,13 @@ export default function TecnoFitTVs() {
       />
 
       <div className="mb-20 md:mb-28">
+        <p className="text-black/80 max-w-2xl mb-10 md:mb-14">
+          Un proyecto de este alcance toma habitualmente <strong>16 a 20 semanas</strong>. Lo
+          comprimimos a <strong className="text-[var(--marco-accent)]">8 semanas</strong> para
+          que TecnoFit empiece a darle valor al socio lo antes posible — con la salvedad de que
+          el sprint de implementación (semana 7–8) puede estirar el total a{' '}
+          <strong>10 a 12 semanas</strong> si el trabajo sobre las TVs físicas lo requiere.
+        </p>
         <Timeline
           title="Timeline"
           steps={[
@@ -189,6 +196,7 @@ export default function TecnoFitTVs() {
             <div>
               <span className="text-xs uppercase tracking-wide text-black/60">Duración estimada</span>
               <p className="font-thunder text-3xl md:text-5xl text-black mt-1">8 semanas · 4 sprints</p>
+              <p className="text-sm text-black/60 mt-1">Posible extensión a 10–12 semanas (vs. 16–20 habituales)</p>
             </div>
           </div>
         </div>
