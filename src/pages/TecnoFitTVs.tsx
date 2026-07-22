@@ -51,7 +51,8 @@ export default function TecnoFitTVs() {
           TecnoFit
         </div>
         <p className="mt-8 md:mt-10 text-black/80 text-lg md:text-xl max-w-xl">
-          Motor de cola en tiempo real, pantallas del piso y CMS de rutinas y video.
+          Motor de cola en tiempo real, pantallas del piso, CMS de rutinas y video —
+          más personalización total del entrenamiento y una capa de métricas de negocio.
         </p>
         <hr className="mt-10 md:mt-14 border-t border-[var(--marco-border)]" />
       </div>
@@ -93,6 +94,57 @@ export default function TecnoFitTVs() {
           Estas dos funcionalidades son scope nuevo respecto de la propuesta original — ver nota en Inversión.
         </p>
       </TwoColumnSection>
+
+      <TwoColumnSection title="Nuevo: personalización total del entrenamiento">
+        <p>
+          Hoy el socio puede ajustar ejercicios puntuales dentro de una rutina ya armada. Esta
+          ampliación va un paso más allá: deja atrás las rutinas templadas ("los siete
+          entrenamientos que se renuevan") y pasa a que <strong>cada plan lo arma el coach a
+          medida de cada alumno</strong>.
+        </p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li>El coach construye entrenamientos 100% personalizados, asignados 1 a 1 por alumno — no rutina → grupo</li>
+          <li>Desde la app, el socio puede cambiar la rutina completa, no solo un ejercicio puntual</li>
+          <li>Nuevas modalidades de entrenamiento además de Tabata: <strong>On the Minute / EMOM</strong> y <strong>AMRAP</strong></li>
+        </ul>
+        <p className="text-sm text-black/60 pt-2">
+          Impacto directo en el producto: el socio siente un entrenamiento hecho a medida, no genérico —
+          esto es scope nuevo respecto de la propuesta original, ver nota en Inversión.
+        </p>
+      </TwoColumnSection>
+
+      <TwoColumnSection title="Nuevo: capa de métricas de negocio">
+        <p>
+          La funcionalidad de mayor valor estratégico para franquicias: convertir la operación diaria
+          del gym en datos accionables, con asignación trazable de cada alumno a un coach y a quien lo
+          recibió en recepción.
+        </p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li>Conversión de lead a clase de prueba, atribuida a recepción</li>
+          <li>Conversión de clase de prueba a alumno, atribuida al coach</li>
+          <li>Retención por coach y retención por recepcionista</li>
+          <li>Frecuencia de asistencia por socio e ingresos por coach — la base para planes de compensación variable a futuro</li>
+          <li>Predicción de abandono (churn), en base a benchmarks de industria fitness</li>
+        </ul>
+        <p className="text-sm text-black/60 pt-2">
+          La asignación de leads a recepcionistas es manual por ahora, pero queda trackeada en el sistema.
+          Con esta trazabilidad, TecnoFit puede identificar qué coaches y qué procesos de recepción
+          funcionan mejor y replicar ese modelo al abrir nuevas sedes — un diferencial de venta para el
+          negocio de franquicias. Esto probablemente requiere un dashboard de administración nuevo,
+          además del CMS de rutinas ya contemplado. Scope nuevo respecto de la propuesta original,
+          ver nota en Inversión.
+        </p>
+      </TwoColumnSection>
+
+      <BoxedListSection
+        title="Preguntas abiertas"
+        subtitle="A resolver antes de cerrar el alcance final de esta ampliación"
+        items={[
+          '¿Personalización total + métricas de negocio entran dentro del rango ya cotizado (U$20.000–25.000), o son una fase/cotización aparte? — mismo criterio que se usó para NFC y edición de rutina.',
+          '¿El dashboard de métricas de negocio va dentro del mismo timeline de 8 semanas, o es un sprint adicional?',
+          'Qué benchmarks de industria fitness se van a usar como referencia para el scoring de churn.',
+        ]}
+      />
 
       <BoxedListSection
         title="Por qué esto es producto, no infraestructura"
@@ -209,9 +261,10 @@ export default function TecnoFitTVs() {
           controlamos de punta a punta y no varían dentro de ese rango.
         </p>
         <p className="text-sm text-black/60 pt-2">
-          Nota: la edición de rutina desde la app y los tags NFC son scope agregado después de esta estimación —
-          todavía no están reflejados en el rango de arriba. Falta definir si van dentro de estos U$20.000–25.000
-          o como una fase aparte.
+          Nota: la edición de rutina desde la app, los tags NFC, la personalización total del
+          entrenamiento y la capa de métricas de negocio son scope agregado después de esta
+          estimación — todavía no están reflejados en el rango de arriba. Falta definir si van
+          dentro de estos U$20.000–25.000 o como una fase aparte (ver Preguntas abiertas).
         </p>
       </ContentBox>
 
