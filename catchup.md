@@ -1,5 +1,43 @@
 # Marco Polo — Catchup
 
+## 2026-07-22 — TecnoFit TVs budget: restructuración completa (Fitness 2.0/Lista de espera/TVs/Admin) ✅
+**Source:** Claude Code — Macbook Pro
+
+### Qué se hizo
+Mateo dio un brief detallado (texto) con 3 objetivos estratégicos (bajar churn, KPIs de staff,
+franquiciar) y pidió reorganizar toda la página `src/pages/TecnoFitTVs.tsx` alrededor de ellos:
+
+- Nueva `BoxedListSection` "Objetivos" arriba de todo, con los 3 objetivos estratégicos
+- "Visión general" reescrita: control total en tiempo real para el dueño (no solo socios, también
+  KPIs de coaches/recepción) + nuevo módulo de entrenamiento con variabilidad real (AMRAP/EMOM)
+- Reestructurado en 4 pilares de "Stack de tecnología a crear":
+  - **Fitness 2.0 — CMS de rutinas**: absorbe "personalización total del entrenamiento" y "edición
+    de rutina desde la app" (secciones viejas eliminadas), suma optimización de video (compresión +
+    resoluciones múltiples) y visualización en tiempo real de socios por línea
+  - **Lista de espera**: reframeada con el ángulo franquicia (sin hardware, replicable) + control de
+    acceso para que el staff detecte baja asistencia
+  - **TVs**: nueva sección — links dinámicos por línea/box/sede para adopción rápida en franquicias
+  - **Administrador — métricas de negocio**: contenido de la sesión anterior, sin cambios de fondo,
+    solo retitulado y sin el cierre "scope nuevo, ver nota en Inversión" (ya no se trata como scope
+    agregado, es parte del stack central)
+- **Eliminada** la sección "Preguntas abiertas" (Mateo: "no va")
+- **Reemplazado** el diagrama Mermaid técnico (con nombres de tablas `access_logs`, `pg_cron`, etc.)
+  por una sección narrativa "Así se vive puertas adentro": 5 pasos contados desde el punto de vista
+  de una socia (Sofía), sin jerga técnica, incluyendo el "motor" de riesgo de abandono como parte de
+  la historia — pensado para que lo entienda el dueño del gym, no un desarrollador
+- Inversión: agregada "Forma de pago — 4 cuotas de U$5.000"; sacada la nota de "scope agregado sin
+  pricear" (ya no aplica con la nueva estructura, todo es una sola propuesta coherente)
+- Verificado en browser (dev server) antes de deployar — layout, numeración de la historia y caja de
+  Inversión revisados visualmente
+- Commit `7e35d73`, push a `main` → deploy automático en Vercel
+
+### Pendiente / próximo paso
+Ninguno explícito — Mateo puede querer ajustar el Timeline (semanas) para reflejar los 4 pilares
+nuevos (Administrador/métricas no tiene sprint asignado todavía), pero no lo pidió así que quedó
+como estaba.
+
+---
+
 ## 2026-07-22 — TecnoFit TVs budget ampliado: personalización total + métricas de negocio ✅
 **Source:** Claude Code — Macbook Pro
 
