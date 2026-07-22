@@ -2,42 +2,30 @@ import ContentBox from '../components/ContentBox'
 import TwoColumnSection from '../components/TwoColumnSection'
 import BoxedListSection from '../components/BoxedListSection'
 import Timeline from '../components/Timeline'
-import MermaidDiagram from '../components/MermaidDiagram'
 import MarcopoloLogo from '../components/MarcopoloLogo'
 
-const EXPERIENCE_FLOW = `
-flowchart TD
-  subgraph ING["1 · Entrada"]
-    A1["Socio escanea QR<br/>o tag NFC"]
-  end
-  A1 --> D1[("access_logs")]
-
-  subgraph FILA["2 · Lista de espera"]
-    B1["App: se anota en la fila"]
-    B2["Motor de cola (pg_cron)<br/>avanza box → box"]
-    B3["App: confirma turno<br/>al llegar al box 1"]
-  end
-  D1 -.-> B1
-  B1 --> D2[("production_lines / boxes /<br/>line_box_status")]
-  D2 --> B2
-  B2 --> B3
-  B3 --> D2
-
-  subgraph ANTES["3 · Antes de la clase"]
-    C1["App: socio edita los<br/>ejercicios de su rutina"]
-    C2["Admin: staff sube video<br/>y arma la rutina"]
-  end
-  C1 --> D3[("rutinas / ejercicios / video")]
-  C2 --> D3
-
-  subgraph PISO["4 · Lo que se ve en vivo"]
-    E1["TV pública × 10<br/>(2 líneas × 5 boxes)"]
-    E2["App: pantalla de<br/>entrenamiento"]
-  end
-  D2 -. Realtime .-> E1
-  D3 -. Realtime .-> E1
-  D3 --> E2
-`.trim()
+const FLOW_STEPS = [
+  {
+    title: 'Llega y entra sin hacer fila en la puerta',
+    body: 'Sofía llega al gym a las 7 de la mañana. Apoya el teléfono en la entrada — ni QR impreso, ni tarjeta, ni nadie de recepción tiene que escanearla. La app ya sabe quién es.',
+  },
+  {
+    title: 'Se anota y espera cómoda, no parada',
+    body: 'Desde la misma app se anota en la fila de su línea. Ve en el celular cuánto falta para que la llamen a su box — no hace fila de pie esperando que alguien le diga "ya podés pasar".',
+  },
+  {
+    title: 'El sistema la conoce, aunque ella no lo note',
+    body: 'Cada clase que entrena queda registrada sola. El sistema sabe que esta semana ya vino 3 veces — y si en cambio hubiera bajado el ritmo, un motor de alerta se lo avisa al gym antes de que Sofía deje de venir, para que alguien del equipo la llame a tiempo.',
+  },
+  {
+    title: 'Entrena su plan, no el de todos',
+    body: 'Le toca el turno. La pantalla de su box ya muestra el entrenamiento que armó su coach para ella — no la rutina genérica de la semana. Si un ejercicio no le cae bien, lo cambia ahí mismo desde el celular.',
+  },
+  {
+    title: 'Todo se actualiza solo, para todos',
+    body: 'El cambio se ve al instante en la pantalla, sin que nadie del staff tenga que tocar nada. Del otro lado, el dueño ve en su panel en tiempo real cuántas líneas están activas ahora mismo, cómo viene cada coach con sus alumnos y qué sede necesita atención esta semana.',
+  },
+]
 
 export default function TecnoFitTVs() {
   return (
@@ -51,69 +39,74 @@ export default function TecnoFitTVs() {
           TecnoFit
         </div>
         <p className="mt-8 md:mt-10 text-black/80 text-lg md:text-xl max-w-xl">
-          Motor de cola en tiempo real, pantallas del piso, CMS de rutinas y video —
-          más personalización total del entrenamiento y una capa de métricas de negocio.
+          Un nuevo CMS de entrenamiento, lista de espera y TVs sin hardware, y un panel de
+          control total para el dueño — pensado para dar más valor al socio y para franquiciar.
         </p>
         <hr className="mt-10 md:mt-14 border-t border-[var(--marco-border)]" />
       </div>
 
+      <BoxedListSection
+        title="Objetivos"
+        items={[
+          'Generar valor real para los socios actuales de TecnoFit y bajar la tasa de abandono (churn) del gimnasio.',
+          'Darle al equipo herramientas de control y KPIs de referencia para coaches y recepción.',
+          'Construir un ambiente franquiciable, a nivel tecnología y experiencia, para que TecnoFit pueda replicarse en nuevas sedes.',
+        ]}
+      />
+
       <ContentBox title="Visión general">
         <p>
-          Un motor de cola en tiempo real que ordena y muestra en vivo quién entra a cada box,
-          sincronizado en las 10 pantallas del piso del gym (2 líneas × 5 boxes). Junto con eso,
-          una herramienta para que el staff cargue videos de ejercicios y arme rutinas nuevas sin
-          depender de que alguien toque código para publicar contenido — y dos funcionalidades
-          nuevas del lado del socio: poder ajustar los ejercicios de su rutina desde la app antes
-          de entrenar, y tags NFC como método de ingreso.
+          Este proyecto le da al dueño control total sobre cómo está funcionando cada sede, en
+          tiempo real — no solo cuántos socios entrenan, sino cómo está rindiendo el equipo que
+          los atiende: qué coach retiene mejor a sus alumnos, qué recepcionista convierte más
+          clases de prueba, y qué sede necesita atención antes de que se note en la facturación.
+        </p>
+        <p>
+          Del lado del socio, el entrenamiento deja de ser genérico. Un nuevo módulo de
+          entrenamiento le da al coach la posibilidad de armar planes 100% a medida, con
+          variantes reales más allá del Tabata — AMRAP, On the Minute / EMOM y lo que el gym
+          quiera sumar — para que cada clase se sienta hecha para esa persona, no para todo el
+          grupo.
         </p>
       </ContentBox>
 
-      <TwoColumnSection title="Lista de espera en tiempo real">
-        <ul className="list-disc pl-5 space-y-2">
-          <li>Motor de cola nativo (Supabase Realtime + <code>pg_cron</code>), sin depender de hardware LAN-only</li>
-          <li>Avance automático de box a box cada 1 minuto, visible en vivo sin refrescar</li>
-          <li>El socio confirma su turno desde la app al llegar al box 1 — si no confirma, se salta o penaliza</li>
-          <li>Sincronización de las 10 TVs físicas (2 líneas × 5 boxes) desde un único canal por línea</li>
-        </ul>
-      </TwoColumnSection>
+      <div className="mb-10 md:mb-14">
+        <span className="text-xs uppercase tracking-wide text-black/50">Stack de tecnología a crear</span>
+      </div>
 
-      <TwoColumnSection title="CMS de rutinas y video">
-        <ul className="list-disc pl-5 space-y-2">
-          <li>Catálogo de ejercicios con video, administrado desde el panel — sin código</li>
-          <li>Constructor de rutinas de punta a punta para el staff</li>
-          <li>Pipeline de carga de video (storage, compresión, entrega) pensado para el volumen real de un gym</li>
-        </ul>
-      </TwoColumnSection>
-
-      <TwoColumnSection title="Nuevo: más control desde la app">
-        <ul className="list-disc pl-5 space-y-2">
-          <li>El socio va a poder modificar los ejercicios de su rutina desde la app, antes de entrar a clase</li>
-          <li>Tags NFC como método de ingreso, junto al QR existente</li>
-        </ul>
-        <p className="text-sm text-black/60 pt-2">
-          Estas dos funcionalidades son scope nuevo respecto de la propuesta original — ver nota en Inversión.
-        </p>
-      </TwoColumnSection>
-
-      <TwoColumnSection title="Nuevo: personalización total del entrenamiento">
+      <TwoColumnSection title="Fitness 2.0 — CMS de rutinas">
         <p>
-          Hoy el socio puede ajustar ejercicios puntuales dentro de una rutina ya armada. Esta
-          ampliación va un paso más allá: deja atrás las rutinas templadas ("los siete
-          entrenamientos que se renuevan") y pasa a que <strong>cada plan lo arma el coach a
-          medida de cada alumno</strong>.
+          Reemplaza el sistema actual de rutinas por uno pensado para la personalización real,
+          administrado desde el mismo panel de Tecno que ya existe.
         </p>
         <ul className="list-disc pl-5 space-y-2">
-          <li>El coach construye entrenamientos 100% personalizados, asignados 1 a 1 por alumno — no rutina → grupo</li>
-          <li>Desde la app, el socio puede cambiar la rutina completa, no solo un ejercicio puntual</li>
-          <li>Nuevas modalidades de entrenamiento además de Tabata: <strong>On the Minute / EMOM</strong> y <strong>AMRAP</strong></li>
+          <li>Constructor de rutinas y catálogo de ejercicios con video, sin código</li>
+          <li>El coach arma el entrenamiento de cada alumno a medida — no rutina → grupo — y lo puede cambiar de forma dinámica sumando ejercicios y nuevas modalidades: <strong>AMRAP</strong>, <strong>On the Minute / EMOM</strong>, además de Tabata</li>
+          <li>Desde la app, el socio también puede ajustar o cambiar su rutina completa antes de entrenar</li>
+          <li>Carga de video optimizada para uso real: compresión automática y varias resoluciones según el video subido, para que cargue rápido sin importar la conexión del gym</li>
+          <li>Visualización en tiempo real de los socios en cada línea, con la posibilidad de adaptar los ejercicios sobre la marcha</li>
         </ul>
-        <p className="text-sm text-black/60 pt-2">
-          Impacto directo en el producto: el socio siente un entrenamiento hecho a medida, no genérico —
-          esto es scope nuevo respecto de la propuesta original, ver nota en Inversión.
-        </p>
       </TwoColumnSection>
 
-      <TwoColumnSection title="Nuevo: capa de métricas de negocio">
+      <TwoColumnSection title="Lista de espera">
+        <p className="text-sm text-black/60">Apunta directo al objetivo de hacer el gimnasio franquiciable.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li>Reemplaza la lista de espera actual sin necesitar hardware dedicado — el socio apoya el teléfono (QR o tag NFC) y entra</li>
+          <li>Confirma su turno e ingresa a la línea directo desde la app, sin que el personal tenga que intervenir</li>
+          <li>Cada ingreso queda registrado en el administrador: el staff puede ver quién viene poco y hacerle seguimiento antes de perderlo como socio</li>
+          <li>Al no depender de hardware a medida, se replica igual en cualquier sede nueva</li>
+        </ul>
+      </TwoColumnSection>
+
+      <TwoColumnSection title="TVs">
+        <p className="text-sm text-black/60">También apunta al objetivo de franquicias.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li>Reemplazo de las TVs actuales por links dinámicos por línea, box y sede — una sede nueva se conecta en minutos, sin configuración a medida</li>
+          <li>El ejercicio que se ve en la TV está siempre en vivo: si el socio lo cambia desde la app, o si lo cambia front desk o el coach, se refleja al instante en la pantalla</li>
+        </ul>
+      </TwoColumnSection>
+
+      <TwoColumnSection title="Administrador — métricas de negocio">
         <p>
           La funcionalidad de mayor valor estratégico para franquicias: convertir la operación diaria
           del gym en datos accionables, con asignación trazable de cada alumno a un coach y a quien lo
@@ -129,22 +122,10 @@ export default function TecnoFitTVs() {
         <p className="text-sm text-black/60 pt-2">
           La asignación de leads a recepcionistas es manual por ahora, pero queda trackeada en el sistema.
           Con esta trazabilidad, TecnoFit puede identificar qué coaches y qué procesos de recepción
-          funcionan mejor y replicar ese modelo al abrir nuevas sedes — un diferencial de venta para el
-          negocio de franquicias. Esto probablemente requiere un dashboard de administración nuevo,
-          además del CMS de rutinas ya contemplado. Scope nuevo respecto de la propuesta original,
-          ver nota en Inversión.
+          funcionan mejor y replicar ese modelo al abrir nuevas sedes. Esto probablemente requiere un
+          dashboard de administración nuevo, además del CMS de rutinas ya contemplado.
         </p>
       </TwoColumnSection>
-
-      <BoxedListSection
-        title="Preguntas abiertas"
-        subtitle="A resolver antes de cerrar el alcance final de esta ampliación"
-        items={[
-          '¿Personalización total + métricas de negocio entran dentro del rango ya cotizado (U$20.000–25.000), o son una fase/cotización aparte? — mismo criterio que se usó para NFC y edición de rutina.',
-          '¿El dashboard de métricas de negocio va dentro del mismo timeline de 8 semanas, o es un sprint adicional?',
-          'Qué benchmarks de industria fitness se van a usar como referencia para el scoring de churn.',
-        ]}
-      />
 
       <BoxedListSection
         title="Por qué esto es producto, no infraestructura"
@@ -202,29 +183,30 @@ export default function TecnoFitTVs() {
         />
       </div>
 
-      {/* Flujo de la experiencia */}
+      {/* Flujo de la experiencia — contado como lo vive el socio, no como lo ve el código */}
       <section className="mb-14 md:mb-20">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14">
-          <div className="md:col-span-4 flex flex-col">
-            <h2 className="font-thunder text-2xl md:text-3xl lg:text-4xl uppercase text-[var(--marco-accent)]">
-              Cómo fluye la experiencia
-            </h2>
-            <p className="text-sm text-black/60 mt-3">
-              Desde que el socio entra al gym hasta que termina la clase — y de dónde sale cada dato.
-            </p>
-          </div>
-          <div className="md:col-span-8 space-y-8">
-            <MermaidDiagram
-              chart={EXPERIENCE_FLOW}
-              className="min-h-[420px] rounded-xl border-2 border-[var(--marco-border)] bg-white p-6 md:p-8 shadow-sm [&_svg]:h-auto"
-            />
-            <ul className="space-y-3 text-black font-interphases">
-              <li><strong>1 · Entrada:</strong> el socio escanea el QR de la puerta o pasa un tag NFC — queda registrado en <code>access_logs</code>.</li>
-              <li><strong>2 · Lista de espera:</strong> se anota en la fila desde la app; el motor de cola (<code>pg_cron</code>) avanza box a box en <code>production_lines / boxes / line_box_status</code>, y confirma su turno al llegar al box 1.</li>
-              <li><strong>3 · Antes de la clase:</strong> el socio puede ajustar los ejercicios de su rutina desde la app; el staff sube video y arma rutinas desde el admin — todo vive en las tablas de rutinas/ejercicios/video.</li>
-              <li><strong>4 · En el piso:</strong> las 10 TVs y la pantalla de entrenamiento de la app leen esos mismos datos por Realtime — es la misma fuente de verdad, mostrada en dos superficies distintas.</li>
-            </ul>
-          </div>
+        <div className="mb-10 md:mb-14 max-w-2xl">
+          <h2 className="font-thunder text-2xl md:text-3xl lg:text-4xl uppercase text-[var(--marco-accent)]">
+            Así se vive puertas adentro
+          </h2>
+          <p className="text-sm text-black/60 mt-3">
+            Desde que el socio llega al gym hasta que termina la clase — y lo que ve el dueño mientras tanto.
+          </p>
+        </div>
+        <div className="space-y-10 md:space-y-12">
+          {FLOW_STEPS.map((step, i) => (
+            <div key={i} className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-10">
+              <div className="md:col-span-1">
+                <span className="font-thunder text-3xl md:text-4xl text-[var(--marco-accent)]">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+              </div>
+              <div className="md:col-span-11">
+                <h3 className="font-thunder text-xl md:text-2xl uppercase text-black mb-2">{step.title}</h3>
+                <p className="text-black/80 max-w-2xl">{step.body}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -250,6 +232,10 @@ export default function TecnoFitTVs() {
               <p className="font-thunder text-3xl md:text-5xl text-black mt-1">8 semanas · 4 sprints</p>
               <p className="text-sm text-black/60 mt-1">Posible extensión a 10–12 semanas (vs. 16–20 habituales)</p>
             </div>
+            <div>
+              <span className="text-xs uppercase tracking-wide text-black/60">Forma de pago</span>
+              <p className="font-thunder text-2xl md:text-3xl text-black mt-1">4 cuotas de U$5.000</p>
+            </div>
           </div>
         </div>
         <p>
@@ -259,12 +245,6 @@ export default function TecnoFitTVs() {
           disponibilidad de horarios sin clase — por eso se cotiza con un mínimo y un máximo en vez de un
           número fijo. Los primeros tres sprints (arquitectura, CMS y motor de cola) son software que
           controlamos de punta a punta y no varían dentro de ese rango.
-        </p>
-        <p className="text-sm text-black/60 pt-2">
-          Nota: la edición de rutina desde la app, los tags NFC, la personalización total del
-          entrenamiento y la capa de métricas de negocio son scope agregado después de esta
-          estimación — todavía no están reflejados en el rango de arriba. Falta definir si van
-          dentro de estos U$20.000–25.000 o como una fase aparte (ver Preguntas abiertas).
         </p>
       </ContentBox>
 
