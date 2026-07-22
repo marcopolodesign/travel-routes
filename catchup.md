@@ -1,5 +1,125 @@
 # Marco Polo — Catchup
 
+## 2026-07-22 — TecnoFit TVs budget ampliado: personalización total + métricas de negocio ✅
+**Source:** Claude Code — Macbook Pro
+
+### Qué se hizo
+- Mateo dictó un brief por voz (Claude app voice mode) con scope nuevo para la propuesta de
+  Fitness Central/TecnoFit: personalización total del entrenamiento (coach arma plan 1:1, EMOM/AMRAP)
+  y capa de métricas de negocio para franquicias (conversión por recepción/coach, retención, churn)
+- `src/pages/TecnoFitTVs.tsx`:
+  - Nueva sección "Personalización total del entrenamiento"
+  - Nueva sección "Capa de métricas de negocio"
+  - Nueva `BoxedListSection` "Preguntas abiertas" (scope adentro o afuera del rango cotizado, timeline, benchmarks de churn)
+  - Nota de Inversión actualizada para incluir ambas como scope agregado sin pricear
+  - Copy de portada actualizado para reflejar el scope ampliado
+- Verificado en browser (dev server localhost:5173) — secciones renderizan con el mismo estilo que el resto de la página
+- Commit `8d53cbb`, push a `main` → deploy automático en Vercel
+
+### Pendiente / próximo paso
+Definir con el cliente si personalización total + métricas de negocio entran en el rango
+U$20.000–25.000 ya cotizado o son fase aparte — las 3 preguntas abiertas quedan documentadas en la página.
+
+---
+
+## 2026-07-20 — Factura C 0003-00000004 BIGG (HEKTOR S.R.L.) $329.696,36 ✅
+**Source:** Claude Code — Macbook Pro
+
+### Qué se hizo
+- Emitida Factura C vía WSFEv1 (API `travels.marcopolo.agency/api/chat` → `createInvoice`):
+  - Número: 0003-00000004 · Pto. Vta. 3
+  - Receptor: HEKTOR S.R.L. (BIGG) · CUIT 30-71401537-7
+  - Importe: $329.696,36 · Concepto: Servicios (período jun 2026)
+  - Descripción: Servicios de desarrollo — BIGG
+  - CAE: 86294652692056 · Vencimiento: 30/07/2026
+- PDF descargado en `~/Downloads/Factura C 0003-00000004 - BIGG (HEKTOR SRL) - $329.696,36.pdf` y verificado (receptor, importe y CAE correctos)
+- `arca/monotributo-2026.md` actualizado: agregadas 0003-2 ($3.562.500 MOSERINI), 0003-3 ($1.000 CF) y 0003-4 que faltaban en la tabla; totales y sección "Situación" recalculados
+
+### Total acumulado 2026
+$12.722.074,60 (13 facturas) → superado límite Cat A ($10.277.988); quedan $2.336.373 para agotar Cat B
+
+---
+
+## 2026-07-01 — Dashboard Monotributo dinámico (fetch desde ARCA) ✅
+**Source:** Claude Code — Macbook Pro
+
+### Qué se hizo
+- **`api/_arca.ts`** — cliente ARCA compartido: token cache, `wsfeCall`, `afipPost` con SSL legacy (weak DH keys), helpers `extractXmlTag`/`getArcaToken`
+- **`api/invoices.ts`** — endpoint GET `/api/invoices`: fetchea Facturas C (tipo 11) de pto_vta 2 y 3, últimas 50 por punto, filtra por año. Retorna array ordenado con CUIT del receptor
+- **`src/pages/Monotributo.tsx`** — reescrito para ser dinámico:
+  - `useEffect` → `fetch('/api/invoices')` al montar
+  - CUIT→nombre: `{ 30714015377: 'HEKTOR S.R.L.', 20330327562: 'CARRIQUIRI IGNACIO FEDERICO', 30716140403: 'MOSERINI SAS' }`
+  - `avgMonthly` calculado dinámicamente desde unique months del fetch (no hardcodeado a 7)
+  - Loading state "Consultando ARCA…" + error state
+  - Botón "Actualizar" en tabla para refetch manual
+- **`vercel.json`** — `api/invoices.ts` agregado a `includeFiles: "api/**"` para bundling de `_arca.ts`
+- Verificado en browser: 10 comprobantes 2026, total $12.391.378, client names correctos ✅
+
+---
+
+## 2026-07-01 — Factura C 0003-00000002 MOSERINI SAS $3.562.500 ✅
+**Source:** Claude Code — Macbook Pro
+
+### Qué se hizo
+- Emitida Factura C vía WSFEv1 (ARCA producción):
+  - Número: 0003-00000002 · Pto. Vta. 3
+  - Receptor: MOSERINI SAS · CUIT 30-71614040-3
+  - Importe: $3.562.500 · Concepto: Servicios
+  - Descripción: App TecnoFit
+  - CAE: 86262016085779 · Vencimiento: 11/07/2026
+- Dashboard Monotributo actualizado con la nueva factura (total 2026: $12.391.378)
+- `src/pages/Monotributo.tsx` — nueva fila en INVOICES
+
+### Total acumulado 2026
+$12.391.378,24 (10 facturas) → Categoría B (> $10.277.988)
+
+---
+
+## 2026-07-01 — Dashboard Monotributo 2026 en /monotributo ✅
+**Source:** Claude Code — Macbook Pro
+
+### Qué se hizo
+- **`src/pages/Monotributo.tsx`** — nueva página React con 4 secciones:
+  - 4 stat cards: total facturado, promedio/mes, queda Cat A, categoría actual
+  - Barra de progreso horizontal con markers visuales en Cat A / B / C (escala hasta $21.1M)
+  - Hint de cuánto puede facturar por mes para mantenerse en Cat A hasta diciembre
+  - Proyección mensual AGO 26 → MAR 27 con barras y marcadores de categoría (↑ CAT B en SEP 26, ↑ CAT C en DIC 26)
+  - Simulador: input importe → actualiza total, queda por categoría, meses hasta Cat B, en tiempo real
+  - Historial 2026: las 9 facturas en orden cronológico inverso con total
+- **`src/App.tsx`** — route `/monotributo` agregado
+- Protegida con `AuthGate`
+- Deploy via git push → Vercel auto-deploy ✅, verificado en browser ✅
+
+### Datos base hardcoded
+Total 2026: $8,828,878.24 (9 facturas) · Promedio: $1,261,268/mes (7 meses Jan-Jul)
+Cat A límite: $10,277,988 → Queda: $1,449,110 → 1.1 meses al ritmo actual
+
+### Archivos modificados
+- `src/pages/Monotributo.tsx` — nuevo
+- `src/App.tsx` — route agregado
+
+---
+
+## 2026-07-01 — Fix /api/factura + /api/payment-request en producción ✅
+**Source:** Claude Code — Macbook Pro
+
+### Qué se hizo
+- **Root cause identificado:** `@vercel/node` v5 usa TypeScript compiler para los archivos `.tsx` de `api/`, pero sin un `tsconfig.json` local con `jsx: "react-jsx"`, TypeScript NO transformaba el JSX. El `<` quedaba en el output `.js` → Node.js ESM crasheaba con "Unexpected token '<'".
+- **`api/tsconfig.json`** — nuevo archivo con `jsx: "react-jsx"`, `module: "ESNext"`, `moduleResolution: "bundler"` → ahora tsc transforma JSX correctamente
+- **`api/package.json`** — ya existía (`{"type":"module"}`), necesario para que Node.js cargue el output ESM como módulo ESM
+- **`vercel.json`** — `includeFiles: "api/**"` bundle `api/package.json` y fonts junto con la función serverless
+
+### Archivos modificados
+- `api/tsconfig.json` — nuevo (jsx fix)
+- `vercel.json` — includeFiles ajustado
+- `api/package.json` — ya existía, no modificado
+
+### Resultado
+- `https://travels.marcopolo.agency/api/factura` → 200 OK, PDF 47KB ✅
+- `https://travels.marcopolo.agency/api/payment-request` → 200 OK, PDF 34KB ✅
+
+---
+
 ## 2026-06-30 — createInvoice tool + Factura C PDF ✅
 **Source:** Claude Code — Macbook Pro
 
