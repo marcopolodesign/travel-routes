@@ -57,7 +57,7 @@ export default function SendaArqAds() {
         <ul className="list-disc pl-5 space-y-2">
           <li>Alta de Business Manager, Página de Facebook y cuenta de anuncios para Senda Arquitectura</li>
           <li>Instalación de Meta Pixel + Conversions API en senda-arq.com para medir conversación real, no solo clic</li>
-          <li>Campaña de Conversaciones por WhatsApp — mismo formato validado en TAG, adaptado al tono y portfolio de Senda</li>
+          <li>3 campañas corriendo en simultáneo (distintas audiencias/creatividades en test) — mismo formato de Conversaciones por WhatsApp validado en TAG, adaptado al tono y portfolio de Senda</li>
           <li>Creatividades con obra real: renders de Ambientar y fotos de proyectos entregados, no stock genérico</li>
           <li>Segmentación geográfica (zona de cobertura del estudio) + intereses de arquitectura, diseño y remodelación</li>
           <li>Reporte mensual: costo por conversación, alcance, qué obra generó más interés</li>
@@ -125,8 +125,12 @@ export default function SendaArqAds() {
             <p className="font-thunder text-3xl md:text-5xl text-[var(--marco-accent)] mt-1">U$300 – U$500</p>
           </div>
           <div>
-            <span className="text-xs uppercase tracking-wide text-black/60">Gestión mensual (Meta + Google, ambas plataformas)</span>
-            <p className="font-thunder text-3xl md:text-5xl text-black mt-1">U$400 – U$600 / mes</p>
+            <span className="text-xs uppercase tracking-wide text-black/60">Gestión mensual — Meta Ads (3 campañas)</span>
+            <p className="font-thunder text-3xl md:text-5xl text-black mt-1">U$500 / mes</p>
+          </div>
+          <div>
+            <span className="text-xs uppercase tracking-wide text-black/60">+ Si se suma Google Ads</span>
+            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">+ U$200 / mes <span className="text-black/50 text-lg">(U$700 / mes total)</span></p>
           </div>
           <div>
             <span className="text-xs uppercase tracking-wide text-black/60">Presupuesto de pauta recomendado</span>
@@ -135,10 +139,10 @@ export default function SendaArqAds() {
           </div>
         </div>
         <p>
-          Cifras de partida para conversar con el cliente — se ajustan una vez definido el
-          presupuesto real de pauta y el alcance final. La gestión mensual cubre ambas
-          plataformas en conjunto (no es un cobro por plataforma), incluye reporte mensual y
-          reasignación de presupuesto entre Meta y Google según qué esté rindiendo mejor ese mes.
+          La gestión mensual arranca por Meta — 3 campañas corriendo en simultáneo, con reporte
+          mensual de costo por conversación y qué obra generó más interés. Si se suma Google
+          Search más adelante, se cotiza aparte (+U$200/mes) en vez de encarecer el arranque con
+          ambas plataformas desde el día uno.
         </p>
       </ContentBox>
 
