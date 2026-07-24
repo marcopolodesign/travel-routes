@@ -1,5 +1,39 @@
 # Marco Polo — Catchup
 
+## 2026-07-24 — Nueva propuesta: Senda Arq — Meta Ads + Google Ads (gestión mensual) ✅
+**Source:** Claude Code — Macbook Pro
+
+### Qué se hizo
+Mateo pidió una propuesta de pauta paga para Senda Arq (mismo approach que TAG en Meta, más
+Google Ads que TAG no tiene), formato "documento tipo Fitness Central", con redes sociales como
+add-on opcional. Contexto previo en la conversación: Senda Arq no tiene ninguna infraestructura
+de ads hoy (sin Business Manager/cuenta de Meta, sin Google Ads, sin pixel) — a diferencia de TAG,
+que ya tiene todo eso armado. Conversión objetivo confirmada por Mateo: WhatsApp.
+
+- Nueva página `src/pages/SendaArqAds.tsx`, ruta `/budget/senda-arq-ads` en `App.tsx`
+  (`BudgetTemplate` con `title="Senda Arq — Ads"`, `timeline="Mensual · renovable"`,
+  `stack="Meta Ads · Google Ads"`, `whatLabel="Propuesta mensual"`)
+- Reutiliza los mismos componentes que `TecnoFitTVs.tsx` (`ContentBox`, `TwoColumnSection`,
+  `BoxedListSection`, `Timeline`, `MarcopoloLogo`) — mismo lenguaje visual que el resto de
+  propuestas de Marco Polo
+- Estructura: Objetivos → Visión general (Meta = top of funnel/marca, Google Search = intención
+  de búsqueda) → qué incluye cada plataforma → Setup inicial (una vez) → Timeline (Semana 1 /
+  Semana 2 / Mensual recurrente) → Inversión (setup + gestión mensual + presupuesto de pauta,
+  separados) → Redes sociales como `BoxedListSection` "Add-on opcional", claramente separada de
+  la gestión de pauta
+- **Cifras de inversión son un punto de partida, no definitivas** — flaggeado explícitamente en
+  la página y acá: Setup U$300–500, gestión mensual U$400–600, pauta recomendada U$300–500/mes.
+  Ajustar con Mateo antes de mandar al cliente.
+- Verificado en Chrome (dev server `localhost:5173/budget/senda-arq-ads`) — todas las secciones
+  renderizan correctamente, mismo estilo que TecnoFitTVs, sin errores de `tsc --noEmit`
+
+### Pendiente / próximo paso
+Confirmar cifras de inversión con Mateo, luego enviar la propuesta a Senda Arq. Una vez aprobada,
+falta armar toda la infraestructura real (Business Manager + cuenta Meta + Google Ads + pixel/CAPI)
+que hoy no existe — ver contexto en `senda-website/catchup.md`.
+
+---
+
 ## 2026-07-22 — TecnoFit TVs budget: restructuración completa (Fitness 2.0/Lista de espera/TVs/Admin) ✅
 **Source:** Claude Code — Macbook Pro
 

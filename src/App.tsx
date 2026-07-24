@@ -5,6 +5,7 @@ import TecnoFit from './pages/TecnoFit'
 import TecnoFitTVs from './pages/TecnoFitTVs'
 import Ronzio from './pages/Ronzio'
 import GinLane from './pages/GinLane'
+import SendaArqAds from './pages/SendaArqAds'
 import Home from './pages/Home'
 import Agent from './pages/Agent'
 import Monotributo from './pages/Monotributo'
@@ -60,6 +61,16 @@ export default function App() {
             whatLabel="Propuesta"
           >
             <GinLane />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/senda-arq-ads" element={
+          <BudgetTemplate
+            title="Senda Arquitectura — Ads"
+            timeline="Mensual · renovable"
+            stack="Meta Ads · Google Ads"
+            whatLabel="Propuesta mensual"
+          >
+            <SendaArqAds />
           </BudgetTemplate>
         } />
         <Route path="/agent" element={<Agent />} />
