@@ -122,7 +122,7 @@ export default function SendaArqAds() {
         <div className="flex flex-col gap-6 mb-6">
           <div>
             <span className="text-xs uppercase tracking-wide text-black/60">Setup inicial (única vez)</span>
-            <p className="font-thunder text-3xl md:text-5xl text-[var(--marco-accent)] mt-1">U$300 – U$500</p>
+            <p className="font-thunder text-3xl md:text-5xl text-[var(--marco-accent)] mt-1">U$500</p>
           </div>
           <div>
             <span className="text-xs uppercase tracking-wide text-black/60">Gestión mensual — Meta Ads (3 campañas)</span>
@@ -143,6 +143,13 @@ export default function SendaArqAds() {
           mensual de costo por conversación y qué obra generó más interés. Si se suma Google
           Search más adelante, se cotiza aparte (+U$200/mes) en vez de encarecer el arranque con
           ambas plataformas desde el día uno.
+        </p>
+        <p>
+          <strong>Compromiso mínimo de 6 meses.</strong> Con el volumen de consultas esperado para
+          un estudio de arquitectura (bajo, de ticket alto), los primeros 1-2 meses son de
+          aprendizaje del algoritmo y no alcanzan para medir bien indicadores como CAC (costo de
+          adquisición) o CPC — recién con 6 meses de datos se puede optimizar la pauta con
+          confianza en vez de estar reaccionando a ruido estadístico.
         </p>
       </ContentBox>
 
