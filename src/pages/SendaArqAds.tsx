@@ -57,8 +57,15 @@ export default function SendaArqAds() {
         <ul className="list-disc pl-5 space-y-2">
           <li>Alta de Business Manager, Página de Facebook y cuenta de anuncios para Senda Arquitectura</li>
           <li>Instalación de Meta Pixel + Conversions API en senda-arq.com para medir conversación real, no solo clic</li>
-          <li>3 campañas corriendo en simultáneo (distintas audiencias/creatividades en test) — mismo formato de Conversaciones por WhatsApp validado en TAG, adaptado al tono y portfolio de Senda</li>
-          <li>Creatividades con obra real: renders de Ambientar y fotos de proyectos entregados, no stock genérico</li>
+          <li>
+            3 campañas para los primeros 3–4 meses:
+            <ul className="list-[circle] pl-5 mt-2 space-y-1.5">
+              <li><strong>Awareness</strong> — alcance masivo en Buenos Aires, foco en diseño/arquitectura, objetivo de seguidores y visibilidad de marca</li>
+              <li><strong>Reformas / ticket bajo</strong> — landing page específica + formulario/WhatsApp, segmentada a quienes ya están haciendo obra hoy (reformas activas)</li>
+              <li><strong>Casa nueva</strong> — video UGC antes/después con los dueños contando el proceso, formato testimonio</li>
+            </ul>
+          </li>
+          <li>Creatividades: video UGC como pieza clave (antes/después + dueños hablando), sumado a renders de Ambientar y fotos reales de proyectos — no stock genérico</li>
           <li>Segmentación geográfica (zona de cobertura del estudio) + intereses de arquitectura, diseño y remodelación</li>
           <li>Reporte mensual: costo por conversación, alcance, qué obra generó más interés</li>
         </ul>
@@ -134,15 +141,16 @@ export default function SendaArqAds() {
           </div>
           <div>
             <span className="text-xs uppercase tracking-wide text-black/60">Presupuesto de pauta recomendado</span>
-            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">U$300 – U$500 / mes</p>
-            <p className="text-sm text-black/60 mt-1">Se paga directo a Meta y Google, no está incluido en la gestión.</p>
+            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">U$200 – U$300 / mes <span className="text-black/50 text-lg">para arrancar</span></p>
+            <p className="text-sm text-black/60 mt-1">Escala a U$500/mes según performance. Se paga directo a Meta y Google, no está incluido en la gestión.</p>
           </div>
         </div>
         <p>
-          La gestión mensual arranca por Meta — 3 campañas corriendo en simultáneo, con reporte
-          mensual de costo por conversación y qué obra generó más interés. Si se suma Google
-          Search más adelante, se cotiza aparte (+U$200/mes) en vez de encarecer el arranque con
-          ambas plataformas desde el día uno.
+          La gestión mensual arranca por Meta — mejor para captar el perfil pasivo de
+          diseño/arquitectura — durante los primeros 2–3 meses, con reporte mensual de costo por
+          conversación y qué obra generó más interés. Google Search captura intención activa
+          ("arquitectos en Pilar") y necesita menos optimización continua, por eso se suma después
+          en vez de encarecer el arranque con ambas plataformas desde el día uno (+U$200/mes).
         </p>
         <p>
           <strong>Compromiso mínimo de 6 meses.</strong> Con el volumen de consultas esperado para
@@ -151,11 +159,36 @@ export default function SendaArqAds() {
           adquisición) o CPC — recién con 6 meses de datos se puede optimizar la pauta con
           confianza en vez de estar reaccionando a ruido estadístico.
         </p>
+        <p>
+          <strong>Forma de pago:</strong> 70% al confirmar la propuesta, el resto de forma
+          progresiva.
+        </p>
+      </ContentBox>
+
+      <ContentBox title="Métricas, conversión y CRM">
+        <p>
+          Con ticket alto, el embudo es angosto por diseño: de <strong>2.000 interacciones</strong>,
+          unas <strong>200 escriben</strong>, <strong>20 quedan interesadas</strong> y{' '}
+          <strong>1 convierte</strong> (1–5%). Una sola conversión cubre la inversión publicitaria
+          del año — el ciclo de nurturing en este tipo de producto puede ser de <strong>1 a 2
+          años</strong>, así que el valor está en no perder ningún contacto en el camino, no en el
+          volumen de clics del mes.
+        </p>
+        <p>Herramientas de seguimiento incluidas en la gestión, sin costo adicional:</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li>Dashboard de fuente de leads (Meta, Google, WhatsApp, referidos)</li>
+          <li>Pipeline de estado de cada cliente: contactado / interesado / por cerrar / convertido</li>
+          <li>Datos de conversión enviados de vuelta a Meta para que el algoritmo optimice sobre audiencias que realmente convierten, no solo clics</li>
+        </ul>
+        <p className="text-sm text-black/60 pt-2">
+          En desarrollo: agente conversacional que reemplaza el formulario de contacto por preguntas
+          automáticas integradas al sistema, para calificar leads sin fricción.
+        </p>
       </ContentBox>
 
       <BoxedListSection
         title="Redes sociales — Add-on opcional"
-        subtitle="No forma parte de la gestión de pauta — se cotiza y factura aparte si el cliente lo suma."
+        subtitle="Recomendado antes de lanzar campañas: Instagram necesita algo de actividad orgánica de base. No forma parte de la gestión de pauta — se cotiza y factura aparte, U$750/mes con motor de IA."
         items={[
           'Calendario de contenido mensual (mismo pipeline ya construido en senda-website: tagging de imágenes + generación de calendario)',
           'Piezas de Instagram/Stories usando renders de Ambientar como contenido diferencial',
