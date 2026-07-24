@@ -160,8 +160,7 @@ export default function SendaArqAds() {
           confianza en vez de estar reaccionando a ruido estadístico.
         </p>
         <p>
-          <strong>Forma de pago:</strong> 70% al confirmar la propuesta, el resto de forma
-          progresiva.
+          <strong>Forma de pago:</strong> mensual, por adelantado — del 1 al 5 de cada mes.
         </p>
       </ContentBox>
 
