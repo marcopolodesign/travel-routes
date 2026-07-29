@@ -13,6 +13,8 @@ const NAV: NavItem[] = [
   { id: 'alcance', label: 'Alcance' },
   { id: 'recorrido', label: 'Recorrido' },
   { id: 'carga', label: 'Carga' },
+  { id: 'optimizacion', label: 'Optimización' },
+  { id: 'spec', label: 'Especificación' },
   { id: 'catalogo', label: 'Catálogo' },
   { id: 'entrega', label: 'Entrega' },
   { id: 'convivencia', label: 'Convivencia' },
@@ -107,7 +109,7 @@ export default function TecnoFitSprint1() {
         items={[
           'El equipo de TecnoFit puede subir el video de un ejercicio desde el administrador, el mismo día que lo graba y sin pedirle nada a nadie.',
           'Ese ejercicio queda disponible para las tres piezas a la vez: el coach lo usa en el administrador, el socio lo ve en la app y aparece en la pantalla del box. Un solo video, un solo formato, todas las pantallas.',
-          'Ese video llega optimizado a cada pantalla: liviano al celular, en alta a la TV, con su portada generada sola, y siempre rápido sin importar la conexión del gym.',
+          'El video se sube tal como salió del celular y el servidor lo optimiza solo: baja de peso, se le limpian los datos ocultos del archivo y se genera su portada. El gym no comprime, no exporta y no prepara nada.',
           'Queda decidida y documentada la arquitectura de video que va a sostener las 10 TVs del piso durante el resto del proyecto — con números medidos, no con una corazonada.',
         ]}
       />
@@ -123,7 +125,9 @@ export default function TecnoFitSprint1() {
             <ul className="space-y-3 text-black/80 text-sm">
               <li>Almacenamiento de video decidido, configurado y con permisos</li>
               <li>Carga de archivo desde el catálogo que ya existe, con progreso y reintento</li>
-              <li>Compresión automática y varias resoluciones por video</li>
+              <li>Optimización en el servidor: el video baja de peso solo, sin trabajo del gym</li>
+              <li>Limpieza de metadata del archivo, incluida la ubicación GPS</li>
+              <li>Varias resoluciones por video, una por tipo de pantalla</li>
               <li>Un formato único que se ve igual en la TV y en la app</li>
               <li>Portada generada sola, para cualquier video que se suba</li>
               <li>Búsqueda y filtros por músculo y equipamiento sobre el catálogo</li>
@@ -240,7 +244,7 @@ export default function TecnoFitSprint1() {
   B -->|No| R["Rechazo temprano<br/>con motivo claro"]
   B -->|Sí| C["PUT directo al bucket<br/>ruta original/"]
   C --> D["Alta del ejercicio<br/>estado: procesando"]
-  D --> E["Transcodificación<br/>1080p · 720p · 480p"]
+  D --> E["Normalización<br/>limpieza de metadata<br/>+ 1080p · 720p · 480p"]
   E --> F["Extracción de portada<br/>+ duración"]
   F --> G["Update de la fila<br/>estado: listo"]
   E -->|Falla| H["estado: error<br/>+ log del motivo"]
@@ -256,6 +260,125 @@ export default function TecnoFitSprint1() {
           ],
         }}
       />
+
+      <DualDiagram
+        id="optimizacion"
+        title="El video se optimiza solo, en el servidor"
+        subtitle="Nadie del gym tiene que comprimir, recortar ni exportar nada antes de subir. Se sube lo que salió del celular."
+        user={{
+          caption:
+            'Un video grabado con un celular moderno puede pesar 200 MB por 30 segundos. Si tuviéramos que pedirle al gym que lo comprima antes de subirlo, el sistema no se usaría: nadie va a abrir un editor para cargar un ejercicio. Así que el trabajo pesado lo hace el servidor. Se sube el archivo tal cual salió de la cámara y, del otro lado, sale liviano, parejo y listo para las pantallas.',
+          chart: `flowchart LR
+  A["Video del celular<br/>pesado, 4K, vertical<br/>con datos del dispositivo"] --> B["El servidor lo<br/>optimiza solo"]
+  B --> C["Mismo video,<br/>una fracción del peso"]
+  B --> D["Se le borran los datos<br/>ocultos del archivo"]
+  B --> E["Portada generada<br/>automáticamente"]
+  C --> F["Carga rápido en la TV<br/>y en el celular"]
+  D --> F
+  E --> F
+  classDef hi fill:#e66065,stroke:#c44a4f,color:#fff
+  classDef soft fill:#f5b5b8,stroke:#e66065,color:#000
+  class A,B hi
+  class F soft`,
+          points: [
+            'Cero trabajo extra para el gym. Quien carga no abre un editor, no elige calidad y no exporta nada: sube el archivo original y listo.',
+            'Los videos del celular vienen con datos escondidos adentro: ubicación GPS de dónde se grabó, modelo del teléfono, fecha y hora. Todo eso se borra en el procesamiento — no queda pegado a un archivo que después se sirve a las pantallas.',
+            'El ahorro no es cosmético: menos peso es menos costo de almacenamiento, menos consumo de datos del socio y menos tiempo hasta que el video arranca en la TV.',
+            'Que el gym no tenga que preparar nada es lo que hace que el catálogo crezca. Si cargar un ejercicio cuesta trabajo, no se carga.',
+          ],
+        }}
+        dev={{
+          caption:
+            'La normalización es un paso obligatorio del pipeline, no una optimización opcional. Toma el archivo original tal como se subió y produce una escalera de variantes homogéneas: mismo códec, mismo perfil de color, sin metadata, con el índice al principio del archivo. La entrada es impredecible — HEVC de iPhone, VP9 de Android, cualquier resolución y orientación — y la salida tiene que ser siempre la misma para que la TV y la app no tengan que negociar nada.',
+          chart: `flowchart TD
+  IN["Original tal como se subió<br/>HEVC · VP9 · H.264<br/>4K · vertical · con metadata"] --> N1["Limpieza de metadata<br/>map_metadata -1"]
+  N1 --> N2["Rotación aplicada<br/>y flag descartado"]
+  N2 --> N3["Escalado con lado mayor<br/>acotado, sin deformar"]
+  N3 --> N4["H.264 High · yuv420p<br/>CRF por variante<br/>audio descartado"]
+  N4 --> N5["faststart<br/>índice al principio"]
+  N5 --> V1["1080p · TV"]
+  N5 --> V2["720p · app en wifi"]
+  N5 --> V3["480p · app en datos"]
+  N5 --> P["Portada del segundo 1<br/>WebP · sin metadata"]
+  V1 --> DB[("Fila del ejercicio:<br/>variantes · duración<br/>dimensiones · peso final")]
+  V2 --> DB
+  V3 --> DB
+  P --> DB
+  classDef hi fill:#e66065,stroke:#c44a4f,color:#fff
+  classDef soft fill:#f5b5b8,stroke:#e66065,color:#000
+  class N1,N2,N3,N4,N5 hi
+  class V1,V2,V3,P soft`,
+          points: [
+            'Las funciones serverless de Supabase corren Deno y no tienen ffmpeg disponible: este paso no puede vivir ahí. O se resuelve con un worker propio con ffmpeg disparado por webhook del storage, o con un servicio de video que ya traiga la escalera incluida. Es exactamente el eje de la decisión del día 2.',
+            'El original nunca se pisa. Si mañana cambia el códec objetivo, hace falta otra resolución o aparece un bug en el escalado, se re-procesa desde la fuente sin pedirle al gym que vuelva a subir nada.',
+            'Descartar el audio no es sólo ahorro de peso: elimina toda una clase de problemas de compatibilidad de códec de audio, y las pantallas del piso reproducen en mute igual. Es una decisión de producto a confirmar con el gym, no un supuesto técnico.',
+            'faststart es el flag que decide si el video arranca al toque o después de bajar el archivo entero. Sin él, el objetivo de menos de dos segundos no se cumple por más CDN que haya.',
+            'Todo el paso es idempotente y las rutas de salida se derivan del ejercicio y la variante: re-procesar sobrescribe, no duplica.',
+          ],
+        }}
+      />
+
+      <TwoColumnSection title="Especificación de procesamiento" id="spec">
+        <p className="text-sm text-black/60">
+          Sección técnica, para el equipo de desarrollo. En la reunión se puede saltear.
+        </p>
+        <p>
+          Estos son los parámetros concretos con los que se implementa la normalización. Están acá y
+          no en un documento aparte porque son la parte del sprint que más fácil se implementa
+          distinto de como se acordó — y porque los números son los que después se verifican contra
+          los criterios de aceptación.
+        </p>
+        <div className="overflow-x-auto -mx-6 md:mx-0 px-6 md:px-0">
+          <table className="w-full text-sm border-collapse min-w-[520px]">
+            <thead>
+              <tr className="border-b-2 border-[var(--marco-accent)]">
+                <th className="text-left font-thunder uppercase text-[var(--marco-accent)] py-3 pr-4 w-1/3">Parámetro</th>
+                <th className="text-left font-thunder uppercase text-[var(--marco-accent)] py-3">Definición</th>
+              </tr>
+            </thead>
+            <tbody className="text-black/80">
+              {[
+                ['Formatos de entrada', '.mp4 · .mov · .m4v · .webm — incluye HEVC de iPhone y VP9 de Android'],
+                ['Límites de entrada', '500 MB y 2 minutos por archivo. Se validan antes de emitir la URL de subida'],
+                ['Metadata', 'Se elimina toda: GPS, modelo de dispositivo, fecha de captura, autor'],
+                ['Orientación', 'La rotación se aplica al fotograma y el flag se descarta, para que ninguna pantalla la reinterprete'],
+                ['Códec de salida', 'H.264 High, espacio de color yuv420p — el denominador común de la TV, iOS y Android'],
+                ['Audio', 'Se descarta, salvo pedido explícito del gym'],
+                ['Variantes', '1080p para la TV · 720p para la app en wifi · 480p para la app en datos'],
+                ['Escalado', 'Lado mayor acotado por variante, relación de aspecto intacta, sin recortes ni barras'],
+                ['Calidad', 'CRF 23 / 24 / 26 según variante — calidad constante, no bitrate fijo'],
+                ['Arranque', 'Índice del archivo movido al principio, para que empiece a reproducirse sin descargar todo'],
+                ['Keyframes', 'Cada 2 segundos, para que la TV pueda saltar de ejercicio sin esperar'],
+                ['Portada', 'Fotograma del segundo 1 — no el 0, que suele salir negro o movido — a 720p, sin metadata'],
+                ['Se persiste', 'Ruta por variante, duración, dimensiones y peso final de cada una'],
+                ['Original', 'Se conserva intacto en su propia ruta, para re-procesar sin volver a pedirle nada al gym'],
+                ['Idempotencia', 'Las rutas de salida se derivan del ejercicio y la variante: re-procesar sobrescribe'],
+              ].map((row, i) => (
+                <tr key={i} className="border-b border-[var(--marco-border)]">
+                  <td className="py-3 pr-4 font-medium align-top">{row[0]}</td>
+                  <td className="py-3">{row[1]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="border border-[var(--marco-border)] rounded-lg p-6 bg-[var(--marco-accent-light)]/20 mt-2">
+          <h4 className="font-thunder text-lg uppercase text-[var(--marco-accent)] mb-3">
+            Objetivo de peso
+          </h4>
+          <p className="text-black/80 text-sm">
+            Un clip de 30 segundos grabado en 4K con un celular moderno entra pesando del orden de
+            150 a 250 MB. La salida objetivo es <strong>del orden de 6 a 12 MB en 1080p</strong> y{' '}
+            <strong>de 1,5 a 3 MB en 480p</strong>, sin pérdida visible en una pantalla de gimnasio.
+            Es una reducción de aproximadamente 20 a 40 veces.
+          </p>
+          <p className="text-black/60 text-sm mt-3">
+            Estos rangos son la hipótesis de partida y se confirman en los días 1–2 contra archivos
+            reales del gym, grabados con los celulares que se van a usar de verdad. Si los números
+            no dan, el que se ajusta es el CRF, no el criterio de aceptación.
+          </p>
+        </div>
+      </TwoColumnSection>
 
       <DualDiagram
         id="catalogo"
@@ -409,8 +532,16 @@ export default function TecnoFitSprint1() {
       <TwoColumnSection title="La decisión del sprint" id="decision">
         <p>
           Hay una sola decisión de arquitectura importante en estas dos semanas: <strong>dónde
-          vive el video</strong>. No se toma por preferencia — se toma midiendo las dos opciones
-          con un video real del gym, servido a una TV real, sobre el wifi real del gimnasio.
+          vive el video y quién lo procesa</strong>. No se toma por preferencia — se toma midiendo
+          las dos opciones con un video real del gym, servido a una TV real, sobre el wifi real del
+          gimnasio.
+        </p>
+        <p className="text-sm text-black/60">
+          El requisito de optimización automática es lo que le da peso a esta decisión. Las
+          funciones serverless que ya usa el proyecto no pueden procesar video, así que la opción
+          de storage integrado implica además construir y mantener un worker propio, mientras que
+          un servicio de video dedicado trae la escalera de variantes incluida. Eso es lo que se
+          está comparando de verdad, no el precio por gigabyte.
         </p>
         <div className="overflow-x-auto -mx-6 md:mx-0 px-6 md:px-0">
           <table className="w-full text-sm border-collapse min-w-[520px]">
@@ -426,7 +557,8 @@ export default function TecnoFitSprint1() {
                 ['Puesta en marcha', 'Inmediata — ya está en el stack', 'Requiere cuenta, dominio y configuración'],
                 ['Costo mensual', 'Predecible, incluido en el plan actual', 'Variable según tráfico y minutos servidos'],
                 ['10 TVs en simultáneo', 'A verificar con la medición del sprint', 'Diseñado exactamente para esto'],
-                ['Transcodificación', 'A resolver nosotros', 'Incluida en el servicio'],
+                ['Optimización del video', 'Worker propio con ffmpeg, a construir y mantener', 'Incluida — es el corazón del servicio'],
+                ['Control sobre la salida', 'Total: cada parámetro lo definimos nosotros', 'Acotado a lo que exponga el proveedor'],
                 ['Dependencias externas', 'Ninguna nueva', 'Un proveedor más en la cadena'],
               ].map((row, i) => (
                 <tr key={i} className="border-b border-[var(--marco-border)]">
@@ -458,6 +590,7 @@ export default function TecnoFitSprint1() {
               label: 'Días 1–2',
               items: [
                 'Kickoff técnico y relevamiento del contenido real del gym',
+                'Calibración de la optimización contra videos crudos de los celulares del gym',
                 'Medición de las dos opciones de hosting con video y red reales',
                 'Decisión de arquitectura tomada y documentada',
               ],
@@ -473,8 +606,9 @@ export default function TecnoFitSprint1() {
             {
               label: 'Días 6–8',
               items: [
-                'Compresión automática y variantes por resolución',
+                'Optimización en el servidor: limpieza de metadata y variantes por resolución',
                 'Portada y duración generadas solas, para todo video',
+                'Objetivo de peso verificado contra los archivos reales del gym',
                 'Búsqueda y filtros por músculo y equipamiento en el catálogo',
               ],
             },
@@ -497,6 +631,7 @@ export default function TecnoFitSprint1() {
         items={[
           'Día 1 — Una persona referente del gym para el kickoff y para responder dudas de contenido durante las dos semanas.',
           'Día 1 — Acceso al wifi del gym y a una TV del piso para poder medir en condiciones reales, no simuladas.',
+          'Día 1 — Dos o tres videos crudos, tal como salen del celular con el que se va a grabar, sin comprimir ni exportar. Son los que calibran la optimización: si se mandan ya procesados, los números del sprint no sirven.',
           'Día 3 — El listado de ejercicios que el gym quiere tener cargados primero, en orden de prioridad. No hace falta que estén grabados todavía.',
           'Día 6 — Un primer lote de videos grabados, aunque sean 10. Con eso alcanza para validar el circuito completo con contenido de verdad.',
           'Día 9 — Una hora del equipo que va a cargar contenido, para la sesión de carga asistida.',
@@ -510,6 +645,8 @@ export default function TecnoFitSprint1() {
         items={[
           'Una persona del gym, sin ayuda y sin instrucciones nuestras, sube un ejercicio nuevo con video y lo ve aparecer en el catálogo.',
           'Ese mismo ejercicio se reproduce correctamente en una TV del piso y en la app de un socio.',
+          'Se sube un video crudo de celular sin tocarlo y sale optimizado dentro del rango de peso acordado, sin pérdida visible en la pantalla del gimnasio.',
+          'El archivo servido ya no contiene la metadata del original: se verifica que la ubicación GPS y los datos del dispositivo no estén.',
           'El video empieza a verse en menos de dos segundos, medido sobre el wifi del gym.',
           'Se sube un archivo pesado y otro con formato inválido: el sistema los maneja con un mensaje claro, sin quedar colgado.',
           'La decisión de arquitectura de video está escrita, con los números que la respaldan y su costo mensual estimado.',
