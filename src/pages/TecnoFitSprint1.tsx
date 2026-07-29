@@ -14,6 +14,7 @@ const NAV: NavItem[] = [
   { id: 'recorrido', label: 'Recorrido' },
   { id: 'carga', label: 'Carga' },
   { id: 'optimizacion', label: 'Optimización' },
+  { id: 'reencuadre', label: 'Reencuadre' },
   { id: 'spec', label: 'Especificación' },
   { id: 'catalogo', label: 'Catálogo' },
   { id: 'entrega', label: 'Entrega' },
@@ -127,6 +128,7 @@ export default function TecnoFitSprint1() {
               <li>Carga de archivo desde el catálogo que ya existe, con progreso y reintento</li>
               <li>Optimización en el servidor: el video baja de peso solo, sin trabajo del gym</li>
               <li>Limpieza de metadata del archivo, incluida la ubicación GPS</li>
+              <li>Reencuadre del video en el sistema, al subirlo y al editarlo después</li>
               <li>Varias resoluciones por video, una por tipo de pantalla</li>
               <li>Un formato único que se ve igual en la TV y en la app</li>
               <li>Portada generada sola, para cualquier video que se suba</li>
@@ -142,8 +144,9 @@ export default function TecnoFitSprint1() {
               <li>Las modalidades AMRAP y EMOM — Sprint 2</li>
               <li>El motor de cola y el avance por box — Sprint 3</li>
               <li>El despliegue sobre las 10 TVs físicas — Sprint 4</li>
+              <li>Recortar el video en el tiempo — sacarle el principio o el final. Es hermano del reencuadre pero es otra herramienta; queda como candidato a Sprint 2 salvo que el gym lo pida ahora</li>
               <li>El panel de métricas de negocio y churn — posterior</li>
-              <li>Grabar y editar los videos: eso lo hace el gym, no nosotros</li>
+              <li>Grabar los videos: eso lo hace el gym, no nosotros</li>
             </ul>
           </div>
         </div>
@@ -244,7 +247,8 @@ export default function TecnoFitSprint1() {
   B -->|No| R["Rechazo temprano<br/>con motivo claro"]
   B -->|Sí| C["PUT directo al bucket<br/>ruta original/"]
   C --> D["Alta del ejercicio<br/>estado: procesando"]
-  D --> E["Normalización<br/>limpieza de metadata<br/>+ 1080p · 720p · 480p"]
+  D --> P["Proxy rápido para<br/>previsualizar y encuadrar"]
+  P --> E["Normalización + encuadre<br/>limpieza de metadata<br/>+ 1080p · 720p · 480p"]
   E --> F["Extracción de portada<br/>+ duración"]
   F --> G["Update de la fila<br/>estado: listo"]
   E -->|Falla| H["estado: error<br/>+ log del motivo"]
@@ -318,6 +322,58 @@ export default function TecnoFitSprint1() {
         }}
       />
 
+      <DualDiagram
+        id="reencuadre"
+        title="Reencuadre desde el sistema"
+        subtitle="El video se recorta y se centra en el mismo administrador, al subirlo o después — sin editor externo y sin volver a subir el archivo."
+        user={{
+          caption:
+            'Un video grabado con el celular casi nunca sale con el encuadre que necesita una pantalla de gimnasio: viene vertical, con demasiado techo, o con la persona corrida a un costado. Al subir el ejercicio aparece una vista previa con un marco que se arrastra y se agranda hasta dejar el movimiento centrado. Y si más adelante el encuadre no convence, se entra al ejercicio, se corre el marco y listo — no hay que volver a subir el video ni buscar el archivo original.',
+          chart: `flowchart LR
+  A["Subo el video<br/>tal como salió"] --> B["Aparece la vista previa<br/>con un marco encima"]
+  B --> C["Arrastro y agrando<br/>hasta centrar el movimiento"]
+  C --> D["Confirmo · el sistema<br/>genera el video final"]
+  D --> E["Se ve encuadrado en la TV<br/>y en el celular"]
+  E --> F["¿No convence?<br/>Se corre el marco de nuevo,<br/>sin volver a subir nada"]
+  F --> C
+  classDef hi fill:#e66065,stroke:#c44a4f,color:#fff
+  classDef soft fill:#f5b5b8,stroke:#e66065,color:#000
+  class B,C hi
+  class E,F soft`,
+          points: [
+            'Se puede corregir cuantas veces haga falta, meses después de cargado el ejercicio. El video original queda guardado y siempre se puede volver a él.',
+            'Si nadie toca el marco, el sistema propone un encuadre por defecto y el ejercicio queda igual de usable. Reencuadrar mejora el resultado, no es un requisito para cargar.',
+            'Mientras se regenera el video con el encuadre nuevo, las pantallas siguen mostrando la versión anterior. Reencuadrar un ejercicio en el medio de una clase no deja un box en negro.',
+            'Es lo que evita tener que volver a grabar por un problema de cámara. Un buen movimiento mal encuadrado se arregla en el sistema, no en el gimnasio.',
+          ],
+        }}
+        dev={{
+          caption:
+            'El encuadre se guarda como dato en la fila del ejercicio —un rectángulo normalizado más el aspecto objetivo— y nunca se hornea en el archivo subido. El original queda intacto y las variantes se re-renderizan a partir de él cada vez que el encuadre cambia. Eso hace que editar el encuadre sea una operación barata y reversible, en vez de una re-subida.',
+          chart: `flowchart TD
+  UP["Original subido<br/>intacto, nunca se pisa"] --> PX["Proxy rápido 480p H.264<br/>para poder previsualizar"]
+  PX --> UI["Editor de encuadre<br/>sobre el proxy"]
+  UI --> CROP[("crop en la fila:<br/>x · y · w · h normalizados<br/>+ aspecto objetivo")]
+  DEF["Encuadre por defecto<br/>si nadie toca nada"] --> CROP
+  CROP --> REN["Render de variantes<br/>desde el ORIGINAL<br/>crop y luego scale"]
+  UP --> REN
+  REN --> OUT["1080p · 720p · 480p<br/>+ portada, ya encuadradas"]
+  EDIT["Edición posterior<br/>del encuadre"] --> CROP
+  OUT --> SWAP["Swap atómico:<br/>las pantallas siguen sirviendo<br/>lo viejo hasta que lo nuevo está"]
+  classDef hi fill:#e66065,stroke:#c44a4f,color:#fff
+  classDef soft fill:#f5b5b8,stroke:#e66065,color:#000
+  class CROP,REN hi
+  class OUT,SWAP soft`,
+          points: [
+            'El crop se persiste normalizado entre 0 y 1, no en píxeles. Así sobrevive a un cambio de resolución objetivo y se aplica igual a las tres variantes de la escalera.',
+            'El recorte se aplica antes del escalado y siempre sobre el original, nunca sobre una variante ya generada — recortar algo ya comprimido acumula pérdida de calidad sin necesidad.',
+            'La previsualización no puede correr contra el archivo crudo: un .mov HEVC de iPhone no se reproduce de forma confiable en un navegador. Por eso el pipeline genera primero un proxy liviano en H.264, que es contra lo que dibuja el editor de encuadre.',
+            'Editar el encuadre vuelve el ejercicio al estado "procesando" pero mantiene publicadas las variantes vigentes hasta que las nuevas terminan. El reemplazo es atómico: no existe una ventana en la que la TV pida un archivo que se está escribiendo.',
+            'Al no ser destructivo, el encuadre por defecto puede cambiar más adelante y re-aplicarse en lote a todo el catálogo sin pedirle nada al gym.',
+          ],
+        }}
+      />
+
       <TwoColumnSection title="Especificación de procesamiento" id="spec">
         <p className="text-sm text-black/60">
           Sección técnica, para el equipo de desarrollo. En la reunión se puede saltear.
@@ -345,7 +401,13 @@ export default function TecnoFitSprint1() {
                 ['Códec de salida', 'H.264 High, espacio de color yuv420p — el denominador común de la TV, iOS y Android'],
                 ['Audio', 'Se descarta, salvo pedido explícito del gym'],
                 ['Variantes', '1080p para la TV · 720p para la app en wifi · 480p para la app en datos'],
-                ['Escalado', 'Lado mayor acotado por variante, relación de aspecto intacta, sin recortes ni barras'],
+                ['Proxy de previsualización', '480p H.264, generado apenas termina la subida — es contra lo que dibuja el editor de encuadre, porque el original crudo no se reproduce de forma confiable en un navegador'],
+                ['Encuadre', 'Rectángulo normalizado 0–1 más aspecto objetivo, persistido en la fila del ejercicio. Nunca se hornea en el archivo subido'],
+                ['Encuadre por defecto', 'Centrado al aspecto objetivo. Si nadie toca el marco, el ejercicio queda igualmente usable'],
+                ['Orden de operaciones', 'Recorte y después escalado, siempre desde el original — nunca sobre una variante ya comprimida'],
+                ['Edición del encuadre', 'Re-renderiza las variantes desde el original, sin re-subida. Reversible e ilimitada'],
+                ['Publicación', 'Swap atómico: las variantes vigentes se siguen sirviendo hasta que las nuevas están completas'],
+                ['Escalado', 'Lado mayor acotado por variante, relación de aspecto intacta, sin barras'],
                 ['Calidad', 'CRF 23 / 24 / 26 según variante — calidad constante, no bitrate fijo'],
                 ['Arranque', 'Índice del archivo movido al principio, para que empiece a reproducirse sin descargar todo'],
                 ['Keyframes', 'Cada 2 segundos, para que la TV pueda saltar de ejercicio sin esperar'],
@@ -607,15 +669,17 @@ export default function TecnoFitSprint1() {
               label: 'Días 6–8',
               items: [
                 'Optimización en el servidor: limpieza de metadata y variantes por resolución',
+                'Proxy de previsualización y editor de encuadre en el admin',
                 'Portada y duración generadas solas, para todo video',
                 'Objetivo de peso verificado contra los archivos reales del gym',
-                'Búsqueda y filtros por músculo y equipamiento en el catálogo',
+                'Búsqueda y filtros en el catálogo',
               ],
             },
             {
               label: 'Días 9–10',
               items: [
                 'Reproducción verificada en TV real y en la app',
+                'Reencuadre de un ejercicio ya cargado, verificado sin re-subida',
                 'Sesión de carga asistida con el equipo del gym',
                 'Entrega, medición final y arranque del Sprint 2',
               ],
@@ -646,6 +710,8 @@ export default function TecnoFitSprint1() {
           'Una persona del gym, sin ayuda y sin instrucciones nuestras, sube un ejercicio nuevo con video y lo ve aparecer en el catálogo.',
           'Ese mismo ejercicio se reproduce correctamente en una TV del piso y en la app de un socio.',
           'Se sube un video crudo de celular sin tocarlo y sale optimizado dentro del rango de peso acordado, sin pérdida visible en la pantalla del gimnasio.',
+          'Se reencuadra un ejercicio ya cargado desde el administrador, sin volver a subir el archivo, y el resultado se ve encuadrado en la TV y en la app.',
+          'Durante ese re-proceso, la pantalla del box nunca queda en negro: sigue mostrando la versión anterior hasta que la nueva está publicada.',
           'El archivo servido ya no contiene la metadata del original: se verifica que la ubicación GPS y los datos del dispositivo no estén.',
           'El video empieza a verse en menos de dos segundos, medido sobre el wifi del gym.',
           'Se sube un archivo pesado y otro con formato inválido: el sistema los maneja con un mensaje claro, sin quedar colgado.',
