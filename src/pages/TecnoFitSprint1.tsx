@@ -65,38 +65,38 @@ export default function TecnoFitSprint1() {
 
       <ContentBox title="Dónde estamos hoy" id="hoy">
         <p>
-          Antes de contar qué se construye, conviene ser honestos sobre el punto de partida —
-          porque define por qué este sprint va primero y no tercero.
+          TecnoFit no arranca de cero. En el último año se construyeron las piezas grandes, y hoy
+          las tres están funcionando de verdad, con socios reales usándolas todos los días.
         </p>
         <ul className="list-disc pl-5 space-y-2">
           <li>
-            <strong>El catálogo de ejercicios ya existe en el administrador, pero está casi vacío
-            y no acepta videos.</strong> Se puede dar de alta un ejercicio con su nombre, músculo,
-            equipamiento y dificultad — eso ya funciona. Lo único que ofrece para el video es un
-            campo donde pegar un link de YouTube o Vimeo. <strong>No hay carga de archivos en
-            ninguna parte del administrador</strong>, y el único depósito de archivos que existe
-            hoy es el de las fotos de perfil.
+            <strong>La app está en la calle.</strong> Publicada en el App Store y aprobada por
+            Apple. El socio se loguea, ve su rutina, entrena con ella, se anota en la fila y
+            confirma su turno desde el teléfono.
           </li>
           <li>
-            <strong>Y ese link de YouTube tiene un problema real y verificado:</strong> la TV del box
-            sabe mostrarlo, pero <strong>la app del socio no</strong>. La app usa un reproductor de
-            video nativo que sólo abre archivos de video directos, no páginas de YouTube. Es decir
-            que un ejercicio cargado como el admin sugiere hoy se ve en la pantalla del gimnasio y
-            queda en blanco en el celular. Además, la portada automática sólo se genera para
-            YouTube: un video de Vimeo o un archivo propio queda sin miniatura.
+            <strong>El administrador está operativo.</strong> Es desde donde el gym gestiona socios,
+            rutinas, sedes, la lista de espera y las pantallas. No es un prototipo: es la
+            herramienta con la que se trabaja.
           </li>
           <li>
-            <strong>Las rutinas reales todavía viven en el sistema viejo.</strong> Los socios entrenan
-            con las rutinas que salen de CENTRAL. La app sabe leer de las dos fuentes y por eso no se
-            entera, pero <strong>la TV sólo sabe leer de la plataforma nueva</strong> — sin contenido
-            propio cargado, no tiene qué mostrar.
+            <strong>El piso ya está conectado.</strong> El motor de lista de espera, las líneas, los
+            boxes y el avance automático están probados en producción, y las pantallas saben mostrar
+            en vivo qué se está haciendo en cada box.
           </li>
         </ul>
+        <p className="pt-2">
+          <strong>Lo que falta no es una pieza más: es el hilo que las une.</strong> Hoy cada parte
+          resuelve bien lo suyo, pero el contenido —los ejercicios, con su video, su nombre y su
+          equipamiento— todavía vive afuera. Las rutinas reales siguen saliendo del sistema viejo,
+          el catálogo propio está casi vacío, y no hay ninguna forma de que el gym cargue un
+          ejercicio nuevo sin pedírselo a un desarrollador.
+        </p>
         <p className="text-sm text-black/60 pt-2">
-          Dicho de otro modo: la parte más difícil del proyecto —el motor de cola, las TVs en vivo,
-          el avance automático por box— ya está probada en producción, y el catálogo ya tiene dónde
-          vivir. Lo que falta es el video: dónde se guarda, cómo se sube y en qué formato, para que
-          se vea igual en la TV y en el celular. Ese es el Sprint 1.
+          Ese contenido es exactamente lo que comparten las tres piezas: es lo que el coach arma en
+          el administrador, lo que el socio ve en la app y lo que aparece en la pantalla del box.
+          Sin él, cada parte sigue funcionando por separado. Con él, empiezan a ser un solo
+          producto. Por eso el Sprint 1 va primero — y por eso es de contenido, no de pantallas.
         </p>
       </ContentBox>
 
@@ -105,8 +105,8 @@ export default function TecnoFitSprint1() {
         title="Qué resuelve este sprint"
         subtitle="Tres resultados concretos, verificables el último día."
         items={[
-          'El equipo de TecnoFit puede subir el archivo de video de un ejercicio desde el administrador, sin pegar links y sin pedirle nada a nadie.',
-          'Un mismo ejercicio se ve igual en la TV del box y en el celular del socio — se termina la incompatibilidad que hoy hace que un video de YouTube quede en blanco en la app.',
+          'El equipo de TecnoFit puede subir el video de un ejercicio desde el administrador, el mismo día que lo graba y sin pedirle nada a nadie.',
+          'Ese ejercicio queda disponible para las tres piezas a la vez: el coach lo usa en el administrador, el socio lo ve en la app y aparece en la pantalla del box. Un solo video, un solo formato, todas las pantallas.',
           'Ese video llega optimizado a cada pantalla: liviano al celular, en alta a la TV, con su portada generada sola, y siempre rápido sin importar la conexión del gym.',
           'Queda decidida y documentada la arquitectura de video que va a sostener las 10 TVs del piso durante el resto del proyecto — con números medidos, no con una corazonada.',
         ]}
@@ -125,7 +125,7 @@ export default function TecnoFitSprint1() {
               <li>Carga de archivo desde el catálogo que ya existe, con progreso y reintento</li>
               <li>Compresión automática y varias resoluciones por video</li>
               <li>Un formato único que se ve igual en la TV y en la app</li>
-              <li>Portada generada sola para todo video, no sólo para YouTube</li>
+              <li>Portada generada sola, para cualquier video que se suba</li>
               <li>Búsqueda y filtros por músculo y equipamiento sobre el catálogo</li>
               <li>Reproducción verificada en la TV real y en la app real</li>
               <li>Carga asistida del primer lote de ejercicios del gym</li>
@@ -534,7 +534,7 @@ export default function TecnoFitSprint1() {
             },
             {
               r: 'Los videos vienen en formatos y calidades dispares',
-              m: 'Es lo esperable cuando se graba con celulares distintos, y ya hay una versión de este problema en producción: los links de YouTube que el admin sugiere hoy funcionan en la TV y no en la app. Por eso la normalización es automática y del lado del sistema, y la salida es siempre un único formato que las dos pantallas saben reproducir. Quien carga no tiene que saber nada de codecs ni resoluciones.',
+              m: 'Es lo esperable cuando se graba con celulares distintos, y ya hay una versión de este problema hoy: según cómo esté cargado, un mismo video puede verse bien en la pantalla del box y no verse en el celular. Por eso la normalización es automática y del lado del sistema, y la salida es siempre un único formato que todas las pantallas saben reproducir. Quien carga no tiene que saber nada de codecs ni resoluciones.',
             },
           ].map((item, i) => (
             <div key={i} className="border-l-2 border-[var(--marco-accent-light)] pl-5">
