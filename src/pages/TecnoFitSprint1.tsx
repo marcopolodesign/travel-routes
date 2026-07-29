@@ -129,13 +129,13 @@ export default function TecnoFitSprint1() {
               <li>Optimización en el servidor: el video baja de peso solo, sin trabajo del gym</li>
               <li>Limpieza de metadata del archivo, incluida la ubicación GPS</li>
               <li>Reencuadre del video en el sistema, al subirlo y al editarlo después</li>
-              <li>Varias resoluciones por video, una por tipo de pantalla</li>
+              <li>Dos variantes por video: una para la TV y otra para la app, cada una con su encuadre</li>
               <li>Un formato único que se ve igual en la TV y en la app</li>
               <li>Portada generada sola, para cualquier video que se suba</li>
               <li>Búsqueda y filtros por músculo y equipamiento sobre el catálogo</li>
               <li>Reproducción verificada en la TV real y en la app real</li>
-              <li>Imagen de respaldo y manejo de error en la pantalla, para que una casilla nunca quede negra</li>
-              <li>Carga diferida de las casillas que todavía no entraron en turno</li>
+              <li>Imagen de respaldo y manejo de error, para que una pantalla nunca quede negra</li>
+              <li>Precarga del ejercicio siguiente durante el OFF, para que el ON arranque sin espera</li>
               <li>Carga asistida del primer lote de ejercicios del gym</li>
             </ul>
           </div>
@@ -199,7 +199,7 @@ export default function TecnoFitSprint1() {
           chart: `flowchart LR
   A["Admin<br/>selector de archivo"] -->|"URL de subida firmada"| B["Object storage<br/>bucket de videos"]
   B --> C["Función de<br/>procesamiento"]
-  C --> D["Variantes 1080p · 720p · 480p<br/>+ imagen de portada"]
+  C --> D["Dos variantes encuadradas<br/>TV horizontal + app<br/>+ imagen de portada"]
   D --> E[("Tabla exercises<br/>video_url · poster_url<br/>variantes · estado")]
   E --> F["App del socio"]
   E --> G["Pantalla de TV"]
@@ -250,7 +250,7 @@ export default function TecnoFitSprint1() {
   B -->|Sí| C["PUT directo al bucket<br/>ruta original/"]
   C --> D["Alta del ejercicio<br/>estado: procesando"]
   D --> P["Proxy rápido para<br/>previsualizar y encuadrar"]
-  P --> E["Normalización + encuadre<br/>limpieza de metadata<br/>+ 1080p · 720p · 480p"]
+  P --> E["Normalización + encuadre<br/>limpieza de metadata<br/>+ variante TV y variante app"]
   E --> F["Extracción de portada<br/>+ duración"]
   F --> G["Update de la fila<br/>estado: listo"]
   E -->|Falla| H["estado: error<br/>+ log del motivo"]
@@ -302,9 +302,8 @@ export default function TecnoFitSprint1() {
   N2 --> N3["Escalado con lado mayor<br/>acotado, sin deformar"]
   N3 --> N4["H.264 High · yuv420p<br/>CRF por variante<br/>audio descartado"]
   N4 --> N5["faststart<br/>índice al principio"]
-  N5 --> V1["1080p · TV"]
-  N5 --> V2["720p · app en wifi"]
-  N5 --> V3["480p · app en datos"]
+  N5 --> V1["Variante TV<br/>encuadre horizontal"]
+  N5 --> V2["Variante app<br/>su propio encuadre"]
   N5 --> P["Portada del segundo 1<br/>WebP · sin metadata"]
   V1 --> DB[("Fila del ejercicio:<br/>variantes · duración<br/>dimensiones · peso final")]
   V2 --> DB
@@ -313,7 +312,7 @@ export default function TecnoFitSprint1() {
   classDef hi fill:#e66065,stroke:#c44a4f,color:#fff
   classDef soft fill:#f5b5b8,stroke:#e66065,color:#000
   class N1,N2,N3,N4,N5 hi
-  class V1,V2,V3,P soft`,
+  class V1,V2,P soft`,
           points: [
             'Las funciones serverless de Supabase corren Deno y no tienen ffmpeg disponible: este paso no puede vivir ahí. O se resuelve con un worker propio con ffmpeg disparado por webhook del storage, o con un servicio de video que ya traiga la escalera incluida. Es exactamente el eje de la decisión del día 2.',
             'El original nunca se pisa. Si mañana cambia el códec objetivo, hace falta otra resolución o aparece un bug en el escalado, se re-procesa desde la fuente sin pedirle al gym que vuelva a subir nada.',
@@ -359,7 +358,7 @@ export default function TecnoFitSprint1() {
   DEF["Encuadre por defecto<br/>si nadie toca nada"] --> CROP
   CROP --> REN["Render de variantes<br/>desde el ORIGINAL<br/>crop y luego scale"]
   UP --> REN
-  REN --> OUT["1080p · 720p · 480p<br/>+ portada, ya encuadradas"]
+  REN --> OUT["Variante TV + variante app<br/>+ portada, ya encuadradas"]
   EDIT["Edición posterior<br/>del encuadre"] --> CROP
   OUT --> SWAP["Swap atómico:<br/>las pantallas siguen sirviendo<br/>lo viejo hasta que lo nuevo está"]
   classDef hi fill:#e66065,stroke:#c44a4f,color:#fff
@@ -402,10 +401,11 @@ export default function TecnoFitSprint1() {
                 ['Orientación', 'La rotación se aplica al fotograma y el flag se descarta, para que ninguna pantalla la reinterprete'],
                 ['Códec de salida', 'H.264 Main profile, Level 4.0, espacio de color yuv420p — no High. Es exactamente el perfil de la videoteca que hoy funciona en las pantallas del gym, verificado sobre los archivos reales; High es más eficiente pero no está probado en ese hardware'],
                 ['Audio', 'Se descarta. No es una decisión nueva: los videos actuales del gym ya vienen sin pista de audio'],
-                ['Variantes', '1080p para la TV · 720p para la app en wifi · 480p para la app en datos'],
+                ['Variantes', 'Dos por ejercicio, no más: una para la TV con encuadre horizontal, otra para la app con su propio encuadre. El contenido son loops de segundos y pesa poco, así que una escalera de tres resoluciones agrega archivos sin agregar beneficio'],
+                ['Encuadres', 'Dos, independientes entre sí: TV y app. Cada uno guarda su propio rectángulo y se puede ajustar por separado sin tocar el otro'],
                 ['Proxy de previsualización', '480p H.264, generado apenas termina la subida — es contra lo que dibuja el editor de encuadre, porque el original crudo no se reproduce de forma confiable en un navegador'],
-                ['Encuadre', 'Rectángulo normalizado 0–1 más aspecto objetivo, persistido en la fila del ejercicio. Nunca se hornea en el archivo subido'],
-                ['Encuadre por defecto', 'Centrado al aspecto objetivo. Si nadie toca el marco, el ejercicio queda igualmente usable'],
+                ['Encuadre', 'Rectángulo normalizado 0–1 más aspecto objetivo, uno por destino, persistido en la fila del ejercicio. Nunca se hornea en el archivo subido'],
+                ['Encuadre por defecto', 'Centrado al aspecto de cada destino — horizontal para la TV. Si nadie toca el marco, el ejercicio queda igualmente usable'],
                 ['Orden de operaciones', 'Recorte y después escalado, siempre desde el original — nunca sobre una variante ya comprimida'],
                 ['Edición del encuadre', 'Re-renderiza las variantes desde el original, sin re-subida. Reversible e ilimitada'],
                 ['Publicación', 'Swap atómico: las variantes vigentes se siguen sirviendo hasta que las nuevas están completas'],
@@ -440,9 +440,9 @@ export default function TecnoFitSprint1() {
           <p className="text-black/80 text-sm mt-3">
             La salida nueva tiene que quedar en ese orden de magnitud. Un clip grabado con un celular
             moderno entra pesando del orden de 150 a 250 MB por 30 segundos; para un loop de ejercicio
-            de 6 segundos la salida objetivo es <strong>de 1 a 2 MB en 1080p</strong> y{' '}
-            <strong>por debajo de 500 KB en 480p</strong>, sin pérdida visible en una pantalla de
-            gimnasio.
+            de 6 segundos la salida objetivo es <strong>de 1 a 2 MB en la variante de TV</strong> y{' '}
+            <strong>por debajo de 800 KB en la variante de app</strong>, sin pérdida visible en una
+            pantalla de gimnasio.
           </p>
           <p className="text-black/60 text-sm mt-3">
             Estos rangos se recalibran en los días 1–2 contra los archivos reales del gym, grabados
@@ -534,10 +534,10 @@ export default function TecnoFitSprint1() {
           caption:
             'Cada consumidor pide la variante que le corresponde y la sirve por CDN. Las URLs firmadas se emiten con una vigencia que cubre la duración de una clase, y la pantalla de TV precarga el ejercicio siguiente mientras reproduce el actual, para que el cambio de box no tenga latencia visible.',
           chart: `flowchart LR
-  E[("exercises<br/>variantes")] --> S["Emisión de URL firmada<br/>por variante"]
+  E[("exercises<br/>variante TV · variante app")] --> S["Emisión de URL firmada<br/>por variante"]
   S --> CDN["CDN · caché de borde"]
-  CDN --> TV["TV · 1080p<br/>precarga del siguiente"]
-  CDN --> APP["App · 480p o 720p<br/>según red"]
+  CDN --> TV["TV del box · un video<br/>precarga del siguiente en el OFF"]
+  CDN --> APP["App · variante propia<br/>con su encuadre"]
   CDN --> ADM["Admin · portada estática"]
   TV --> F{"¿Se cae la red?"}
   F -->|Sí| K["Mantiene el último<br/>fotograma y reintenta"]
@@ -546,9 +546,10 @@ export default function TecnoFitSprint1() {
   class CDN hi
   class K warn`,
           points: [
-            'La pantalla de línea monta hasta cinco elementos de video reproduciéndose en simultáneo, en loop. A los 1,2–1,6 Mbps de la videoteca actual eso es del orden de 6 Mbps sostenidos por pantalla si el caché no retiene el loop — contra el modelo anterior, que bajaba un archivo por vez desde la red local. La medición del día 2 se hace con las cinco casillas activas, no con un video suelto.',
-            'Faltan tres mitigaciones que hoy no están en el código de la pantalla: no hay carga diferida de las casillas que todavía no entraron en turno, no hay imagen de respaldo si el archivo no decodifica y no hay manejo de error en el elemento de video — si falla, la casilla queda negra y en silencio. Entran en este sprint.',
-            'La medición se hace sobre la red real del gym con un video real del gym. Un número de laboratorio no sirve para decidir la arquitectura de las pantallas.',
+            'Una pantalla por box, diez en total, y en cada una un solo video reproduciéndose por vez. Durante el ON se muestra el ejercicio activo; durante el OFF, el que viene. Eso acota la demanda real a un video en reproducción más uno ya descargado esperando su turno — no a cinco corriendo en paralelo.',
+            'El OFF es la ventana de precarga, y por eso el ciclo se diseña como una sola cosa: mientras el socio descansa, el archivo del ejercicio siguiente ya se está bajando. Cuando arranca el ON no hay descarga, hay reproducción. Ese es el mecanismo que hace que el cambio de ejercicio se vea instantáneo.',
+            'A los 1,2–1,6 Mbps de la videoteca actual, un video activo por pantalla es del orden de 1,5 Mbps por box. La medición del día 2 igual se hace con las diez pantallas encendidas a la vez, porque el pico real ocurre cuando varios boxes cambian de ejercicio en el mismo momento.',
+            'Faltan dos mitigaciones que hoy no están en el código de la pantalla: no hay imagen de respaldo si el archivo no decodifica y no hay manejo de error en el elemento de video — si falla, la pantalla queda negra y en silencio. Entran en este sprint.',
             'La precarga del ejercicio siguiente es lo que hace que el avance automático por box del Sprint 3 se vea instantáneo en el Sprint 4.',
             'La degradación ante corte de red se diseña ahora, no se parchea después: la pantalla conserva el último estado válido y reintenta con espera creciente.',
           ],
@@ -745,7 +746,7 @@ export default function TecnoFitSprint1() {
             },
             {
               r: 'La pantalla nueva pide mucho más que la vieja',
-              m: 'Es el riesgo más subestimado del proyecto y conviene decirlo con todas las letras. El sistema anterior mostraba un video por vez, descargado entero desde una máquina de la red local del gimnasio. La pantalla nueva muestra hasta cinco videos reproduciéndose a la vez, en loop, traídos por internet desde un servidor externo. Cambian las dos cosas a la vez: cuántos videos simultáneos tiene que decodificar la pantalla, y por dónde viajan. Por eso la medición es el día 2 y no la semana 7, y por eso se mide con las cinco casillas andando al mismo tiempo, no con una sola.',
+              m: 'El modelo definido es una pantalla por box —diez en total— con un solo video en reproducción por vez: el activo durante el ON, el que viene durante el OFF. Eso mantiene la carga por pantalla parecida a la del sistema anterior. Lo que sí cambia es por dónde viajan los archivos: antes salían de una máquina en la red local del gimnasio, ahora vienen por internet desde un servidor externo. Por eso la medición es el día 2 y no la semana 7, y se hace con las diez pantallas prendidas — el pico real es cuando varios boxes cambian de ejercicio al mismo tiempo.',
             },
             {
               r: 'No sabemos qué son las pantallas del piso',
