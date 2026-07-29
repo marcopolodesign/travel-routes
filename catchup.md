@@ -23,6 +23,64 @@ gráficos que se puedan ver desde dos ángulos: el técnico y el del usuario.
   vs CDN dedicado, timeline día a día (10 días hábiles), dependencias del cliente con fecha,
   criterios de aceptación verificables y riesgos con mitigación.
 
+### Iteración 4 — modelo de salida corregido contra los videos REALES del gym
+Mateo pidió ajustar el modelo de output para los monitores del gym ("creo que tiene algo especial
+para reproducir"). En vez de especular, se bajaron y se corrieron por `ffprobe` **nueve assets
+reales** de `https://central.somostecnofit.com/videos/` (soportan range requests, se accede sin
+auth). Resultado unívoco en las 9 muestras:
+
+| | Lo que asumía el doc | Lo que realmente corre en el gym |
+|---|---|---|
+| Perfil | H.264 **High** | H.264 **Main**, Level 4.0, yuv420p |
+| Resolución | escalera 1080/720/480 | **altura fija 700**, ancho variable 1116–1200 |
+| Duración | clip de 30 s | **loops de 5 a 6,5 s** |
+| Audio | "descartar, a confirmar" | **ya vienen sin pista de audio** |
+| Peso | — | 0,6–1,3 MB · 1,2–1,6 Mbps · 23,976 fps |
+
+Tres correcciones: (1) el perfil de salida baja de High a **Main** — menos eficiente pero es el
+único con años de funcionamiento probado en ese hardware; (2) descartar el audio deja de ser una
+decisión abierta, ya es el estándar de facto; (3) el objetivo de peso estaba escrito para clips de
+30 s y el contenido real son loops de ~6 s, así que se recalibró.
+
+**Relevamiento de hardware de las TVs: no existe.** Un agente barrió todo el repo (marca, modelo,
+Tizen/WebOS/Android TV/Raspberry, kiosk mode, `canPlayType`, `codecs=`) — **cero hits**. Ya figuraba
+como pendiente en `catchup.md:96` y `timeline.md:28`. Se documentó como incógnita real, no como
+supuesto, y se acotó a 15 minutos frente a una pantalla el día 1.
+
+### Iteración 5 — modelo de pantalla corregido por Mateo: ON/OFF, un video por box
+El doc había tomado el modelo de pantalla del código actual de `QueueTv.jsx` (**una pantalla por
+línea con 5 casillas de video simultáneas**), y sobre eso yo había levantado un riesgo grande de
+concurrencia/ancho de banda. **Mateo corrigió: no es ese el modelo.** Es **una pantalla por box, 10
+en total, con un solo video por vez** — durante el ON el ejercicio activo, durante el OFF el que
+viene, que después pasa a ser el activo.
+
+- **Mata el riesgo de concurrencia** que había agregado en la iteración 4: la demanda real es un
+  video reproduciéndose más uno ya descargado, no cinco en paralelo.
+- **El OFF es la ventana de precarga** — se especificó como un solo mecanismo, no como dos features.
+  Es lo que hace que el cambio de ejercicio se vea instantáneo.
+- **Hallazgo abierto:** `QueueTv.jsx` tal como está construido **no implementa este modelo**.
+  Rehacerlo es Sprint 3/4 según la propuesta, no Sprint 1 — pero queda anotado.
+- **Salida simplificada a 2 variantes** por ejercicio en vez de escalera de 3 resoluciones: una para
+  TV con encuadre horizontal, otra para app con el suyo ("a lo sumo servimos 2 videos del mismo
+  ejercicio"). Los encuadres se guardan independientes por destino.
+- Se saca del alcance la carga diferida de casillas (no hay casillas inactivas); quedan imagen de
+  respaldo y manejo de error, que hoy no existen en el código de la pantalla.
+
+Commits `fa855c9` + `71e54d5`. Verificado en producción: 7 cards, 14 charts, 0 errores de Mermaid.
+
+### Decisiones tomadas por Mateo en esta sesión
+- **Comercial:** trabajo ya aprobado, no facturar por ahora (lo maneja él).
+- **Entorno:** crear **staging real** para el sprint (proyecto Supabase nuevo + preview de Vercel
+  apuntando ahí; NO se duplica el admin, es el mismo código con otras env vars).
+- **Logística:** él manda los crudos, no hace falta coordinar visita todavía.
+
+### Preguntas abiertas al cierre de la sesión
+1. **¿Tenemos root en el server de CENTRAL y es nuestro para modificar?** El repo salió de un
+   Bitbucket de `tecsolutionstm` (otro proveedor). Define si se puede instalar ffmpeg ahí.
+   Recomendación dada: **no** hacerlo — CENTRAL es de lo que dependen las clases hoy; mejor una
+   máquina chica separada (~U$5–10/mes).
+2. **Modelo de ejecución** — fases con compuerta vs loop autónomo. Sin respuesta todavía.
+
 ### Iteración 3 — reencuadre del video desde el sistema
 Pedido de Mateo: poder **reencuadrar el video en el mismo sistema**, al subir el ejercicio y al
 editarlo después. Al documento y a la implementación.
