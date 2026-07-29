@@ -546,7 +546,8 @@ export default function TecnoFitSprint1() {
   class CDN hi
   class K warn`,
           points: [
-            'Una pantalla por box, diez en total, y en cada una un solo video reproduciéndose por vez. Durante el ON se muestra el ejercicio activo; durante el OFF, el que viene. Eso acota la demanda real a un video en reproducción más uno ya descargado esperando su turno — no a cinco corriendo en paralelo.',
+            'Hay dos tipos de pantalla y conviene no mezclarlos. La pantalla de espera muestra la cola: quién entra a la fila A, quién a la fila B y la lista completa de anotados — ahí no va video. El video va en las pantallas de box, una por box, diez en total.',
+            'En cada pantalla de box se reproduce un solo video por vez. Durante el ON se muestra el ejercicio activo; durante el OFF, el que viene. Eso acota la demanda real a un video en reproducción más uno ya descargado esperando su turno — no a varios corriendo en paralelo.',
             'El OFF es la ventana de precarga, y por eso el ciclo se diseña como una sola cosa: mientras el socio descansa, el archivo del ejercicio siguiente ya se está bajando. Cuando arranca el ON no hay descarga, hay reproducción. Ese es el mecanismo que hace que el cambio de ejercicio se vea instantáneo.',
             'A los 1,2–1,6 Mbps de la videoteca actual, un video activo por pantalla es del orden de 1,5 Mbps por box. La medición del día 2 igual se hace con las diez pantallas encendidas a la vez, porque el pico real ocurre cuando varios boxes cambian de ejercicio en el mismo momento.',
             'Faltan dos mitigaciones que hoy no están en el código de la pantalla: no hay imagen de respaldo si el archivo no decodifica y no hay manejo de error en el elemento de video — si falla, la pantalla queda negra y en silencio. Entran en este sprint.',
