@@ -134,6 +134,8 @@ export default function TecnoFitSprint1() {
               <li>Portada generada sola, para cualquier video que se suba</li>
               <li>Búsqueda y filtros por músculo y equipamiento sobre el catálogo</li>
               <li>Reproducción verificada en la TV real y en la app real</li>
+              <li>Imagen de respaldo y manejo de error en la pantalla, para que una casilla nunca quede negra</li>
+              <li>Carga diferida de las casillas que todavía no entraron en turno</li>
               <li>Carga asistida del primer lote de ejercicios del gym</li>
             </ul>
           </div>
@@ -398,8 +400,8 @@ export default function TecnoFitSprint1() {
                 ['Límites de entrada', '500 MB y 2 minutos por archivo. Se validan antes de emitir la URL de subida'],
                 ['Metadata', 'Se elimina toda: GPS, modelo de dispositivo, fecha de captura, autor'],
                 ['Orientación', 'La rotación se aplica al fotograma y el flag se descarta, para que ninguna pantalla la reinterprete'],
-                ['Códec de salida', 'H.264 High, espacio de color yuv420p — el denominador común de la TV, iOS y Android'],
-                ['Audio', 'Se descarta, salvo pedido explícito del gym'],
+                ['Códec de salida', 'H.264 Main profile, Level 4.0, espacio de color yuv420p — no High. Es exactamente el perfil de la videoteca que hoy funciona en las pantallas del gym, verificado sobre los archivos reales; High es más eficiente pero no está probado en ese hardware'],
+                ['Audio', 'Se descarta. No es una decisión nueva: los videos actuales del gym ya vienen sin pista de audio'],
                 ['Variantes', '1080p para la TV · 720p para la app en wifi · 480p para la app en datos'],
                 ['Proxy de previsualización', '480p H.264, generado apenas termina la subida — es contra lo que dibuja el editor de encuadre, porque el original crudo no se reproduce de forma confiable en un navegador'],
                 ['Encuadre', 'Rectángulo normalizado 0–1 más aspecto objetivo, persistido en la fila del ejercicio. Nunca se hornea en el archivo subido'],
@@ -429,15 +431,23 @@ export default function TecnoFitSprint1() {
             Objetivo de peso
           </h4>
           <p className="text-black/80 text-sm">
-            Un clip de 30 segundos grabado en 4K con un celular moderno entra pesando del orden de
-            150 a 250 MB. La salida objetivo es <strong>del orden de 6 a 12 MB en 1080p</strong> y{' '}
-            <strong>de 1,5 a 3 MB en 480p</strong>, sin pérdida visible en una pantalla de gimnasio.
-            Es una reducción de aproximadamente 20 a 40 veces.
+            <strong>Punto de referencia real:</strong> se inspeccionaron nueve videos de la
+            videoteca que hoy usa el gym. Son loops cortos, de 5 a 6,5 segundos, en H.264 Main a
+            unos 1,2–1,6 Mbps, con altura fija de 700 px y ancho variable, sin audio, y pesan entre{' '}
+            <strong>0,6 y 1,3 MB cada uno</strong>. Ése es el estándar de facto que las pantallas del
+            gym ya reproducen sin problemas.
+          </p>
+          <p className="text-black/80 text-sm mt-3">
+            La salida nueva tiene que quedar en ese orden de magnitud. Un clip grabado con un celular
+            moderno entra pesando del orden de 150 a 250 MB por 30 segundos; para un loop de ejercicio
+            de 6 segundos la salida objetivo es <strong>de 1 a 2 MB en 1080p</strong> y{' '}
+            <strong>por debajo de 500 KB en 480p</strong>, sin pérdida visible en una pantalla de
+            gimnasio.
           </p>
           <p className="text-black/60 text-sm mt-3">
-            Estos rangos son la hipótesis de partida y se confirman en los días 1–2 contra archivos
-            reales del gym, grabados con los celulares que se van a usar de verdad. Si los números
-            no dan, el que se ajusta es el CRF, no el criterio de aceptación.
+            Estos rangos se recalibran en los días 1–2 contra los archivos reales del gym, grabados
+            con los celulares que se van a usar de verdad. Si los números no dan, el que se ajusta es
+            el CRF, no el criterio de aceptación.
           </p>
         </div>
       </TwoColumnSection>
@@ -536,7 +546,9 @@ export default function TecnoFitSprint1() {
   class CDN hi
   class K warn`,
           points: [
-            'La medición se hace sobre la red real del gym con un video real del gym. Un número de laboratorio no sirve para decidir la arquitectura de 10 pantallas.',
+            'La pantalla de línea monta hasta cinco elementos de video reproduciéndose en simultáneo, en loop. A los 1,2–1,6 Mbps de la videoteca actual eso es del orden de 6 Mbps sostenidos por pantalla si el caché no retiene el loop — contra el modelo anterior, que bajaba un archivo por vez desde la red local. La medición del día 2 se hace con las cinco casillas activas, no con un video suelto.',
+            'Faltan tres mitigaciones que hoy no están en el código de la pantalla: no hay carga diferida de las casillas que todavía no entraron en turno, no hay imagen de respaldo si el archivo no decodifica y no hay manejo de error en el elemento de video — si falla, la casilla queda negra y en silencio. Entran en este sprint.',
+            'La medición se hace sobre la red real del gym con un video real del gym. Un número de laboratorio no sirve para decidir la arquitectura de las pantallas.',
             'La precarga del ejercicio siguiente es lo que hace que el avance automático por box del Sprint 3 se vea instantáneo en el Sprint 4.',
             'La degradación ante corte de red se diseña ahora, no se parchea después: la pantalla conserva el último estado válido y reintenta con espera creciente.',
           ],
@@ -694,7 +706,7 @@ export default function TecnoFitSprint1() {
         subtitle="Poco, pero en fecha. Es lo único que puede demorar este sprint."
         items={[
           'Día 1 — Una persona referente del gym para el kickoff y para responder dudas de contenido durante las dos semanas.',
-          'Día 1 — Acceso al wifi del gym y a una TV del piso para poder medir en condiciones reales, no simuladas.',
+          'Día 1 — Acceso al wifi del gym y a una TV del piso para poder medir en condiciones reales, no simuladas. Alcanza con quince minutos frente a una pantalla: identificar qué es y qué navegador corre. Hoy no está documentado en ningún lado y es la única incógnita de hardware del sprint.',
           'Día 1 — Dos o tres videos crudos, tal como salen del celular con el que se va a grabar, sin comprimir ni exportar. Son los que calibran la optimización: si se mandan ya procesados, los números del sprint no sirven.',
           'Día 3 — El listado de ejercicios que el gym quiere tener cargados primero, en orden de prioridad. No hace falta que estén grabados todavía.',
           'Día 6 — Un primer lote de videos grabados, aunque sean 10. Con eso alcanza para validar el circuito completo con contenido de verdad.',
@@ -732,8 +744,12 @@ export default function TecnoFitSprint1() {
               m: 'Es el riesgo más probable y el único fuera de nuestro control. Se mitiga arrancando con un lote chico —10 ejercicios alcanzan para validar todo el circuito— y dejando la carga masiva como una tarea continua del gym, no como un bloqueante del sprint.',
             },
             {
-              r: 'La red del gym no sostiene 10 pantallas con video',
-              m: 'Por eso la medición es el día 2 y no la semana 7. Si el número no cierra, la respuesta es CDN con caché de borde y precarga, y esa decisión se toma cuando todavía sobra tiempo para implementarla.',
+              r: 'La pantalla nueva pide mucho más que la vieja',
+              m: 'Es el riesgo más subestimado del proyecto y conviene decirlo con todas las letras. El sistema anterior mostraba un video por vez, descargado entero desde una máquina de la red local del gimnasio. La pantalla nueva muestra hasta cinco videos reproduciéndose a la vez, en loop, traídos por internet desde un servidor externo. Cambian las dos cosas a la vez: cuántos videos simultáneos tiene que decodificar la pantalla, y por dónde viajan. Por eso la medición es el día 2 y no la semana 7, y por eso se mide con las cinco casillas andando al mismo tiempo, no con una sola.',
+            },
+            {
+              r: 'No sabemos qué son las pantallas del piso',
+              m: 'Ningún registro del proyecto documenta marca, modelo, sistema operativo ni navegador de las TVs — ya figuraba como pendiente antes de este sprint. Lo que sí se verificó es que la videoteca actual está en H.264 Main y funciona, así que la salida se fija en ese perfil en vez del más eficiente. Se cierra el día 1 con quince minutos en el gym: abrir una pantalla, mirar qué navegador es y reproducir un archivo de prueba.',
             },
             {
               r: 'Los videos vienen en formatos y calidades dispares',
