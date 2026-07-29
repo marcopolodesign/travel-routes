@@ -21,6 +21,12 @@ const budgets = [
     timeline: '8 semanas · 4 sprints',
   },
   {
+    slug: 'tecnofit-sprint-1',
+    title: 'TecnoFit — Sprint 1: Catálogo y video',
+    description: 'Plan detallado del primer sprint: dónde vive el video, cómo lo sube el gym y cómo llega a la TV y a la app.',
+    timeline: '2 semanas · Sprint 1 de 4',
+  },
+  {
     slug: 'ronzio',
     title: 'Ronzio',
     description: 'Revisión de landing page, CRM a medida para tracking de leads, UTMs y ciclo de vida del usuario.',

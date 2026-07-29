@@ -3,6 +3,7 @@ import BudgetTemplate from './components/BudgetTemplate'
 import HealthMvp from './pages/HealthMvp'
 import TecnoFit from './pages/TecnoFit'
 import TecnoFitTVs from './pages/TecnoFitTVs'
+import TecnoFitSprint1 from './pages/TecnoFitSprint1'
 import Ronzio from './pages/Ronzio'
 import GinLane from './pages/GinLane'
 import SendaArqAds from './pages/SendaArqAds'
@@ -41,6 +42,16 @@ export default function App() {
             whatLabel="Timeline & Propuesta"
           >
             <TecnoFitTVs />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/tecnofit-sprint-1" element={
+          <BudgetTemplate
+            title="Sprint 1 — Catálogo y video — TecnoFit"
+            timeline="2 semanas · Sprint 1 de 4"
+            stack="Supabase Storage · Transcodificación · CDN"
+            whatLabel="Plan de Sprint"
+          >
+            <TecnoFitSprint1 />
           </BudgetTemplate>
         } />
         <Route path="/budget/ronzio" element={
