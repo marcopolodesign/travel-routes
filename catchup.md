@@ -23,6 +23,25 @@ gráficos que se puedan ver desde dos ángulos: el técnico y el del usuario.
   vs CDN dedicado, timeline día a día (10 días hábiles), dependencias del cliente con fecha,
   criterios de aceptación verificables y riesgos con mitigación.
 
+### Iteración de Mateo — "Dónde estamos hoy" reencuadrada a nivel gym
+Feedback: sacar YouTube de esa sección y hacerla **más general a nivel gimnasio** — la app puesta,
+el administrador funcionando, y este sprint como el camino que une todo.
+
+La sección abría con la limitación técnica del campo de link (YouTube/Vimeo), lo que la hacía
+sonar a queja técnica y enterraba lo importante: TecnoFit ya tiene tres piezas funcionando en
+producción. Reescrita para abrir desde el lado del gym — la app publicada y aprobada en el App
+Store, el administrador como la herramienta con la que el gym realmente trabaja, y el piso ya
+conectado (motor de cola, líneas, boxes, pantallas en vivo) — y cerrar con el encuadre pedido:
+**lo que falta no es una pieza más, es el hilo que las une**, y ese hilo es el contenido, que es
+justamente lo único que las tres comparten.
+
+Efecto colateral: quedaron huérfanas 3 menciones a YouTube en otras secciones de cara al cliente
+(objetivo, alcance "entra", riesgos) — reescritas sin nombrarlo, conservando la sustancia
+("un solo video, un solo formato, todas las pantallas"). **La única mención que queda en toda la
+página está dentro de la vista Desarrollo** del diagrama del recorrido, donde la audiencia es el
+equipo técnico. Verificado recorriendo el DOM en las dos vistas: 0 menciones en vista Usuario.
+`tsc` + build limpios, commit `9b9c9d1`.
+
 ### El contenido está anclado al código real de Tecno, no inventado
 Se corrió un agente de exploración sobre `~/Local/Tecno` antes de escribir. Corrigió tres cosas
 que había asumido mal, y todas terminaron siendo los mejores argumentos del documento:
