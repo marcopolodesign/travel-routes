@@ -1,5 +1,52 @@
 # Marco Polo — Catchup
 
+## 2026-07-29 — TecnoFit: página de Sprint 1 para la reunión de kickoff ✅
+**Source:** Claude Code — Macbook Pro
+
+### Qué se hizo
+Hoy es la primera reunión del roadmap nuevo de Tecno. Mateo pidió un documento del mismo estilo
+que la propuesta `/budget/tecnofit-tvs`, pero más largo y explicando **sólo el Sprint 1**, con
+gráficos que se puedan ver desde dos ángulos: el técnico y el del usuario.
+
+- Nueva página `src/pages/TecnoFitSprint1.tsx`, ruta `/budget/tecnofit-sprint-1` en `App.tsx`
+  (`BudgetTemplate` con `timeline="2 semanas · Sprint 1 de 4"`,
+  `stack="Supabase Storage · Transcodificación · CDN"`, `whatLabel="Plan de Sprint"`).
+  Agregada también como card en `Home.tsx`.
+- **Componente nuevo `src/components/DualDiagram.tsx`** — es el pedido central. Cada gráfico es
+  un card con un switcher segmentado arriba a la derecha: **Usuario** (lo que se ve en pantalla,
+  sin tecnicismos) y **Desarrollo** (cómo se construye). Cada vista tiene su propio chart Mermaid,
+  su propio párrafo de contexto y sus propios takeaways numerados. Envuelve `MermaidDiagram` con
+  `key={view}` para forzar el re-render al cambiar de vista.
+- Cinco diagramas duales: el recorrido de un ejercicio · el pipeline de carga · el catálogo y su
+  modelo de datos · cómo llega el video a cada pantalla · convivencia con CENTRAL.
+- Además: `ScrollNav` con 12 anclas, alcance entra/no-entra, tabla comparativa Storage integrado
+  vs CDN dedicado, timeline día a día (10 días hábiles), dependencias del cliente con fecha,
+  criterios de aceptación verificables y riesgos con mitigación.
+
+### El contenido está anclado al código real de Tecno, no inventado
+Se corrió un agente de exploración sobre `~/Local/Tecno` antes de escribir. Corrigió tres cosas
+que había asumido mal, y todas terminaron siendo los mejores argumentos del documento:
+
+1. **El catálogo de ejercicios YA existe** — `admin/src/components/Exercises.jsx` (960 líneas,
+   ruta `/exercises`) con CRUD completo sobre `exercises`, `exercise_categories` y `body_zones`.
+   Lo que falta no es el catálogo: es el video. El sprint le agrega la carga de archivo.
+2. **Hay una incompatibilidad real en producción hoy.** El form del admin ofrece sólo un campo
+   para pegar un link de YouTube/Vimeo. La TV (`QueueTv.jsx`) lo resuelve con un `<iframe>` de
+   YouTube, pero la app usa `expo-video`, que **sólo reproduce archivos directos** — así que un
+   ejercicio cargado como el admin sugiere se ve en la TV y queda en blanco en el celular.
+   Además el trigger `extract_video_info()` sólo genera thumbnail para YouTube: Vimeo y archivo
+   directo quedan sin portada. Esto pasó a ser el argumento central de por qué el sprint existe.
+3. **La TV no tiene fallback a CENTRAL.** La app sí (`supabaseRoutines.ts` → si no hay datos,
+   `central-rutina-fallback`), pero `queueService.getCurrentExerciseForUser()` lee sólo de
+   Supabase. Es la razón concreta de por qué el contenido va antes que las pantallas.
+   El único bucket de Storage que existe hoy es `avatars`.
+
+### Verificación
+Verificado en Chrome sobre el dev server: los 5 cards renderizan, el switcher cambia chart +
+caption + takeaways, los 10 diagramas (5 usuario + 5 desarrollo) compilan sin error de Mermaid,
+y no hay overflow horizontal ni en desktop ni en ancho reducido. `tsc -b --noEmit` limpio,
+`npm run build` OK. Commit `8c12ef2`, push a `main` → deploy automático en Vercel.
+
 ## 2026-07-24 — Nueva propuesta: Senda Arq — Meta Ads + Google Ads (gestión mensual) ✅
 **Source:** Claude Code — Macbook Pro
 
@@ -27,10 +74,58 @@ que ya tiene todo eso armado. Conversión objetivo confirmada por Mateo: WhatsAp
 - Verificado en Chrome (dev server `localhost:5173/budget/senda-arq-ads`) — todas las secciones
   renderizan correctamente, mismo estilo que TecnoFitTVs, sin errores de `tsc --noEmit`
 
+### Actualización — cifras de inversión confirmadas por Mateo
+Setup inicial se mantiene (U$300–500). Gestión mensual pasa de un rango combinado
+Meta+Google a un **flat fee de Meta: U$500/mes, 3 campañas corriendo en simultáneo** —
+Google Ads deja de estar incluido por defecto y pasa a ser una extensión opcional
+(**+U$200/mes, U$700/mes total con ambas plataformas**), en vez de encarecer el arranque
+con las dos plataformas desde el día uno. Sección "Qué incluye Meta" actualizada para
+mencionar las 3 campañas. Verificado en Chrome, `tsc` limpio, commit `a656ce0` pusheado.
+
+### Segunda actualización — setup fee flat + compromiso mínimo de 6 meses
+Setup inicial pasa de rango (U$300–500) a **flat U$500**. Agregada nota en la caja de Inversión
+explicando por qué se pide un **compromiso mínimo de 6 meses**: con el volumen de consultas
+esperado para un estudio de arquitectura (bajo, ticket alto), los primeros 1-2 meses son de
+aprendizaje del algoritmo y no alcanzan para medir bien CAC/CPC — recién con 6 meses se puede
+optimizar con confianza en vez de reaccionar a ruido estadístico. Verificado en Chrome, `tsc`
+limpio, commit `bbb8dfe` pusheado.
+
+### Tercera actualización — alineado contra la reunión real con Senda (Granola "Senda redes", 24/07)
+Mateo pidió chequear Granola por la última reunión con Senda para ver qué mejorar del budget.
+Encontrada la reunión de esa misma mañana con el detalle completo de lo charlado — la propuesta
+tenía varios placeholders genéricos que no coincidían con lo acordado. Reescrito contra la reunión:
+
+- **3 campañas ahora nombradas y específicas** (antes: bullet genérico "3 campañas corriendo en
+  simultáneo"): **Awareness** (alcance masivo Buenos Aires, foco diseño/arquitectura, objetivo
+  seguidores), **Reformas/ticket bajo** (landing + form/WhatsApp, segmentado a obra activa hoy),
+  **Casa nueva** (video UGC antes/después + testimonio de dueños)
+- **Presupuesto de pauta**: de "U$300–500/mes" a **arranca U$200–300/mes, escala a U$500 según
+  performance** (cifra real que se charló en la reunión)
+- **Ventana Meta-first explícita**: 2–3 meses solo Meta antes de sumar Google (razón: Meta capta
+  perfil pasivo de diseño, Google intención activa y necesita menos optimización continua)
+- **Forma de pago agregada** (no estaba en la página): inicialmente 70% al confirmar + resto
+  progresivo, corregido después por Mateo a **mensual por adelantado, del 1 al 5 de cada mes**
+  (commit `90d79f3`)
+- **Nueva sección "Métricas, conversión y CRM"** — no existía antes, es valor real que faltaba
+  mostrar: embudo esperado de ticket alto (2.000 interacciones → 200 escriben → 20 interesados →
+  1 convierte), ciclo de nurturing 1–2 años, herramientas incluidas sin costo extra (dashboard de
+  fuente de leads, pipeline de estado del cliente, feed de conversión a Meta), agente conversacional
+  en desarrollo
+- **Redes sociales add-on**: antes no tenía precio — agregado **U$750/mes con motor de IA** +
+  nota de que Instagram necesita actividad orgánica de base antes de lanzar campañas pagas
+
+No se tocaron: setup inicial (U$500 flat, no discutido en la reunión — decisión de Mateo se
+mantiene) ni el compromiso mínimo de 6 meses (tampoco mencionado en la reunión, pero no contradice
+nada de lo charlado). Verificado en Chrome, `tsc` limpio, commit `7c5c6a4` pusheado.
+
 ### Pendiente / próximo paso
-Confirmar cifras de inversión con Mateo, luego enviar la propuesta a Senda Arq. Una vez aprobada,
-falta armar toda la infraestructura real (Business Manager + cuenta Meta + Google Ads + pixel/CAPI)
-que hoy no existe — ver contexto en `senda-website/catchup.md`.
+Enviar la propuesta actualizada a Senda Arquitectura (Juan recibiría "presupuesto detallado de
+campañas" per la reunión — esta página ya cubre eso). Una vez aprobada, falta armar toda
+la infraestructura real (Business Manager + cuenta Meta + pixel/CAPI, y Google Ads solo si
+suman la extensión) que hoy no existe — ver contexto en `senda-website/catchup.md`. Pendiente sin
+relación directa con el budget pero mencionado en la misma reunión: pedir fotos en alta resolución
+para el sitio de Senda (las actuales están pixeladas/cortadas) y decisión pendiente sobre separar
+marca "Senda" vs "Senda Industrial" (investigar competencia antes de decidir).
 
 ---
 
