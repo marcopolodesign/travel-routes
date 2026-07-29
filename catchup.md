@@ -23,6 +23,48 @@ gráficos que se puedan ver desde dos ángulos: el técnico y el del usuario.
   vs CDN dedicado, timeline día a día (10 días hábiles), dependencias del cliente con fecha,
   criterios de aceptación verificables y riesgos con mitigación.
 
+### Iteración 2 — pre-procesamiento de video en el servidor + el doc pasa a ser spec ejecutable
+Mateo agregó un requisito de producto y un cambio de propósito del documento:
+
+1. **Los videos tienen que optimizarse del lado del servidor** — bajar peso, sacar metadata
+   (analogía suya: ImageOptim), acotar dimensiones — **para que nadie del gym tenga que hacer nada
+   antes de subir**. Aplica al documento y al flujo real de trabajo.
+2. **El documento va a servir de POC/mega plan que se le va a pasar a otro agente de Claude para
+   que ejecute.** Eso cambia el listón: el detalle técnico tiene que ser accionable, no una promesa.
+
+El `DualDiagram` resultó ser el vehículo natural para las dos audiencias a la vez: la vista Usuario
+sigue contando el beneficio en criollo, la vista Desarrollo y una sección técnica nueva llevan los
+parámetros exactos.
+
+- **Diagrama dual nuevo** (`id="optimizacion"`): "El video se optimiza solo, en el servidor".
+  Usuario = "subís lo que salió del celular y listo" + el ángulo de privacidad (los videos de
+  celular traen GPS, modelo de dispositivo y fecha adentro). Desarrollo = la cadena de
+  normalización completa.
+- **Sección `id="spec"` — "Especificación de procesamiento"**, marcada explícitamente como técnica
+  y salteable en la reunión. Tabla de 15 parámetros: formatos de entrada (incluye HEVC de iPhone y
+  VP9 de Android), límites 500 MB / 2 min validados **antes** de emitir la URL firmada, limpieza
+  total de metadata, rotación horneada al fotograma y flag descartado, H.264 High + yuv420p, audio
+  descartado (decisión de producto, flagueada como "a confirmar con el gym"), escalera
+  1080/720/480, CRF 23/24/26, faststart, keyframes cada 2 s, portada del **segundo 1** (no el 0,
+  que sale negro), qué se persiste, original intacto, idempotencia por ruta derivada.
+- **Objetivo de peso** como hipótesis explícita, no como promesa: clip de 30 s en 4K ≈150–250 MB →
+  ≈6–12 MB en 1080p y ≈1,5–3 MB en 480p (~20–40×), a calibrar en los días 1–2 contra archivos
+  reales del gym. Si no dan los números, se ajusta el CRF, no el criterio de aceptación.
+
+**Hallazgo que reencuadró la decisión de arquitectura:** las Edge Functions de Supabase corren Deno
+y **no tienen ffmpeg**, así que este paso no puede vivir ahí. O worker propio con ffmpeg disparado
+por webhook del storage, o un servicio de video que traiga la escalera incluida. La tabla
+comparativa se actualizó: las filas que deciden ahora son "Optimización del video" (worker propio a
+construir y mantener vs. incluida) y "Control sobre la salida", no el precio por gigabyte.
+
+Propagado a alcance/entra, timeline (días 1–2 calibración, días 6–8 verificación del objetivo de
+peso), dependencias del gym (**día 1: 2–3 videos crudos sin comprimir** — si los mandan ya
+procesados los números no sirven) y criterios de aceptación (rango de peso cumplido + verificar que
+el archivo servido ya no traiga GPS ni datos del dispositivo).
+
+Verificado en browser: 6 cards, 12 charts, 0 errores de Mermaid en ambas vistas, sin overflow.
+`tsc` + build limpios, commit `a7407b2`.
+
 ### Iteración de Mateo — "Dónde estamos hoy" reencuadrada a nivel gym
 Feedback: sacar YouTube de esa sección y hacerla **más general a nivel gimnasio** — la app puesta,
 el administrador funcionando, y este sprint como el camino que une todo.
