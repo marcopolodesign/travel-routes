@@ -23,6 +23,37 @@ gráficos que se puedan ver desde dos ángulos: el técnico y el del usuario.
   vs CDN dedicado, timeline día a día (10 días hábiles), dependencias del cliente con fecha,
   criterios de aceptación verificables y riesgos con mitigación.
 
+### Iteración 3 — reencuadre del video desde el sistema
+Pedido de Mateo: poder **reencuadrar el video en el mismo sistema**, al subir el ejercicio y al
+editarlo después. Al documento y a la implementación.
+
+**Decisión de arquitectura que ordena todo lo demás:** el encuadre se guarda **como dato** en la
+fila del ejercicio (rectángulo normalizado 0–1 + aspecto objetivo) y **nunca se hornea en el
+archivo subido**. Las variantes se re-renderizan desde el original intacto cada vez que el encuadre
+cambia. Consecuencias: reencuadrar meses después no cuesta nada y no requiere re-subida, y el
+encuadre por defecto se puede cambiar y re-aplicar en lote a todo el catálogo sin pedirle nada al
+gym. Compone limpio con la decisión previa de conservar el original.
+
+Dos detalles de implementación de los que depende el pipeline:
+- **La previsualización no puede correr contra el archivo crudo.** Un `.mov` HEVC de iPhone no se
+  reproduce de forma confiable en un navegador. Por eso se genera primero un **proxy 480p H.264** y
+  el editor de encuadre dibuja contra eso. Esto **cambia el orden del pipeline**, así que también se
+  actualizó el diagrama de carga (subida → proxy → encuadre → escalera completa).
+- **Publicación por swap atómico:** las variantes vigentes se siguen sirviendo mientras se renderizan
+  las nuevas. Reencuadrar en el medio de una clase no deja un box en negro. Quedó como criterio de
+  aceptación explícito.
+- El crop se aplica **antes** del escalado y **siempre desde el original**, nunca sobre una variante
+  ya comprimida (acumular pérdida sin necesidad).
+
+Nuevo diagrama dual `id="reencuadre"` + 6 filas nuevas en la tabla de especificación (proxy,
+encuadre, encuadre por defecto, orden de operaciones, edición, publicación). Propagado a alcance,
+timeline (días 6–8 editor, días 9–10 reencuadre verificado sin re-subida) y criterios de aceptación.
+**El recorte temporal** (sacar principio/final) quedó explícito en "no entra" como candidato a
+Sprint 2, para que sea una decisión consciente de Mateo y no un supuesto silencioso.
+
+Verificado en browser: 7 cards, 14 charts, 0 errores de Mermaid en ambas vistas, sin overflow.
+`tsc` + build limpios, commit `16cb2f6`.
+
 ### Iteración 2 — pre-procesamiento de video en el servidor + el doc pasa a ser spec ejecutable
 Mateo agregó un requisito de producto y un cambio de propósito del documento:
 
