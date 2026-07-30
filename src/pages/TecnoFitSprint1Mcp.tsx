@@ -190,7 +190,23 @@ export default function TecnoFitSprint1Mcp() {
 
       <TwoColumnSection title="Dónde queda cada archivo" id="archivos">
         <p>
-          Cuatro archivos por ejercicio. Uno no se sirve nunca y es el más importante de todos.
+          Cuatro archivos por ejercicio, repartidos en <strong>dos buckets de Supabase Storage</strong>,
+          en el mismo proyecto donde vive el catálogo. Uno de los cuatro no se sirve nunca y es el más
+          importante de todos.
+        </p>
+        <div className="border border-[var(--marco-border)] rounded-lg p-6 bg-[var(--marco-accent-light)]/20 my-2">
+          <p className="text-sm text-black/80 font-mono leading-relaxed">
+            exercise-media <span className="text-black/50">· público</span><br />
+            &nbsp;&nbsp;tv/&#123;id&#125;/&#123;version&#125;.mp4<br />
+            &nbsp;&nbsp;app/&#123;id&#125;/&#123;version&#125;.mp4<br />
+            &nbsp;&nbsp;posters/&#123;id&#125;/&#123;version&#125;.webp<br /><br />
+            exercise-originals <span className="text-black/50">· privado</span><br />
+            &nbsp;&nbsp;&#123;id&#125;/source.mov
+          </p>
+        </div>
+        <p className="text-sm text-black/60">
+          Son dos buckets y no uno porque en Supabase el acceso público se define por bucket, no por
+          carpeta. Ya están creados y probados en el entorno de pruebas.
         </p>
         <div className="overflow-x-auto -mx-6 md:mx-0 px-6 md:px-0">
           <table className="w-full text-sm border-collapse min-w-[520px]">
@@ -228,6 +244,31 @@ export default function TecnoFitSprint1Mcp() {
           El original sí queda privado. No porque sea secreto, sino porque no hay razón para servir
           un archivo de 200 MB cuando existe una variante de 2 MB que se ve igual.
         </p>
+
+        <h4 className="font-thunder text-xl uppercase text-[var(--marco-accent)] pt-4">
+          Tres cosas que se descubrieron probándolo
+        </h4>
+        <div className="space-y-5">
+          {[
+            {
+              t: 'El límite de subida venía en 50 MB',
+              d: 'Es el valor por defecto del proyecto. Un video crudo de celular pesa entre 150 y 250 MB, así que la primera subida real habría sido rechazada sin explicación clara. Ya está subido a 500 MB en pruebas, que es el máximo de entrada que define la especificación. Hay que hacer lo mismo en producción antes de cargar nada.',
+            },
+            {
+              t: 'Los archivos se sirven sin caché por defecto',
+              d: 'Medido: un archivo público sale con la instrucción de no cachear. Para una pantalla encendida todo el día eso significa volver a descargar el video una y otra vez — exactamente el consumo de red que queremos evitar. Hay que pedir caché larga explícitamente al subir.',
+            },
+            {
+              t: 'Por eso la ruta lleva versión',
+              d: 'Caché larga y reencuadre se pelean: si se reemplaza el archivo en la misma ruta, la pantalla puede seguir mostrando el viejo durante horas. Con la versión en la ruta, cada re-render escribe una ruta nueva y la fila apunta ahí. El cambio es instantáneo y la copia vieja simplemente deja de usarse. Es lo que hace que el reemplazo sea de verdad atómico.',
+            },
+          ].map((x, i) => (
+            <div key={i} className="border-l-2 border-[var(--marco-accent-light)] pl-5">
+              <h5 className="font-thunder text-base uppercase text-black mb-2">{x.t}</h5>
+              <p className="text-black/80 text-sm">{x.d}</p>
+            </div>
+          ))}
+        </div>
       </TwoColumnSection>
 
       <DualDiagram
