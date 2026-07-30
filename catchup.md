@@ -23,6 +23,48 @@ gráficos que se puedan ver desde dos ángulos: el técnico y el del usuario.
   vs CDN dedicado, timeline día a día (10 días hábiles), dependencias del cliente con fecha,
   criterios de aceptación verificables y riesgos con mitigación.
 
+### Iteración 6 — documento NUEVO: carga por MCP (`/budget/tecnofit-sprint-1-mcp`)
+Mateo propuso reemplazar el formulario de carga por un **servidor MCP local**: procesamiento con
+ffmpeg en la Mac, y la persona que carga interactuando con Claude. Pidió **otro documento**, dejando
+`/budget/tecnofit-sprint-1` intacto.
+
+**Mi objeción inicial estaba mal y la retiré.** Había dicho que un MCP no cumple la promesa del
+sprint porque "el gym no puede cargar, solo Mateo". El dato que faltaba: **la persona que carga ES
+del gimnasio y ya usa Claude**. Con eso el criterio de aceptación se cumple igual — el MCP es su
+interfaz en vez de un formulario.
+
+**Validación real del pipeline antes de opinar:** se corrió el comando ffmpeg propuesto sobre un
+video real del gym. Salida correcta (Main profile, Level 4.0, yuv420p, faststart con moov en el
+byte 36, metadata limpia) en **0,78 s para un clip de 6 s**, en CPU, sin usar siquiera el
+videotoolbox que la Mac tiene. Procesar 200 ejercicios en local son minutos.
+**Bug encontrado en mi propia spec:** el comando escalaba *para arriba* (1200 → 1920 de ancho) y la
+salida pesaba más que la entrada. Hay que topear el escalado: achicar sí, agrandar nunca.
+
+**Cuatro correcciones al flujo que propuso Mateo** (él planteaba: procesar → subir → devolver link →
+mandar datos + link):
+1. **Una sola llamada, no dos** — si la segunda falla queda un video huérfano en storage sin fila.
+2. **El original también se sube** — si vive solo en esa Mac, el reencuadre posterior desde el admin
+   es imposible. Va a ruta privada.
+3. **Se guarda la ruta, no la URL** — poner un CDN adelante después no debe obligar a reescribir filas.
+4. **Bucket público, no URLs firmadas** — corrige la spec anterior: la pantalla del box es pública y
+   está prendida todo el día sin nadie que la refresque; un link que vence es pantalla en negro
+   garantizada. Los videos de ejercicio no son sensibles. El original sí queda privado.
+
+**Idea que destraba el encuadre sin editor visual:** `crear_ejercicio` devuelve la portada generada.
+Instrucción en texto, respuesta en imagen → se mira, se corrige, se regenera (barato, porque el
+encuadre es dato). Con eso el editor visual sale del camino crítico.
+
+**Estados:** el ejercicio nace con `is_active = false` (columna que YA existe y que las consultas del
+catálogo ya respetan) y requiere publicación explícita. Cargar en volumen deja de ser riesgoso.
+
+**Alcance revisado — se corre a Sprint 2:** formulario de carga web, editor visual de encuadre,
+worker en servidor, recorte temporal. Nada se tira: son otras puertas al mismo script.
+
+Contenido del doc: contrato de 5 herramientas MCP, dónde queda cada archivo, columnas nuevas,
+alcance revisado, qué deben decir las instrucciones para quien carga, y 3 límites honestos
+(una persona/una Mac · no replica a sede nueva · encuadre a ciegas). Commit `ff64f78`.
+Verificado en producción: doc nuevo 2 cards/4 charts, y el original **intacto** en 7 cards/14 charts.
+
 ### Iteración 4 — modelo de salida corregido contra los videos REALES del gym
 Mateo pidió ajustar el modelo de output para los monitores del gym ("creo que tiene algo especial
 para reproducir"). En vez de especular, se bajaron y se corrieron por `ffprobe` **nueve assets
