@@ -4,6 +4,7 @@ import HealthMvp from './pages/HealthMvp'
 import TecnoFit from './pages/TecnoFit'
 import TecnoFitTVs from './pages/TecnoFitTVs'
 import TecnoFitSprint1 from './pages/TecnoFitSprint1'
+import TecnoFitSprint1Mcp from './pages/TecnoFitSprint1Mcp'
 import Ronzio from './pages/Ronzio'
 import GinLane from './pages/GinLane'
 import SendaArqAds from './pages/SendaArqAds'
@@ -52,6 +53,16 @@ export default function App() {
             whatLabel="Plan de Sprint"
           >
             <TecnoFitSprint1 />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/tecnofit-sprint-1-mcp" element={
+          <BudgetTemplate
+            title="Sprint 1 — Carga por conversación — TecnoFit"
+            timeline="Sprint 1 · plan de implementación"
+            stack="MCP local · ffmpeg · Supabase Storage"
+            whatLabel="Implementación"
+          >
+            <TecnoFitSprint1Mcp />
           </BudgetTemplate>
         } />
         <Route path="/budget/ronzio" element={
