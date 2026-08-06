@@ -1,5 +1,55 @@
 # Marco Polo — Catchup
 
+## 2026-08-06 — Budget Héctor Barea: marketplace de lotes de ganadería ✅
+**Source:** Claude Code — Macbook Pro
+
+### Qué se hizo
+Mateo pidió un budget "tipo los que hacemos a TecnoFit" para Héctor Barea, y trajo el alcance ya
+depurado en un brief: marketplace de compra/venta de hacienda en pie donde **sólo el admin publica**,
+el comprador emite ofertas privadas con condiciones comerciales, y la transacción se cierra fuera de
+la plataforma. Sin pagos, sin chat interno, sin WhatsApp, sin validación de CUIT contra ARCA.
+
+- Nueva página `src/pages/HectorBarea.tsx`, ruta `/budget/hector-barea` en `App.tsx`
+  (`BudgetTemplate` con `timeline="9 a 10 semanas (Web)"`, `stack="Web App · PWA instalable · React"`,
+  `whatLabel="Propuesta"`). Card agregada en `Home.tsx` entre `tecnofit-sprint-1` y `ronzio`.
+- Reusa los componentes existentes: `ContentBox`, `TwoColumnSection`, `BoxedListSection`, `Timeline`
+  (roadmap de 5 fases) y **dos** `BudgetRemainderSection` — uno por opción de cotización.
+
+### Los números (decisión de Mateo)
+Le ofrecí anclas de $28–34k (alineado a Ronzio), $20–24k lean y $38–45k full. Respondió: **"opción 1
+pero por 15, no lo veo tan complejo"** — o sea el scope completo de la opción cara al precio de la
+barata. Con research + diseño UX/UI incluidos (fase 0) y mobile como monto cerrado aparte.
+
+Desglose Web — total **$15.000**:
+Fase 0 research + AI + diseño $2.500 · onboarding/cuenta $1.200 · carga de lotes admin (multi-paso,
+fotos y video) $2.300 · catálogo con filtros y ficha $2.200 · ofertas con condiciones comerciales +
+bandeja $2.600 · form "quiero vender mi lote" + mails $700 · landing + vidriera SEO $1.500 · back
+office (usuarios, moderación, parametrización, dashboard) $1.500 · QA/entornos/deploy $500.
+
+Desglose Mobile nativo (fase posterior) — total **$9.000**:
+Diseño UI mobile $1.500 · app nativa (cuenta, catálogo, ficha) $3.000 · ofertas + push $2.500 · carga
+desde cámara/galería $1.000 · QA en dispositivos + publicación en las tiendas $1.000.
+
+El argumento que sostiene los dos números por separado sin que parezca doble cobro está escrito en la
+sección "Cómo se relacionan las dos opciones": el core (base de datos, lógica de ofertas, back office,
+notificaciones) se construye una vez en la opción web y la app sólo paga el canal nuevo.
+
+### Decisiones de contenido
+- **PWA instalable** como argumento de fase 1: cubre mobile sin tiendas y, a diferencia de una app
+  nativa, la vidriera es indexable por Google — eso es demanda que hoy no le llega.
+- Sección "Fuera de alcance" explícita con los 5 ítems del brief, para que no se cuelen después.
+- Costos recurrentes de terceros listados aparte y **sin montos** (se contratan a nombre del cliente
+  y se pagan por consumo) — así no quedan pegados al valor de desarrollo.
+- Cuatro puntos a confirmar: taxonomía de familias/categorías y atributos zoosanitarios obligatorios,
+  video subido vs enlace externo, métricas del dashboard día uno, y si el registro de compradores es
+  abierto o con aprobación manual.
+
+### Verificación
+`tsc -b` limpio. Verificado en browser en local (`:5175`) y en producción: **200** en
+https://travels.marcopolo.agency/budget/hector-barea (deploy de Vercel `READY`, commit `652321d`).
+
+---
+
 ## 2026-07-29 — TecnoFit: página de Sprint 1 para la reunión de kickoff ✅
 **Source:** Claude Code — Macbook Pro
 
