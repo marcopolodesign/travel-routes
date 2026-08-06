@@ -3,6 +3,8 @@ import BoxedListSection from '../components/BoxedListSection'
 import TwoColumnSection from '../components/TwoColumnSection'
 import BudgetRemainderSection from '../components/BudgetRemainderSection'
 import Timeline from '../components/Timeline'
+import ScrollReveal from '../components/ScrollReveal'
+import ContourLines from '../components/ContourLines'
 
 const ROADMAP_STEPS = [
   {
@@ -50,7 +52,13 @@ const ROADMAP_STEPS = [
 export default function HectorBarea() {
   return (
     <>
-      <ContentBox title="Visión general">
+      <ContourLines
+        lines={13}
+        className="w-full h-32 md:h-44 mb-12 md:mb-16 opacity-70"
+      />
+
+      <ScrollReveal>
+        <ContentBox title="Visión general">
         <p>
           Marketplace especializado en compra y venta de <strong>lotes de ganadería en pie</strong> para
           el mercado argentino. La plataforma encapsula y le da seriedad a una oferta que hoy circula
@@ -111,6 +119,8 @@ export default function HectorBarea() {
         </div>
       </section>
 
+      <ContourLines lines={9} variant={1} className="w-full h-24 md:h-32 mb-14 md:mb-20 opacity-60" />
+
       {/* Opción 1 — Web */}
       <BudgetRemainderSection
         title="Opción 1 — Web (PWA instalable)"
@@ -141,6 +151,8 @@ export default function HectorBarea() {
           lotes publicados aparecen en Google y traen demanda que hoy no llega.
         </p>
       </ContentBox>
+
+      <ContourLines lines={9} variant={2} className="w-full h-24 md:h-32 mb-14 md:mb-20 opacity-60" />
 
       {/* Opción 2 — Mobile nativo */}
       <BudgetRemainderSection
@@ -202,7 +214,8 @@ export default function HectorBarea() {
           forman parte del valor de desarrollo. Cambios de alcance sobre lo definido en este documento se
           cotizan aparte.
         </p>
-      </ContentBox>
+        </ContentBox>
+      </ScrollReveal>
     </>
   )
 }
