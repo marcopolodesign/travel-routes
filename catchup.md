@@ -135,6 +135,31 @@ aplica (`matrix(1,0,0,1,0,40)` + `opacity 0`), y en la iteración 2 se vio un tw
 
 `tsc` limpio, `npm run build` OK, deploy `READY`. Commit `4d998e9`.
 
+### Iteración 4 — precios finales y opción combo (mismo día)
+Mateo: *"Hace de 11 la pwa por favor y 11 la mobile app - y otra opción de combo por 20"*. Los números
+quedaron así, y **ya no coinciden con los desgloses de la iteración 1** (que eran 15k web / 9k mobile):
+
+| Opción | Monto |
+|---|---|
+| 1 — Web (PWA instalable) | **$11.000** — 9 a 10 semanas |
+| 2 — Mobile nativo (iOS + Android) | **$11.000** — fase posterior, +5 a 6 semanas |
+| 3 — Combo (Web + Mobile) | **$20.000** — $2.000 menos que por separado |
+
+El combo se justifica en el documento sin hablar de descuento por descuento: contratadas juntas, el
+núcleo se planifica una sola vez para los dos canales en lugar de adaptarse después, y ese ahorro se
+traslada al precio. Se aclara que igual se entrega por etapas (primero web en producción, después las
+apps), así que el combo no obliga a esperar todo junto.
+
+Ojo con el detalle de que ahora la app nativa vale lo mismo que la web: se sacó de "Cómo se relacionan
+las opciones" cualquier redacción que sugiriera que la mobile es sólo un incremento chico sobre el
+core ya pago, y se dejó el argumento de que consume el mismo backend sin duplicar el core.
+
+Textos actualizados por consistencia: "Cómo se relacionan **las opciones**" (era "las dos opciones"),
+la nota de cuentas de App Store ya no dice "Opción 2" sino "la app nativa", y Condiciones ahora da los
+dos plazos. Formato de moneda unificado en `en-US` (`$2,000`), que es lo que usa `PriceBlock`.
+
+`tsc` limpio, build OK, deploy `READY`. Commit `fdd152e`.
+
 ---
 
 ## 2026-07-29 — TecnoFit: página de Sprint 1 para la reunión de kickoff ✅
