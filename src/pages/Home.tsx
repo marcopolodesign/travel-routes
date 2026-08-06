@@ -27,6 +27,12 @@ const budgets = [
     timeline: '2 semanas · Sprint 1 de 4',
   },
   {
+    slug: 'hector-barea',
+    title: 'Marketplace de Lotes de Ganadería — Héctor Barea',
+    description: 'Compra y venta de hacienda en pie: catálogo curado por el administrador, ofertas privadas con condiciones comerciales y back office. Web + opción mobile nativo.',
+    timeline: '9 a 10 semanas (Web)',
+  },
+  {
     slug: 'ronzio',
     title: 'Ronzio',
     description: 'Revisión de landing page, CRM a medida para tracking de leads, UTMs y ciclo de vida del usuario.',

@@ -11,6 +11,7 @@ import SendaArqAds from './pages/SendaArqAds'
 import Home from './pages/Home'
 import Agent from './pages/Agent'
 import Monotributo from './pages/Monotributo'
+import HectorBarea from './pages/HectorBarea'
 
 export default function App() {
   return (
@@ -93,6 +94,16 @@ export default function App() {
             whatLabel="Propuesta mensual"
           >
             <SendaArqAds />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/hector-barea" element={
+          <BudgetTemplate
+            title="Marketplace de Lotes de Ganadería — Héctor Barea"
+            timeline="9 a 10 semanas (Web)"
+            stack="Web App · PWA instalable · React"
+            whatLabel="Propuesta"
+          >
+            <HectorBarea />
           </BudgetTemplate>
         } />
         <Route path="/agent" element={<Agent />} />
