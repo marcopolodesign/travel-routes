@@ -48,6 +48,53 @@ notificaciones) se construye una vez en la opción web y la app sólo paga el ca
 `tsc -b` limpio. Verificado en browser en local (`:5175`) y en producción: **200** en
 https://travels.marcopolo.agency/budget/hector-barea (deploy de Vercel `READY`, commit `652321d`).
 
+### Iteración 2 — mobile roto + animaciones (mismo día)
+Mateo: *"Las secciones en mobile necesitan un bg - pisan en contenido. Y podemos animar esto? Fíjate
+las animaciones de topografía que usamos en el website de TAG"*.
+
+**Mobile (dos bugs reales, ambos en componentes compartidos por todos los budgets):**
+1. `TwoColumnSection` — el título es `sticky top-16` **sin fondo**, así que en mobile (donde la grilla
+   de 12 colapsa a 1 columna) el body scrollea por debajo del título y las dos tipografías se pisan.
+   Arreglado con una banda blanca propia en mobile: `-mx-[4vw] px-[4vw] py-3 bg-white border-b`, todo
+   reseteado en `md:` para no tocar desktop.
+2. `Timeline` — el `style={{gridTemplateColumns: repeat(N, 1fr)}}` inline aplica en **todos** los
+   anchos, así que 5 fases entraban en 390px y el texto se solapaba en horizontal. Ahora hay una
+   variante `md:hidden` apilada en vertical (riel a la izquierda con dots + pill + lista por fase) y
+   la horizontal original queda `hidden md:block`.
+
+Verificado con un iframe de 390px inyectado en la página (`resize_window` de la extensión no cambia
+el viewport en esta Mac — reporta éxito pero `window.innerWidth` no se mueve).
+
+**Animaciones:** un agente barrió `TAG/website` completo y **no existe ninguna animación de
+topografía** — cero matches de `topo`/`contour`/`terrain`, sin `<canvas>`, sin `requestAnimationFrame`,
+sin `stroke-dasharray`. Lo que sí hay, y es a lo que Mateo se refería, son **hairlines de 1px que se
+dibujan solas de 0%→100% al entrar en viewport, escalonadas** (`AnimatedLine` en `CursosHome.tsx:224`
+y el cascade con stagger de `index*200ms` en `Cursos.tsx:309`), con IntersectionObserver + GSAP.
+(Dato aparte para corregir: `TAG/CLAUDE.md` dice que el website es Astro; **no lo es**, es Vite +
+React 19 + react-router + Tailwind v4 + GSAP.)
+
+Porté ese motivo y lo doblé en curvas de nivel de verdad — que además le va al rubro:
+- **`src/components/ContourLines.tsx`** — SVG con N curvas generadas como suma de senos
+  (determinístico, sin `Math.random`, así el server y el cliente coinciden). Las líneas del medio
+  del stack tienen más amplitud, como una loma vista desde arriba. Se revelan con
+  `strokeDasharray`/`strokeDashoffset` animado a 0, `stagger: 0.11`, `duration: 2.2`.
+  `vectorEffect="non-scaling-stroke"` para que `preserveAspectRatio="none"` no engorde el trazo.
+- **`src/components/ScrollReveal.tsx`** — observa los **hijos directos** y les hace fade + rise
+  (`y: 28 → 0`, `power3.out`). Se envuelve el bloque entero de la página una sola vez, así el markup
+  del contenido queda intacto.
+- Ambos respetan `prefers-reduced-motion`.
+- Aplicado sólo en `HectorBarea.tsx`: una banda de 13 curvas arriba de todo y dos cortes de 9 curvas
+  antes de cada opción de presupuesto (`variant` distinto para que no se repita el dibujo).
+
+GSAP ya estaba en `package.json` pero no se usaba en `src/` — este es el primer uso.
+
+**Cuidado al verificar animaciones desde la extensión:** la tab queda con
+`document.visibilityState === "hidden"`, así que `requestAnimationFrame` se congela y GSAP se queda a
+mitad del tween (la caja quedaba en `opacity: 0.12` para siempre). No es un bug de la página. Para ver
+el estado final hay que forzarlo por JS (`strokeDashoffset=0`, `opacity=1`) y recién ahí screenshotear.
+
+`npm run build` OK, deploy `READY`. Commits `160fabd` (mobile) y `5cfee74` (animaciones).
+
 ---
 
 ## 2026-07-29 — TecnoFit: página de Sprint 1 para la reunión de kickoff ✅
