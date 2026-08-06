@@ -1,10 +1,9 @@
 import ContentBox from '../components/ContentBox'
 import BoxedListSection from '../components/BoxedListSection'
 import TwoColumnSection from '../components/TwoColumnSection'
-import BudgetRemainderSection from '../components/BudgetRemainderSection'
+import PriceBlock from '../components/PriceBlock'
 import Timeline from '../components/Timeline'
 import ScrollReveal from '../components/ScrollReveal'
-import ContourLines from '../components/ContourLines'
 
 const ROADMAP_STEPS = [
   {
@@ -52,11 +51,6 @@ const ROADMAP_STEPS = [
 export default function HectorBarea() {
   return (
     <>
-      <ContourLines
-        lines={13}
-        className="w-full h-32 md:h-44 mb-12 md:mb-16 opacity-70"
-      />
-
       <ScrollReveal>
         <ContentBox title="Visión general">
         <p>
@@ -69,6 +63,11 @@ export default function HectorBarea() {
           La demanda es centralizada: <strong>solo el administrador publica lotes</strong>. El comprador
           registrado navega, filtra, marca interés y emite ofertas privadas con condiciones comerciales
           completas. La transacción y el contacto final se cierran fuera de la plataforma.
+        </p>
+        <p>
+          Se entrega como <strong>PWA (Progressive Web App)</strong>: una sola plataforma que se navega
+          igual desde la computadora y desde el teléfono, y que además se instala en la pantalla de
+          inicio del celular como una app más, sin pasar por App Store ni Google Play.
         </p>
       </ContentBox>
 
@@ -119,24 +118,18 @@ export default function HectorBarea() {
         </div>
       </section>
 
-      <ContourLines lines={9} variant={1} className="w-full h-24 md:h-32 mb-14 md:mb-20 opacity-60" />
-
       {/* Opción 1 — Web */}
-      <BudgetRemainderSection
+      <PriceBlock
         title="Opción 1 — Web (PWA instalable)"
-        total={15000}
-        items={[
-          { name: 'Fase 0 — Research, arquitectura de información y diseño UX/UI', amount: 2500, status: 'pending' },
-          { name: 'Onboarding y cuenta de usuario', amount: 1200, status: 'pending' },
-          { name: 'Carga y gestión de lotes (admin, multi-paso, fotos y video)', amount: 2300, status: 'pending' },
-          { name: 'Catálogo — listado, filtros, búsqueda y ficha de detalle', amount: 2200, status: 'pending' },
-          { name: 'Ofertas — emisión con condiciones comerciales y bandeja de gestión', amount: 2600, status: 'pending' },
-          { name: 'Formulario "Quiero vender mi lote" + notificaciones por mail', amount: 700, status: 'pending' },
-          { name: 'Landing institucional + vidriera pública indexable', amount: 1500, status: 'pending' },
-          { name: 'Back office — usuarios, moderación, parametrización y dashboard', amount: 1500, status: 'pending' },
-          { name: 'QA, entornos (dev / staging / producción) y deploy', amount: 500, status: 'pending' },
-        ]}
-      />
+        meta="9 a 10 semanas · incluye research, diseño UX/UI, desarrollo, back office, QA y puesta en producción"
+        amount={15000}
+      >
+        <p>
+          Cubre el circuito completo descrito arriba, de punta a punta. Se navega igual desde la
+          computadora y desde el teléfono, y se instala en la pantalla de inicio del celular como una
+          app, sin tiendas de aplicaciones de por medio.
+        </p>
+      </PriceBlock>
 
       <ContentBox title="Por qué arrancar por web">
         <p>
@@ -152,20 +145,17 @@ export default function HectorBarea() {
         </p>
       </ContentBox>
 
-      <ContourLines lines={9} variant={2} className="w-full h-24 md:h-32 mb-14 md:mb-20 opacity-60" />
-
       {/* Opción 2 — Mobile nativo */}
-      <BudgetRemainderSection
-        title="Opción 2 — Mobile nativo (iOS + Android) · Fase posterior"
-        total={9000}
-        items={[
-          { name: 'Diseño de interfaz mobile — adaptación a patrones iOS y Android', amount: 1500, status: 'pending' },
-          { name: 'App nativa — cuenta, catálogo, filtros y ficha de lote', amount: 3000, status: 'pending' },
-          { name: 'Ofertas y bandeja en la app + notificaciones push', amount: 2500, status: 'pending' },
-          { name: 'Carga de lotes desde el teléfono (cámara y galería, uso del admin)', amount: 1000, status: 'pending' },
-          { name: 'QA en dispositivos + publicación en App Store y Google Play', amount: 1000, status: 'pending' },
-        ]}
-      />
+      <PriceBlock
+        title="Opción 2 — Mobile nativo (iOS + Android)"
+        meta="Fase posterior · incluye diseño mobile, desarrollo, notificaciones push, QA en dispositivos y publicación en las tiendas"
+        amount={9000}
+      >
+        <p>
+          Opcional. Con la Opción 1 el comprador ya opera desde el teléfono, así que este paso se toma
+          sólo si el uso real lo justifica.
+        </p>
+      </PriceBlock>
 
       <ContentBox title="Cómo se relacionan las dos opciones">
         <p>

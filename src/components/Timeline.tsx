@@ -23,26 +23,24 @@ export default function Timeline({ title = 'TIMELINE', steps }: TimelineProps) {
 
       {/* Mobile: stacked vertically. The horizontal layout below forces one
           column per step, which at phone widths collapses into overlapping text. */}
-      <div className="md:hidden relative pl-6">
-        <div className="absolute left-[4px] top-2 bottom-2 w-0.5 bg-[var(--marco-border)]" aria-hidden />
-        <div className="space-y-8">
-          {steps.map((step, i) => (
-            <div key={i} className="relative">
-              <div
-                className="absolute -left-6 top-2.5 w-2.5 h-2.5 rounded-full bg-[var(--marco-gray)]"
-                aria-hidden
-              />
-              <span className="inline-block px-4 py-1.5 rounded-full bg-[var(--marco-accent)] text-white font-thunder text-sm uppercase tracking-wide mb-3">
-                {step.label}
-              </span>
-              <ul className="space-y-2 text-[var(--marco-gray)] text-sm list-disc pl-5">
-                {step.items.map((item, j) => (
-                  <li key={j}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+      <div className="md:hidden divide-y divide-[var(--marco-border)] border-y border-[var(--marco-border)]">
+        {steps.map((step, i) => (
+          <div key={i} className="py-5 first:pt-0">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-[var(--marco-accent)] text-white font-thunder text-sm uppercase tracking-wide mb-4">
+              {step.label}
+            </span>
+            <ul className="space-y-3">
+              {step.items.map((item, j) => (
+                <li key={j} className="flex gap-2.5 text-black text-[15px] leading-snug">
+                  <span className="text-[var(--marco-accent)] leading-none pt-1.5" aria-hidden>
+                    —
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
 
       <div className="relative hidden md:block">
