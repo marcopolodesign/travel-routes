@@ -21,7 +21,31 @@ export default function Timeline({ title = 'TIMELINE', steps }: TimelineProps) {
         </h3>
       )}
 
-      <div className="relative">
+      {/* Mobile: stacked vertically. The horizontal layout below forces one
+          column per step, which at phone widths collapses into overlapping text. */}
+      <div className="md:hidden relative pl-6">
+        <div className="absolute left-[4px] top-2 bottom-2 w-0.5 bg-[var(--marco-border)]" aria-hidden />
+        <div className="space-y-8">
+          {steps.map((step, i) => (
+            <div key={i} className="relative">
+              <div
+                className="absolute -left-6 top-2.5 w-2.5 h-2.5 rounded-full bg-[var(--marco-gray)]"
+                aria-hidden
+              />
+              <span className="inline-block px-4 py-1.5 rounded-full bg-[var(--marco-accent)] text-white font-thunder text-sm uppercase tracking-wide mb-3">
+                {step.label}
+              </span>
+              <ul className="space-y-2 text-[var(--marco-gray)] text-sm list-disc pl-5">
+                {step.items.map((item, j) => (
+                  <li key={j}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="relative hidden md:block">
         {/* Pill labels above the line */}
         <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
           {steps.map((step, i) => (

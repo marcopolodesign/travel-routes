@@ -10,7 +10,9 @@ export default function TwoColumnSection({ title, children, withBar = true, id }
   return (
     <section id={id} className="mb-20 md:mb-28 scroll-mt-28">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14">
-        <div className="md:col-span-4 self-start sticky top-16 md:top-[190px] flex flex-row items-start gap-4">
+        {/* Mobile: the sticky title needs its own opaque band, otherwise the
+            body text scrolls underneath it and the two overlap. */}
+        <div className="md:col-span-4 self-start sticky top-16 md:top-[190px] z-10 -mx-[4vw] px-[4vw] py-3 bg-white border-b border-[var(--marco-border)] md:mx-0 md:px-0 md:py-0 md:bg-transparent md:border-0 flex flex-row items-start gap-4">
           {withBar && (
             <div className="w-1 self-stretch bg-[var(--marco-accent-light)] rounded flex-shrink-0" aria-hidden />
           )}
