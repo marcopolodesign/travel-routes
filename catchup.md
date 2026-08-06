@@ -95,6 +95,46 @@ el estado final hay que forzarlo por JS (`strokeDashoffset=0`, `opacity=1`) y re
 
 `npm run build` OK, deploy `READY`. Commits `160fabd` (mobile) y `5cfee74` (animaciones).
 
+### Iteración 3 — era TIPOGRAFÍA, no topografía (mismo día)
+Mateo corrigió: *"De tipografía decía"*. O sea que toda la iteración 2 de animaciones estaba
+construida sobre una mala lectura de una palabra. **`ContourLines.tsx` borrado.** Lo que él quería es
+el `AnimatedText` de TAG (`Home.tsx:17`, `CursosHome.tsx:152`, `TagSteps.tsx`, `Testimonios.tsx`,
+`TrimestralCards.tsx` — está duplicado en 5 archivos): cada caracter en su propio `<span>`,
+`y: 100% → 0` + `autoAlpha 0 → 1`, `duration 0.6`, `stagger 0.02`, dentro de un contenedor
+`overflow-hidden` para que las letras suban desde detrás de una máscara.
+
+Portado dentro de `ScrollReveal.tsx`, que ahora hace las dos cosas por hijo directo: fade + rise del
+bloque **y** split del primer `h1/h2/h3` que encuentre adentro. El split es en dos niveles —
+**palabra → caracter** — porque partir sólo por caracter con `inline-block` deja que el texto corte a
+mitad de palabra al wrapear en mobile. El heading lleva `padding-bottom: 0.08em` porque el
+`overflow: hidden` de la máscara le come los descendentes con el line-height apretado de Thunder.
+Envuelto en `try/catch` con un `revealEverything()` de fallback: si el setup falla, el documento se
+muestra plano en vez de quedar invisible.
+
+**Otros dos pedidos del mismo mensaje:**
+- *"No desglosar presupuesto, mandar solo el número. Para mobile lo mismo."* → fuera los dos
+  `BudgetRemainderSection` con las 9 y 5 líneas de ítems. Componente nuevo **`PriceBlock.tsx`**:
+  header accent con título + una línea de meta (qué cubre y en cuánto tiempo), y abajo el total en
+  grande. Sin ítems. Los montos internos siguen documentados acá arriba en la iteración 1 — **no
+  borrarlos de este catchup**, es la única traza de cómo se llegó a los 15k y 9k.
+- *"Aclarar que es una PWA y que se va a poder navegar igual desde teléfono mobile"* → dicho en tres
+  lugares: en "Visión general", en el `meta`/cuerpo del PriceBlock de la Opción 1, y en "Por qué
+  arrancar por web".
+
+**Fases en mobile** (se quejó de que no se veían bien): la variante vertical de la iteración 2 tenía
+riel + dot + pill + lista con `list-disc pl-5`, o sea tres niveles de sangría comiéndose el ancho en
+390px, y texto gris chico. Rehecha como filas separadas por hairlines, a ancho completo, texto negro
+de 15px y un guión accent como viñeta.
+
+**Limitación del entorno, para la próxima:** no se pudo ver la animación corriendo. Tanto Chrome como
+Safari devuelven `document.visibilityState === "hidden"` desde las herramientas de esta sesión, y con
+la tab en background `requestAnimationFrame` se congela, así que GSAP queda a mitad del tween. Lo que
+sí se verificó: el split genera los spans correctos (13 en "Visión general"), el estado inicial se
+aplica (`matrix(1,0,0,1,0,40)` + `opacity 0`), y en la iteración 2 se vio un tween congelado en
+`opacity: 0.12`, que prueba que arranca. El estado final se verifica forzando por JS.
+
+`tsc` limpio, `npm run build` OK, deploy `READY`. Commit `4d998e9`.
+
 ---
 
 ## 2026-07-29 — TecnoFit: página de Sprint 1 para la reunión de kickoff ✅
