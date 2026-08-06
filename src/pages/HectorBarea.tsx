@@ -122,7 +122,7 @@ export default function HectorBarea() {
       <PriceBlock
         title="Opción 1 — Web (PWA instalable)"
         meta="9 a 10 semanas · incluye research, diseño UX/UI, desarrollo, back office, QA y puesta en producción"
-        amount={15000}
+        amount={11000}
       >
         <p>
           Cubre el circuito completo descrito arriba, de punta a punta. Se navega igual desde la
@@ -149,7 +149,7 @@ export default function HectorBarea() {
       <PriceBlock
         title="Opción 2 — Mobile nativo (iOS + Android)"
         meta="Fase posterior · incluye diseño mobile, desarrollo, notificaciones push, QA en dispositivos y publicación en las tiendas"
-        amount={9000}
+        amount={11000}
       >
         <p>
           Opcional. Con la Opción 1 el comprador ya opera desde el teléfono, así que este paso se toma
@@ -157,17 +157,29 @@ export default function HectorBarea() {
         </p>
       </PriceBlock>
 
-      <ContentBox title="Cómo se relacionan las dos opciones">
+      {/* Opción 3 — Combo */}
+      <PriceBlock
+        title="Opción 3 — Combo: Web + Mobile nativo"
+        meta="Las dos opciones contratadas juntas · $2,000 menos que por separado"
+        amount={20000}
+      >
+        <p>
+          Contratadas juntas, el núcleo se planifica una sola vez para los dos canales en lugar de
+          adaptarse después, y el ahorro se traslada al precio. Se entrega igual por etapas: primero la
+          web en producción, después las apps nativas.
+        </p>
+      </PriceBlock>
+
+      <ContentBox title="Cómo se relacionan las opciones">
         <p>
           El núcleo de negocio — base de datos, lógica de ofertas, back office y notificaciones — se
-          construye una sola vez en la Opción 1 y queda disponible para mobile. Por eso la Opción 2 cotiza
-          únicamente el canal nuevo: la app nativa consume el mismo backend ya pago, sin duplicar costos
-          de core.
+          construye una sola vez y queda disponible para los dos canales. Por eso la app nativa cotiza
+          únicamente el canal nuevo: consume el mismo backend, sin duplicar costos de core.
         </p>
         <p>
-          La recomendación es contratar la Opción 1, salir a mercado y decidir el nativo con datos de uso
-          reales en la mano. Las dos opciones son independientes: se pueden contratar juntas o por
-          separado.
+          La recomendación es empezar por la web, salir a mercado y decidir el nativo con datos de uso
+          reales en la mano. Si la decisión de ir a las tiendas ya está tomada, el combo es el camino más
+          conveniente. Las tres opciones son independientes entre sí.
         </p>
       </ContentBox>
 
@@ -179,7 +191,7 @@ export default function HectorBarea() {
           'Almacenamiento y entrega de fotos y video (CDN).',
           'Servicio de mail transaccional para las notificaciones.',
           'Dominio y certificado.',
-          'Cuentas de desarrollador de App Store y Google Play — solo si se avanza con la Opción 2.',
+          'Cuentas de desarrollador de App Store y Google Play — solo si se avanza con la app nativa.',
         ]}
       />
 
@@ -196,8 +208,8 @@ export default function HectorBarea() {
       <ContentBox title="Condiciones">
         <p>
           Los valores expresados son <strong>netos, en dólares estadounidenses</strong>, y no incluyen IVA
-          ni otros impuestos aplicables. El plazo estimado para la Opción 1 es de <strong>9 a 10
-          semanas</strong> desde el inicio de la Fase 0.
+          ni otros impuestos aplicables. El plazo estimado para la web es de <strong>9 a 10
+          semanas</strong> desde el inicio de la Fase 0; la app nativa suma entre 5 y 6 semanas más.
         </p>
         <p>
           Los costos recurrentes de infraestructura y servicios de terceros se detallan por separado y no
