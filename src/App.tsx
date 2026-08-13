@@ -5,6 +5,8 @@ import TecnoFit from './pages/TecnoFit'
 import TecnoFitTVs from './pages/TecnoFitTVs'
 import TecnoFitSprint1 from './pages/TecnoFitSprint1'
 import TecnoFitSprint1Mcp from './pages/TecnoFitSprint1Mcp'
+import TecnoFitSprint1Cierre from './pages/TecnoFitSprint1Cierre'
+import TecnoFitSprint2 from './pages/TecnoFitSprint2'
 import Ronzio from './pages/Ronzio'
 import GinLane from './pages/GinLane'
 import SendaArqAds from './pages/SendaArqAds'
@@ -54,6 +56,26 @@ export default function App() {
             whatLabel="Plan de Sprint"
           >
             <TecnoFitSprint1 />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/tecnofit-sprint-1-cierre" element={
+          <BudgetTemplate
+            title="Cierre Sprint 1 — Catálogo y video — TecnoFit"
+            timeline="Sprint 1 de 4 · entregado"
+            stack="Catálogo · Video en TV y app · Encuadre"
+            whatLabel="Cierre de Sprint"
+          >
+            <TecnoFitSprint1Cierre />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/tecnofit-sprint-2" element={
+          <BudgetTemplate
+            title="Sprint 2 — Constructor de rutinas — TecnoFit"
+            timeline="2 semanas · Sprint 2 de 4"
+            stack="Constructor · Motor de sustitución · AMRAP/EMOM"
+            whatLabel="Plan de Sprint"
+          >
+            <TecnoFitSprint2 />
           </BudgetTemplate>
         } />
         <Route path="/budget/tecnofit-sprint-1-mcp" element={
