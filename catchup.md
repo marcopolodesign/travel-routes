@@ -1,5 +1,22 @@
 # Marco Polo — Catchup
 
+## 2026-08-19 — Plan Mes 1 de Meta Ads para Senda ✅
+**Source:** Claude Code — Macbook Pro
+
+Documento cara al cliente en `/budget/senda-ads-mes-1`, con la estructura y el estilo de los sprints de TecnoFit (portada con 4 stats, punto de partida, qué resuelve, alcance con "entra / no entra", Timeline semanal, y "lo que necesitamos de Senda").
+
+**Contenido:** las dos campañas del mes (A → obras en la web, B → perfil de Instagram, US$4/día cada una = **US$240/mes**, dentro del rango U$200–300 que se le cotizó y con margen para escalar sobre la que gane), las creatividades renderizadas como tarjetas de anuncio con las fotos reales del portfolio (Los Lagartos CC F42 y Pilará Calesa 594) y los dos ángulos de copy —conceptual y práctico—, la audiencia, qué se mide y el plan semana a semana.
+
+**Componente nuevo:** `AdCard` local en `SendaAdsMes1.tsx` — preview de anuncio (foto + ángulo + título + texto + CTA) para que el cliente vea el anuncio como se va a ver en el feed, no descrito en un bullet.
+
+**Encuadre elegido:** el mes 1 se presenta como calibración ("por dónde entra la gente y qué manera de contar el estudio funciona"), no como los 3 canales simultáneos de la propuesta original — porque Reformas y Casa Nueva siguen bloqueadas por el WhatsApp sin conectar. Se pide explícitamente en la última sección.
+
+`tsc` limpio, verificado en local y en producción. **Nota:** el CDN sirvió el bundle viejo unos minutos después del deploy — el `readyState` READY y el alias correcto no garantizan que el HTML cacheado ya apunte al bundle nuevo; verificar con cache-buster antes de dar por rota una página en blanco.
+
+Commit `6ef63e9b`.
+
+---
+
 ## 2026-08-06 — Budget Héctor Barea: marketplace de lotes de ganadería ✅
 **Source:** Claude Code — Macbook Pro
 
