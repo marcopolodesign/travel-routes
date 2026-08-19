@@ -10,6 +10,7 @@ import TecnoFitSprint2 from './pages/TecnoFitSprint2'
 import Ronzio from './pages/Ronzio'
 import GinLane from './pages/GinLane'
 import SendaArqAds from './pages/SendaArqAds'
+import SendaAdsMes1 from './pages/SendaAdsMes1'
 import Home from './pages/Home'
 import Agent from './pages/Agent'
 import Monotributo from './pages/Monotributo'
@@ -116,6 +117,16 @@ export default function App() {
             whatLabel="Propuesta mensual"
           >
             <SendaArqAds />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/senda-ads-mes-1" element={
+          <BudgetTemplate
+            title="Mes 1 — Salir a la cancha — Senda Arquitectura"
+            timeline="4 semanas · Mes 1"
+            stack="Meta Ads · Web + Instagram · 8 anuncios"
+            whatLabel="Plan del mes"
+          >
+            <SendaAdsMes1 />
           </BudgetTemplate>
         } />
         <Route path="/budget/hector-barea" element={
