@@ -11,6 +11,7 @@ import Ronzio from './pages/Ronzio'
 import GinLane from './pages/GinLane'
 import SendaArqAds from './pages/SendaArqAds'
 import SendaAdsMes1 from './pages/SendaAdsMes1'
+import SendaAdsPreviews from './pages/SendaAdsPreviews'
 import Home from './pages/Home'
 import Agent from './pages/Agent'
 import Monotributo from './pages/Monotributo'
@@ -127,6 +128,16 @@ export default function App() {
             whatLabel="Plan del mes"
           >
             <SendaAdsMes1 />
+          </BudgetTemplate>
+        } />
+        <Route path="/docs/senda-ads-previews" element={
+          <BudgetTemplate
+            title="Previews de los anuncios — Senda Arquitectura"
+            timeline="Mes 1 · listos para activar"
+            stack="Meta Ads · 5 ubicaciones · 20 versiones"
+            whatLabel="Previews"
+          >
+            <SendaAdsPreviews />
           </BudgetTemplate>
         } />
         <Route path="/budget/hector-barea" element={
