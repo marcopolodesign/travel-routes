@@ -55,12 +55,19 @@ function Bloque({
             <p className="font-thunder uppercase text-[var(--marco-accent)] text-sm mb-3">
               {p.label}
             </p>
-            <iframe
-              src={p.url}
-              loading="lazy"
-              title={`${anuncio.ad} — ${p.label}`}
-              className="w-full h-[620px] rounded-md border-0 bg-neutral-50"
-            />
+            <div className="relative w-full h-[620px]">
+              <p className="absolute inset-0 flex items-center justify-center text-center text-sm text-black/40 px-6">
+                Cargando el preview desde Meta…
+                <br />
+                puede tardar unos segundos
+              </p>
+              <iframe
+                src={p.url}
+                loading="lazy"
+                title={`${anuncio.ad} — ${p.label}`}
+                className="absolute inset-0 w-full h-full rounded-md border-0"
+              />
+            </div>
             <a
               href={p.url}
               target="_blank"
@@ -127,8 +134,9 @@ export default function SendaAdsPreviews() {
           eso el video se preparó ya en vertical, para que no quede nada importante afuera del cuadro.
         </p>
         <p className="text-sm text-black/60">
-          Los previews los genera Meta y caducan a las pocas semanas. Si alguno deja de cargar, se
-          regenera en el momento — no significa que el anuncio tenga un problema.
+          Los previews los genera Meta en vivo, así que pueden tardar unos segundos en aparecer.
+          Caducan a las pocas semanas: si alguno deja de cargar, se regenera en el momento — no
+          significa que el anuncio tenga un problema.
         </p>
       </ContentBox>
 
