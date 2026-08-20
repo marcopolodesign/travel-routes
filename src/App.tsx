@@ -12,6 +12,7 @@ import GinLane from './pages/GinLane'
 import SendaArqAds from './pages/SendaArqAds'
 import SendaAdsMes1 from './pages/SendaAdsMes1'
 import SendaAdsPreviews from './pages/SendaAdsPreviews'
+import TagMetaAgosto from './pages/TagMetaAgosto'
 import Home from './pages/Home'
 import Agent from './pages/Agent'
 import Monotributo from './pages/Monotributo'
@@ -128,6 +129,16 @@ export default function App() {
             whatLabel="Plan del mes"
           >
             <SendaAdsMes1 />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/tag-meta-agosto" element={
+          <BudgetTemplate
+            title="Meta Ads, agosto — The Acting Garage"
+            timeline="Agosto 2026 · 3 campañas activas"
+            stack="Meta Ads · WhatsApp + Web · €650/mes"
+            whatLabel="Estado y plan"
+          >
+            <TagMetaAgosto />
           </BudgetTemplate>
         } />
         <Route path="/docs/senda-ads-previews" element={
