@@ -457,10 +457,10 @@ export default function TecnoFitMotorRutinas() {
           más, o sumándole material a la estación— se acomoda solo, sin tocar el motor.
         </p>
         <p>
-          <b>Y hay dos ejercicios de glúteo cargados como empuje horizontal</b> — <b>EJ0014</b>,
-          abductores en colchoneta con tobillera, y <b>EJ0203</b>, glúteos patada en polea baja.
-          Como el motor rota por patrón de movimiento, pueden aparecer en un circuito de flexiones.
-          Cambiando el patrón en el catálogo se acomoda solo, sin tocar ninguna rutina ya armada.
+          <b>Resuelto:</b> dos ejercicios de glúteo estaban cargados como empuje horizontal —
+          <b> EJ0014</b>, abductores en colchoneta con tobillera, y <b>EJ0203</b>, glúteos patada
+          en polea baja. Ya tienen su patrón correcto en el catálogo, así que no van a volver a
+          aparecer en un circuito de flexiones. No tocó ninguna rutina ya armada.
         </p>
       </TwoColumnSection>
 
