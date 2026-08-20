@@ -1,5 +1,25 @@
 # Marco Polo — Catchup
 
+## 2026-08-19 (3) — Documento de TAG en `/budget/tag-meta-agosto` ✅
+**Source:** Claude Code — Macbook Pro
+
+Primer documento de cara al cliente de **The Acting Garage** en travels:
+`/budget/tag-meta-agosto`, con la misma estructura que los de Senda
+(`BudgetTemplate` + `ScrollNav` + `TwoColumnSection`, con `Timeline` para el plan
+de cuatro semanas y `BoxedListSection` para lo que depende del cliente).
+
+Cuenta el estado de las tres campañas de Meta tras redirigir a Meta los €300 que
+bajaron de Google, la campaña nueva de Garage Writing, y qué le toca a la escuela.
+Verificado en producción (200).
+
+**Lección que se llevó por delante:** "documento para cliente" **son dos formatos
+distintos** — esta página con link compartible, y el HTML suelto autocontenido de
+`~/Local/brand/` para mandar por WhatsApp. El documento se hizo dos veces en el
+formato equivocado antes de acertar. Quedó escrito en el skill
+`/documento-cliente` y en `~/Local/CLAUDE.md`, con la señal explícita: si Mateo
+dice "como los del budget", "como los de Senda" o "como los de sprint de Tecno",
+**es esta página**, no un HTML.
+
 ## 2026-08-19 (2) — Previews de anuncios de Senda en `/docs` ✅
 **Source:** Claude Code — Macbook Pro
 
