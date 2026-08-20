@@ -123,7 +123,7 @@ export default function App() {
           <BudgetTemplate
             title="Mes 1 — Salir a la cancha — Senda Arquitectura"
             timeline="4 semanas · Mes 1"
-            stack="Meta Ads · Web + Instagram · 8 anuncios"
+            stack="Meta Ads · Web + Instagram · 20 anuncios"
             whatLabel="Plan del mes"
           >
             <SendaAdsMes1 />

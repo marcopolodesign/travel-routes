@@ -18,46 +18,146 @@ const NAV: NavItem[] = [
   { id: 'senda', label: 'De Senda' },
 ]
 
-/** Ad preview card — foto real + título + texto + CTA, como se va a ver en el feed. */
+const BASE = 'https://senda-arq.com'
+
+/** Las cinco piezas visuales que entran en la rotación. */
+const PIEZAS = [
+  {
+    id: 'movimiento',
+    src: `${BASE}/obras/LARES%20DE%20CANNING%2069/IMG_3226-Post%201.webp`,
+    obra: 'Lares de Canning 69',
+    pie: 'Alguien subiendo la escalera — la casa en uso, no vacía',
+  },
+  {
+    id: 'fachada',
+    src: `${BASE}/obras/LOS%20LAGARTOS%20CC%20F42/DSC09934-Editar%20-%20Post%202.webp`,
+    obra: 'Los Lagartos CC F42',
+    pie: 'La casa entera, de afuera: hormigón, madera y vidrio',
+  },
+  {
+    id: 'interior',
+    src: `${BASE}/obras/LOS%20LAGARTOS%20CC%20F42/DSC00005-Editar%20-%20Post%202.webp`,
+    obra: 'Los Lagartos CC F42',
+    pie: 'El living y la escalera vistos desde el comedor',
+  },
+  {
+    id: 'patio',
+    src: `${BASE}/obras/PILARA,%20CALESA%20594/364A0525-Post1.webp`,
+    obra: 'Pilará, Calesa 594',
+    pie: 'El patio central con el árbol, desde el ingreso',
+  },
+] as const
+
+const VIDEO = {
+  src: `${BASE}/docs/ads-assets/senda-recorrido-15s.mp4`,
+  poster: `${BASE}/docs/ads-assets/senda-recorrido-poster.jpg`,
+  obra: 'Recorrido — 15 segundos',
+  pie: 'Recorte vertical del video del sitio, sin audio',
+}
+
+const TITULOS = [
+  { id: 'A', angulo: 'Conceptual', texto: 'Arquitectura que se habita, no se decora' },
+  { id: 'B', angulo: 'Práctico', texto: 'Casas y reformas en Zona Norte' },
+] as const
+
+const TEXTOS = [
+  {
+    id: '1',
+    texto:
+      'Diseñamos casas donde la luz, la madera y el hormigón conviven. Cada proyecto pensado alrededor de un recorrido, no de un plano.',
+  },
+  {
+    id: '2',
+    texto:
+      'Proyecto, dirección de obra y reformas integrales. Desde 2011 proyectando en countries de Zona Norte. Mirá las obras terminadas.',
+  },
+] as const
+
+/** Anuncio completo, como se ve en el feed. */
 function AdCard({
-  img,
-  obra,
+  pieza,
   titulo,
   texto,
-  cta,
-  angulo,
+  cta = 'Ver las obras →',
 }: {
-  img: string
-  obra: string
-  titulo: string
-  texto: string
-  cta: string
-  angulo: string
+  pieza: { src: string; obra: string; pie?: string; poster?: string }
+  titulo: (typeof TITULOS)[number]
+  texto: (typeof TEXTOS)[number]
+  cta?: string
 }) {
+  const esVideo = pieza.src.endsWith('.mp4')
   return (
     <div className="border border-[var(--marco-border)] rounded-lg overflow-hidden bg-white">
-      <div
-        className="aspect-[1.91/1] bg-neutral-200 bg-cover bg-center"
-        style={{ backgroundImage: `url("${img}")` }}
-      />
+      {esVideo ? (
+        <video
+          className="w-full aspect-[1.91/1] object-cover bg-neutral-200"
+          src={pieza.src}
+          poster={pieza.poster}
+          muted
+          loop
+          playsInline
+          autoPlay
+        />
+      ) : (
+        <div
+          className="aspect-[1.91/1] bg-neutral-200 bg-cover bg-center"
+          style={{ backgroundImage: `url("${pieza.src}")` }}
+        />
+      )}
       <div className="p-5">
         <span className="inline-block text-[11px] uppercase tracking-wide font-thunder text-[var(--marco-accent)] mb-2">
-          {angulo}
+          {titulo.angulo}
         </span>
-        <p className="font-thunder text-xl uppercase text-black leading-tight mb-2">{titulo}</p>
-        <p className="text-[15px] text-black/70 leading-relaxed mb-3">{texto}</p>
+        <p className="font-thunder text-xl uppercase text-black leading-tight mb-2">
+          {titulo.texto}
+        </p>
+        <p className="text-[15px] text-black/70 leading-relaxed mb-3">{texto.texto}</p>
         <p className="text-[13px] text-black/50">
-          {obra} · <span className="text-black/80 font-medium">{cta}</span>
+          {pieza.obra} · <span className="text-black/80 font-medium">{cta}</span>
         </p>
       </div>
     </div>
   )
 }
 
-const IMG_LAGARTOS =
-  'https://senda-arq.com/obras/LOS%20LAGARTOS%20CC%20F42/DSC00005-Editar%20-%20Post%202.webp'
-const IMG_CALESA =
-  'https://senda-arq.com/obras/PILARA,%20CALESA%20594/364A0525-Post1.webp'
+/** Versión compacta, para mostrar la grilla completa sin que sea interminable. */
+function AdMini({
+  pieza,
+  titulo,
+  texto,
+}: {
+  pieza: { src: string; obra: string; poster?: string }
+  titulo: (typeof TITULOS)[number]
+  texto: (typeof TEXTOS)[number]
+}) {
+  const esVideo = pieza.src.endsWith('.mp4')
+  return (
+    <div className="border border-[var(--marco-border)] rounded-md overflow-hidden bg-white">
+      {esVideo ? (
+        <video
+          className="w-full aspect-[4/5] object-cover bg-neutral-200"
+          src={pieza.src}
+          poster={pieza.poster}
+          muted
+          loop
+          playsInline
+          autoPlay
+        />
+      ) : (
+        <div
+          className="aspect-[4/5] bg-neutral-200 bg-cover bg-center"
+          style={{ backgroundImage: `url("${pieza.src}")` }}
+        />
+      )}
+      <div className="p-3">
+        <p className="font-thunder text-[13px] uppercase text-black leading-tight mb-1">
+          {titulo.texto}
+        </p>
+        <p className="text-[12px] text-black/60 leading-snug line-clamp-3">{texto.texto}</p>
+      </div>
+    </div>
+  )
+}
 
 export default function SendaAdsMes1() {
   return (
@@ -90,7 +190,7 @@ export default function SendaAdsMes1() {
           </div>
           <div>
             <span className="text-xs uppercase tracking-wide text-black/50">Anuncios</span>
-            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">8 versiones</p>
+            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">20 versiones</p>
           </div>
           <div>
             <span className="text-xs uppercase tracking-wide text-black/50">Zona</span>
@@ -167,40 +267,90 @@ export default function SendaAdsMes1() {
           Las creatividades
         </h3>
         <p className="text-black/80 max-w-2xl mb-8 md:mb-10">
-          Dos fotos de obra propia y dos maneras de contar el estudio. Meta combina los títulos,
-          los textos y las imágenes entre sí y le muestra a cada persona la combinación que mejor
-          le responde — no hay que elegir una y descartar el resto.
+          Cinco piezas visuales y dos maneras de contar el estudio. Meta las combina entre sí y le
+          muestra a cada persona la que mejor le responde — no hay que elegir una sola y descartar
+          el resto.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <AdCard
-            img={IMG_LAGARTOS}
-            obra="Los Lagartos CC F42, Pilar"
-            angulo="Ángulo conceptual"
-            titulo="Arquitectura que se habita, no se decora"
-            texto="Diseñamos casas donde la luz, la madera y el hormigón conviven. Cada proyecto pensado alrededor de un recorrido, no de un plano."
-            cta="Ver las obras →"
-          />
-          <AdCard
-            img={IMG_CALESA}
-            obra="Pilará, Calesa 594"
-            angulo="Ángulo práctico"
-            titulo="Casas y reformas en Zona Norte"
-            texto="Proyecto, dirección de obra y reformas integrales. Desde 2011 proyectando en countries de Zona Norte. Mirá las obras terminadas."
-            cta="Ver las obras →"
-          />
+        {/* Las piezas */}
+        <p className="font-thunder uppercase text-black text-lg mb-4">Las piezas</p>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
+          {PIEZAS.map((p) => (
+            <div key={p.id}>
+              <div
+                className="aspect-[4/5] rounded-md bg-neutral-200 bg-cover bg-center border border-[var(--marco-border)]"
+                style={{ backgroundImage: `url("${p.src}")` }}
+              />
+              <p className="text-[12px] text-black/70 mt-2 leading-snug">{p.pie}</p>
+              <p className="text-[11px] text-black/40">{p.obra}</p>
+            </div>
+          ))}
+          <div>
+            <video
+              className="w-full aspect-[4/5] rounded-md object-cover bg-neutral-200 border border-[var(--marco-border)]"
+              src={VIDEO.src}
+              poster={VIDEO.poster}
+              muted
+              loop
+              playsInline
+              autoPlay
+            />
+            <p className="text-[12px] text-black/70 mt-2 leading-snug">{VIDEO.pie}</p>
+            <p className="text-[11px] text-black/40">{VIDEO.obra}</p>
+          </div>
         </div>
 
-        <div className="mt-8 border border-[var(--marco-border)] rounded-lg p-6">
-          <p className="font-thunder uppercase text-black text-lg mb-3">
-            Ocho versiones de un mismo anuncio
-          </p>
-          <p className="text-black/70 text-[15px] leading-relaxed">
-            2 títulos × 2 textos × 2 fotos. Meta las rota solas durante las primeras semanas y
-            concentra la inversión en la que mejor funciona. El informe de fin de mes dice cuál
-            ganó — y esa pasa a ser la base de las creatividades del mes 2, incluidos los videos.
-          </p>
+        {/* Los dos ángulos */}
+        <p className="font-thunder uppercase text-black text-lg mb-4">Los dos ángulos</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          {TITULOS.map((t, i) => (
+            <div key={t.id} className="border border-[var(--marco-border)] rounded-lg p-6">
+              <span className="inline-block text-[11px] uppercase tracking-wide font-thunder text-[var(--marco-accent)] mb-2">
+                {t.angulo}
+              </span>
+              <p className="font-thunder text-xl uppercase text-black leading-tight mb-3">
+                {t.texto}
+              </p>
+              <p className="text-[15px] text-black/70 leading-relaxed">{TEXTOS[i].texto}</p>
+            </div>
+          ))}
         </div>
+
+        {/* Ejemplos en tamaño real */}
+        <p className="font-thunder uppercase text-black text-lg mb-1">Cómo se ven en el feed</p>
+        <p className="text-black/60 text-[15px] mb-4 max-w-2xl">
+          Dos ejemplos en tamaño real: la misma foto puede salir con cualquiera de los dos ángulos.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          <AdCard pieza={PIEZAS[0]} titulo={TITULOS[0]} texto={TEXTOS[0]} />
+          <AdCard pieza={PIEZAS[1]} titulo={TITULOS[1]} texto={TEXTOS[1]} />
+        </div>
+
+        {/* La grilla completa */}
+        <p className="font-thunder uppercase text-black text-lg mb-1">
+          Las veinte versiones que van a salir
+        </p>
+        <p className="text-black/60 text-[15px] mb-5 max-w-2xl">
+          Cinco piezas × dos títulos × dos textos. Todas se cargan juntas y Meta reparte la
+          inversión sola: en los primeros días muestra de todo, y a medida que aprende concentra
+          el dinero en las que mejor responden.
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3">
+          {[...PIEZAS, VIDEO].map((pieza) =>
+            TITULOS.map((titulo, i) => (
+              <AdMini
+                key={`${'id' in pieza ? pieza.id : 'video'}-${titulo.id}`}
+                pieza={pieza}
+                titulo={titulo}
+                texto={TEXTOS[i]}
+              />
+            ))
+          )}
+        </div>
+        <p className="text-sm text-black/60 mt-5 max-w-2xl">
+          La grilla muestra las diez combinaciones de pieza y ángulo. Cada una además rota entre
+          los dos textos, lo que da las veinte versiones finales.
+        </p>
       </div>
 
       {/* Audiencia */}
@@ -293,7 +443,7 @@ export default function SendaAdsMes1() {
             <p className="font-thunder uppercase text-[var(--marco-accent)] text-lg mb-3">Entra</p>
             <ul className="space-y-2 text-black/80 text-[15px]">
               <li>— Las dos campañas en paralelo</li>
-              <li>— Las ocho versiones de anuncio</li>
+              <li>— Las veinte versiones de anuncio</li>
               <li>— Medición punta a punta con el pixel</li>
               <li>— Aviso por mail de cada consulta</li>
               <li>— Informe de cierre con la recomendación del mes 2</li>
@@ -302,7 +452,7 @@ export default function SendaAdsMes1() {
           <div className="border border-[var(--marco-border)] rounded-lg p-6">
             <p className="font-thunder uppercase text-black/40 text-lg mb-3">No entra</p>
             <ul className="space-y-2 text-black/60 text-[15px]">
-              <li>— Los videos con dueños (mes 2, sobre el ángulo que gane)</li>
+              <li>— Los videos con dueños contando su obra (mes 2)</li>
               <li>— La campaña de reformas a WhatsApp (necesita el número conectado)</li>
               <li>— Google Ads (es la extensión opcional)</li>
               <li>— Contenido orgánico de Instagram (es otro servicio)</li>
