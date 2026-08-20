@@ -1,5 +1,22 @@
 # Marco Polo — Catchup
 
+## 2026-08-19 (2) — Previews de anuncios de Senda en `/docs` ✅
+**Source:** Claude Code — Macbook Pro
+
+Primera ruta bajo **`/docs`** en travels: `/docs/senda-ads-previews`, con el mismo tratamiento de marca que las de `/budget` (reusa `BudgetTemplate` + `ScrollNav`). Embebe los previews que **renderiza Meta** de los 2 anuncios × 5 ubicaciones (feed FB, feed IG, historias IG, Reels, historias FB).
+
+**Los previews de Meta son públicos de verdad** — verificado con `curl` sin cookies: HTTP 200, con el copy adentro, sin formulario de login. Se pueden pasar por WhatsApp o mail sueltos, además de verse embebidos.
+
+**Dos cosas aprendidas, útiles para la próxima:**
+- **Tardan mucho en cargar dentro de un iframe** (10 segundos o más). La primera verificación en producción dio cajas vacías y parecía roto — no lo estaba. Se agregó un placeholder detrás de cada iframe explicándolo. No bloquean por header: el CSP de Meta no trae `frame-ancestors` ni `X-Frame-Options`.
+- Cada recarga muestra **una combinación distinta** de las 20, lo que sirve para ver la rotación dinámica en vivo.
+
+⚠️ **Las rutas de `/budget` y `/docs` de travels son públicas** — el `AuthGate` sólo envuelve `Monotributo`. Todo lo que se suba ahí es accesible con la URL, así que los documentos internos (council, análisis de competencia) **no** van ahí.
+
+Commits `Add ad previews page` + `Explain the wait`.
+
+---
+
 ## 2026-08-19 — Plan Mes 1 de Meta Ads para Senda ✅
 **Source:** Claude Code — Macbook Pro
 
