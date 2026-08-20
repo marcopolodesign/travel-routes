@@ -7,6 +7,7 @@ import TecnoFitSprint1 from './pages/TecnoFitSprint1'
 import TecnoFitSprint1Mcp from './pages/TecnoFitSprint1Mcp'
 import TecnoFitSprint1Cierre from './pages/TecnoFitSprint1Cierre'
 import TecnoFitSprint2 from './pages/TecnoFitSprint2'
+import TecnoFitMotorRutinas from './pages/TecnoFitMotorRutinas'
 import Ronzio from './pages/Ronzio'
 import GinLane from './pages/GinLane'
 import SendaArqAds from './pages/SendaArqAds'
@@ -79,6 +80,16 @@ export default function App() {
             whatLabel="Plan de Sprint"
           >
             <TecnoFitSprint2 />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/tecnofit-motor-rutinas" element={
+          <BudgetTemplate
+            title="El motor de rutinas, andando — TecnoFit"
+            timeline="Sprint 2 · un mes generado"
+            stack="Motor de sustitución · EMOM/Tabata/AMRAP"
+            whatLabel="Muestra"
+          >
+            <TecnoFitMotorRutinas />
           </BudgetTemplate>
         } />
         <Route path="/budget/tecnofit-sprint-1-mcp" element={
