@@ -80,9 +80,10 @@ export default function PicnicJob() {
             plataforma se adapte a ellos más adelante.
           </p>
           <p>
-            La escala de Pedidos Ya sola ya lo justifica: del orden de <strong>3.000 puntos de
-            colocación por mes</strong>, repartidos en <strong>83 etapas</strong>, sobre una
-            herramienta que hoy no da abasto.
+            La escala de Pedidos Ya sola ya lo justifica: cada etapa —hoy, una por mes— cubre del
+            orden de <strong>3.000 puntos de colocación</strong> a nivel país, y ya van más de{' '}
+            <strong>80 etapas acumuladas</strong> desde que arrancó la relación. Todo ese historial
+            corre hoy sobre una herramienta que no da abasto.
           </p>
         </ContentBox>
 
@@ -99,9 +100,10 @@ export default function PicnicJob() {
               ser un archivo que se sube y se procesa solo.
             </li>
             <li>
-              <strong>El número está a un click, no a un archivo.</strong> Hoy no se puede saber
-              rápido cuántos backlights se pusieron en lo que va del mes sin revisar los archivos
-              uno por uno. Con dashboard, es una consulta.
+              <strong>El número está a un click, no a una suma manual.</strong> El panel de hoy
+              muestra visitas, saliente y sticker efectivo por zona, pero para saber un total
+              nacional hay que sumar fila por fila entre veinte y pico de zonas. Con dashboard, es
+              una consulta.
             </li>
             <li>
               <strong>Los errores de criterio se detectan solos.</strong> Una colocación marcada
@@ -185,8 +187,8 @@ export default function PicnicJob() {
           <div className="rounded-lg bg-[var(--marco-accent-light)]/40 px-5 py-4 mt-2">
             <p className="mb-0">
               <strong>Migración de datos históricos — opcional, aparte: $1,500 – $2,000.</strong>{' '}
-              Normaliza el historial de las 83 etapas y de cada provincia para que entre a la
-              plataforma nueva sin perder registro de lo ya colocado.
+              Normaliza el historial de más de 80 etapas acumuladas y de cada provincia para que
+              entre a la plataforma nueva sin perder registro de lo ya colocado.
             </p>
           </div>
         </PriceBlock>
@@ -224,7 +226,7 @@ export default function PicnicJob() {
             misma conexión la que después permite <strong>preguntarle a la plataforma en
             lenguaje natural</strong>: "¿cuántos backlights se colocaron en Buenos Aires este
             mes?", "¿cuál es el colocador con menor tasa de error?". Consultas que hoy no existen
-            porque implicarían abrir archivo por archivo, acá son una pregunta.
+            porque implicarían sumar a mano zona por zona, acá son una pregunta.
           </p>
         </PriceBlock>
 
