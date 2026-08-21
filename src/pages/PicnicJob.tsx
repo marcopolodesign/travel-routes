@@ -41,25 +41,17 @@ export default function PicnicJob() {
       {/* Cover */}
       <div className="mb-16 md:mb-24">
         <span className="font-thunder text-lg md:text-2xl uppercase tracking-[0.08em] text-black">
-          Plataforma de datos de campo · Job para Picnic
+          Job para Picnic
         </span>
-        <h1 className="font-thunder text-[15vw] md:text-[8vw] leading-[0.88] uppercase text-[var(--marco-accent)] text-balance mt-3">
-          Salir del<br />apuro
+        <h1 className="font-thunder text-[13vw] md:text-[6.5vw] leading-[0.92] uppercase text-[var(--marco-accent)] text-balance mt-3">
+          Plataforma de<br />datos de campo<br />+ trazabilidad
         </h1>
         <p className="mt-8 md:mt-10 text-black/80 text-lg md:text-xl max-w-2xl">
           Job construye para Picnic la herramienta que hoy le falta: una plataforma donde cada
           foto de colocación tiene un dueño. El mismo stack, después, sirve para cualquier otro
           cliente de Job con gente cargando datos desde la calle.
         </p>
-        <div className="mt-10 md:mt-14 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 pt-8">
-          <div>
-            <span className="text-xs uppercase tracking-wide text-black/50">Puntos / mes</span>
-            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">~3.000</p>
-          </div>
-          <div>
-            <span className="text-xs uppercase tracking-wide text-black/50">Etapas / mes</span>
-            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">83</p>
-          </div>
+        <div className="mt-10 md:mt-14 grid grid-cols-2 gap-6 md:gap-10 pt-8">
           <div>
             <span className="text-xs uppercase tracking-wide text-black/50">Fase 1</span>
             <p className="font-thunder text-2xl md:text-3xl text-[var(--marco-accent)] mt-1">
