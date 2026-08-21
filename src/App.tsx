@@ -18,6 +18,7 @@ import Home from './pages/Home'
 import Agent from './pages/Agent'
 import Monotributo from './pages/Monotributo'
 import HectorBarea from './pages/HectorBarea'
+import PicnicJob from './pages/PicnicJob'
 
 export default function App() {
   return (
@@ -170,6 +171,16 @@ export default function App() {
             whatLabel="Propuesta"
           >
             <HectorBarea />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/picnic-job" element={
+          <BudgetTemplate
+            title="Plataforma de colocación y reposición — Picnic / Job"
+            timeline="Fase 1: 4 a 6 semanas"
+            stack="Web App · Carga en campo · Multi-rol"
+            whatLabel="Propuesta por fases"
+          >
+            <PicnicJob />
           </BudgetTemplate>
         } />
         <Route path="/agent" element={<Agent />} />
