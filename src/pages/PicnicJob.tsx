@@ -218,6 +218,13 @@ export default function PicnicJob() {
             antes de cargar, y los primeros agentes de control de calidad sobre lo que entra a la
             plataforma — para que los errores se vean en el momento y no tres semanas después.
           </p>
+          <p>
+            El MCP que se arma acá queda completo — no es sólo para la ingesta del archivo. Es la
+            misma conexión la que después permite <strong>preguntarle a la plataforma en
+            lenguaje natural</strong>: "¿cuántos backlights se colocaron en Buenos Aires este
+            mes?", "¿cuál es el colocador con menor tasa de error?". Consultas que hoy no existen
+            porque implicarían abrir archivo por archivo, acá son una pregunta.
+          </p>
         </PriceBlock>
 
         {/* Fase 3 */}
