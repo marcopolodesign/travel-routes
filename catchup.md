@@ -1,5 +1,84 @@
 # Marco Polo — Catchup
 
+## 2026-08-20 — Presupuesto por fases para Picnic / Job en `/budget/picnic-job` ✅
+**Source:** Claude Code — Macbook Pro
+
+Presupuesto nuevo a partir de la reunión de hoy con **Pato Bellone** (Picnic /
+Job), leída del MCP de Granola (`Pato Bellone Picnic`, 20/08 10:09). El
+transcript no se pudo bajar — el plan de Granola sólo da el resumen — así que
+todo el contenido sale de las notas.
+
+**Contexto del cliente:** Picnic coloca cartelería para Pedido Ya, ~3.000 puntos
+de colocación y ~80 etapas por mes. El sistema actual no tiene autenticación
+(cualquiera con el link sube fotos), la carga de una etapa consume ~4 hs
+manuales, y vence el 1° de enero. Hubo fraude real: un colocador de Tucumán subió
+fotos de 2023 para 50 locales y cobró; otro generó una foto con IA.
+
+**Anclas de precio que Mateo ya había dicho en la reunión** (no se podían mover
+mucho sin quedar mal): Etapa 1 $10–12k · Etapa 2 ~$5k · Etapa 3 app desde $15k ·
+retainer ~$1.500/mes.
+
+**Benchmark interno usado para estimar** (Mateo pidió mirar Tecno y Healthier):
+- Héctor Barea — marketplace PWA completo (auth multi-rol, carga multi-paso con
+  fotos, catálogo con filtros, back office, QA, deploy), 9-10 semanas = **$11.000**.
+- TecnoFit — Website $4.000 · App Design $5.000 · **Admin (panel de gestión)
+  $4.000** · App Development $13.500. Total $26.700.
+- Ronzio — landing + CRM a medida $27.500, con el **CRM solo en $17.000**.
+- Healthier / MVP Salud — sin precio publicado, pero es el paralelo *de alcance*
+  más directo: plataforma web única con tres roles y vistas diferenciadas
+  (paciente / profesional / admin+superadmin), 2-3 meses.
+
+**Razonamiento de la Fase 1 ($10.000 – $13.500):** alcance estructuralmente
+equivalente a Barea (auth multi-rol + carga con fotos desde móvil + buscador con
+filtros + back office + deploy), pero *más caro* por migración de un sistema en
+producción con 3.000 puntos/mes y por tener tres roles reales en vez de dos; y
+*más barato* por no llevar landing institucional, SEO ni lógica de ofertas. Neto:
+levemente por encima de Barea. El piso se dejó en $10.000 a propósito para no
+contradecir lo que Pato escuchó esa mañana; el techo en $13.500 es el número
+honesto. Se espera aterrizar cerca de $12.000.
+
+*Ojo con un argumento que NO se usó:* la "presión de deadline" no aplica —
+del 20/08 al 1° de enero hay ~19 semanas y el build es de 4 a 6. Se dio vuelta a
+favor: el calendario cómodo se presenta como que *de-risquea* la fecha de corte.
+
+**Fase 2 ($4.500 – $6.500):** ingesta del Excel de Pedido Ya, división automática
+por zona/provincia/punto, normalización y detección de inconsistencias. 4 hs por
+etapa → minutos. Coherente con el ~$5k dicho.
+
+**Fase 3 ($15.000 – $22.000):** app mobile con geolocalización y armado de rutas
++ multi-tenant (Branca, Morixe, Media Monks). Piso en $15.000 para respetar el
+"desde 15 mil". Rango ancho a propósito y declarado como tal: falta definición y
+está a varios meses.
+
+### Las dos decisiones de producto que tomó Mateo, y por qué importan
+
+1. **El antifraude NO se cotiza como módulo de build.** Mateo lo sacó
+   explícitamente de la Fase 2 y lo puso como **eje del retainer**. El argumento
+   que quedó escrito en la página: los métodos para esquivar un control cambian,
+   así que el control tiene que cambiar con ellos — no es algo que se construye
+   una vez. Sobre el mismo eje se monta el leaderboard de efectividad por
+   colocador/repositor, planteado como beneficio y no como castigo (clave para
+   los supervisores con antigüedad que resisten cualquier control).
+2. **Fase 3 = build + retainer más alto**, no fee por usuario. Retainer base
+   $1.500/mes durante Fases 1 y 2 (reunión quincenal); $2.500 – $3.500/mes desde
+   la Fase 3 con la plataforma multi-cliente (reunión semanal).
+
+**Formato:** rangos min–máx en todas las fases, con la cláusula de "avisamos
+antes de llegar al techo" — es el modelo que Mateo ya le explicó a Pato.
+
+**Archivos:** `src/pages/PicnicJob.tsx` (nuevo), ruta `/budget/picnic-job` en
+`src/App.tsx`. `tsc --noEmit` limpio, sin errores de consola.
+
+**Verificado:** https://travels.marcopolo.agency/budget/picnic-job — 200, bundle
+con el contenido nuevo confirmado, y los títulos comprobados por DOM
+(`opacity: 1`, color `rgb(230,96,101)`). Los screenshots salen sin títulos porque
+`ScrollReveal` los captura a mitad del fade — **pasa igual en Héctor Barea**, no
+es una regresión.
+
+**Pendiente de Mateo:** mandarlo mañana a Paz y Pato. Pato tiene que pasar el mail
+de Paz para armar la cadena.
+
+
 ## 2026-08-19 (3) — Documento de TAG en `/budget/tag-meta-agosto` ✅
 **Source:** Claude Code — Macbook Pro
 
