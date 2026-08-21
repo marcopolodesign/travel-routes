@@ -25,11 +25,11 @@ const ROADMAP_STEPS = [
     ],
   },
   {
-    label: 'Fase 3',
+    label: 'Retainer',
     items: [
-      'Adaptación de la plataforma a otros clientes de Job',
-      'Formularios dinámicos por cliente, sin depender de Marco Polo en cada alta',
-      'App mobile opcional, con geolocalización y armado de rutas',
+      'Control de evidencia y verificación de colocaciones, en evolución continua',
+      'Adaptación de la plataforma a otros clientes de Job — alcance a definir',
+      'Formularios dinámicos por cliente y app mobile opcional, según lo que se necesite',
       'Job posicionado como proveedor de datos y tecnología',
     ],
   },
@@ -126,7 +126,7 @@ export default function PicnicJob() {
             </li>
           </ul>
           <p className="mt-4 text-sm text-black/70">
-            Los repositores de góndola de otras cuentas de Job se suman en la Fase 3, cuando la
+            Los repositores de góndola de otras cuentas de Job se suman en el retainer, cuando la
             plataforma se adapta a esos clientes — la Fase 1 es exclusiva del flujo de Pedidos Ya.
           </p>
         </TwoColumnSection>
@@ -137,7 +137,7 @@ export default function PicnicJob() {
             Roadmap y timeline
           </h2>
           <div className="rounded-lg bg-[var(--marco-bg)] p-6 md:p-10">
-            <Timeline title="Tres fases de build" steps={ROADMAP_STEPS} />
+            <Timeline title="Dos fases de build + retainer" steps={ROADMAP_STEPS} />
           </div>
         </section>
 
@@ -153,8 +153,9 @@ export default function PicnicJob() {
             se recorta. Nunca hay una factura que sorprenda.
           </p>
           <p>
-            Las tres fases son independientes. Se puede contratar la Fase 1 sola y decidir el resto
-            más adelante, con la plataforma ya andando y datos reales sobre la mesa.
+            Las dos fases de build son independientes: se puede contratar la Fase 1 sola y decidir
+            la Fase 2 más adelante, con la plataforma ya andando y datos reales sobre la mesa. El
+            retainer viene después, con su alcance a definir en conjunto — no es parte del build.
           </p>
         </ContentBox>
 
@@ -174,7 +175,7 @@ export default function PicnicJob() {
           <p>
             La Fase 1 es <strong>sólo para el flujo de Pedidos Ya</strong>: no incluye otros
             formularios de campo. Esos se contemplan cuando la plataforma se adapta a otros
-            clientes, en la Fase 3.
+            clientes, dentro del retainer.
           </p>
           <p>
             Calendario cómodo: arrancando ahora, la plataforma queda estable y probada con etapas
@@ -227,35 +228,12 @@ export default function PicnicJob() {
           </p>
         </PriceBlock>
 
-        {/* Fase 3 */}
-        <PriceBlock
-          title="Fase 3 — Multicliente"
-          meta="Orden de magnitud · alcance a cerrar cuando la Fase 2 esté entregada"
-          amount="$15,000 – $22,000"
-          border={false}
-        >
+        <ContentBox title="Retainer — después de la Fase 2" border={false}>
           <p>
-            Adaptación de la plataforma a otros clientes de Job, con <strong>formularios
-            dinámicos configurables por cliente</strong> — cada cuenta nueva se da de alta con su
-            propio formulario, sin que Marco Polo tenga que desarrollarlo caso por caso.
-          </p>
-          <p>
-            App mobile opcional, con geolocalización y armado de rutas, para el control más
-            estricto de gestión que necesitan los repositores en ruta.
-          </p>
-          <p>
-            Es la fase que convierte la herramienta interna de Picnic en el producto de Job: un
-            proveedor de datos y tecnología para empresas parecidas a Job, que hoy no tienen la
-            potencia técnica que esta herramienta les va a dar.
-          </p>
-        </PriceBlock>
-
-        <ContentBox title="El acompañamiento mensual" border={false}>
-          <p>
-            Por fuera del build hay un <strong>acompañamiento mensual</strong>: no es soporte, es
-            trabajo continuo sobre la plataforma. Arranca <strong>después de la Fase 3</strong> —o,
-            según se arregle con Picnic y Job, puede reemplazar total o parcialmente el alcance de
-            las Fases 2 y 3, dedicando recursos mes a mes en lugar de un build cerrado.
+            Por fuera del build hay un <strong>retainer mensual</strong>: no es soporte, es trabajo
+            continuo sobre la plataforma. Arranca cuando la Fase 2 está entregada, y su alcance se
+            define en conjunto con Picnic y Job — <strong>no viene con un número cerrado</strong>,
+            porque depende de qué tan rápido quieran avanzar y qué clientes suma Job en el camino.
           </p>
           <p>
             Ahí vive <strong>el control de la evidencia</strong>. La verificación de que una
@@ -265,13 +243,23 @@ export default function PicnicJob() {
             eso se sostiene mes a mes en lugar de venderse como un módulo cerrado.
           </p>
           <p>
+            También es donde se aloja, <strong>a definir (TBD)</strong>, la adaptación de la
+            plataforma a otros clientes de Job: formularios dinámicos configurables por cliente —
+            cada cuenta nueva se da de alta con su propio formulario, sin que Marco Polo tenga que
+            desarrollarlo caso por caso — y app mobile opcional con geolocalización y armado de
+            rutas para el control más estricto que necesitan los repositores. Es el camino que
+            convierte la herramienta interna de Picnic en el producto de Job: un proveedor de datos
+            y tecnología para empresas parecidas a Job, que hoy no tienen la potencia técnica que
+            esta herramienta les va a dar.
+          </p>
+          <p>
             Sobre el mismo eje se monta el <strong>leaderboard de efectividad</strong> por
             colocador y repositor — planteado como beneficio y no como castigo, algo que cambia la
             conversación con los supervisores que hoy resisten cualquier sistema de control.
           </p>
           <p className="text-sm text-black/70">
-            El valor del acompañamiento se define con Picnic y Job llegado el momento, según los
-            recursos que quieran alocar al proyecto.
+            Alcance y valor del retainer se definen con Picnic y Job llegado el momento, según qué
+            clientes suma Job y los recursos que quieran alocar al proyecto.
           </p>
         </ContentBox>
 
@@ -293,7 +281,7 @@ export default function PicnicJob() {
           items={[
             'Integración directa con los sistemas internos de Pedidos Ya — el intercambio sigue siendo por archivo.',
             'Facturación y liquidación de pagos a colocadores.',
-            'Los formularios de Movistar Geogestión se reemplazan por el formulario dinámico propio de Job en la Fase 3, no se integran.',
+            'Los formularios de Movistar Geogestión se reemplazan por el formulario dinámico propio de Job dentro del retainer, no se integran.',
             'Apps nativas en App Store y Google Play durante las Fases 1 y 2 — la carga en campo es web desde el celular.',
           ]}
         />
@@ -308,7 +296,7 @@ export default function PicnicJob() {
             'Servicio de mail transaccional para las notificaciones.',
             'Dominio y certificado.',
             'Consumo de los modelos de IA en la Fase 2 y en el control de evidencia del acompañamiento.',
-            'Cuentas de desarrollador de App Store y Google Play — sólo si se avanza con la app mobile de la Fase 3.',
+            'Cuentas de desarrollador de App Store y Google Play — sólo si se avanza con la app mobile del retainer.',
           ]}
         />
 
