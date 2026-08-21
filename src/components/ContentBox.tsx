@@ -2,11 +2,19 @@ type ContentBoxProps = {
   title: string
   children: React.ReactNode
   id?: string
+  /** Set to false to drop the outer border — default true, unchanged everywhere else. */
+  border?: boolean
 }
 
-export default function ContentBox({ title, children, id }: ContentBoxProps) {
+export default function ContentBox({ title, children, id, border = true }: ContentBoxProps) {
   return (
-    <div id={id} className="mb-20 md:mb-28 scroll-mt-28 border border-[var(--marco-border)] rounded-lg p-7 md:p-8 bg-[var(--marco-accent-light)]/20">
+    <div
+      id={id}
+      className={[
+        'mb-20 md:mb-28 scroll-mt-28 rounded-lg p-7 md:p-8 bg-[var(--marco-accent-light)]/20',
+        border ? 'border border-[var(--marco-border)]' : '',
+      ].join(' ')}
+    >
       <h3 className="font-thunder text-2xl md:text-4xl uppercase text-[var(--marco-accent)] mb-5">
         {title}
       </h3>

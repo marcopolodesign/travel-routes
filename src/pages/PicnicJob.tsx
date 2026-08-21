@@ -9,37 +9,28 @@ const ROADMAP_STEPS = [
   {
     label: 'Fase 1',
     items: [
-      'Arquitectura, modelo de datos y entornos',
-      'Autenticación y perfiles para los tres tipos de usuario',
-      'Carga en campo desde el celular, con autoría y sello de cada foto',
-      'Panel de Picnic, panel de cliente y migración de la operación actual',
+      'Autenticación real y vistas por rol: súper admin, cliente final, colocador',
+      'Carga desde el celular, con autoría y sello de cada foto',
+      'Dashboard: desglose por tipo de material y estado, al momento',
+      'Migración de la operación actual (opcional, aparte)',
     ],
   },
   {
     label: 'Fase 2',
     items: [
-      'Ingesta directa del archivo de Pedido Ya',
-      'División automática por zona, provincia y punto de colocación',
-      'Normalización, detección de inconsistencias y carga masiva',
-      'De cuatro horas por etapa a minutos',
+      'Claude conectado por MCP a la ingesta del archivo de Pedidos Ya',
+      'División automática por zona, provincia y punto al subir',
+      'Normalización de datos sucios y detección de inconsistencias',
+      'Primeros agentes de control de calidad sobre la carga',
     ],
   },
   {
     label: 'Fase 3',
     items: [
-      'App mobile con geolocalización y armado de rutas',
-      'Plataforma multi-cliente: Branca, Morixe, Media Monks y los que sigan',
-      'Panel de supervisión de rutas y tiempos reales',
-      'Job opera su propio stack y lo ofrece como servicio',
-    ],
-  },
-  {
-    label: 'Continuo',
-    items: [
-      'Control de evidencia y verificación de colocaciones',
-      'Leaderboard de efectividad por colocador y repositor',
-      'Evolución del producto mes a mes',
-      'Inteligencia de trade sobre los datos acumulados',
+      'Adaptación de la plataforma a otros clientes de Job',
+      'Formularios dinámicos por cliente, sin depender de Marco Polo en cada alta',
+      'App mobile opcional, con geolocalización y armado de rutas',
+      'Job posicionado como proveedor de datos y tecnología',
     ],
   },
 ]
@@ -47,25 +38,59 @@ const ROADMAP_STEPS = [
 export default function PicnicJob() {
   return (
     <>
+      {/* Cover */}
+      <div className="mb-16 md:mb-24">
+        <span className="font-thunder text-lg md:text-2xl uppercase tracking-[0.08em] text-black">
+          Plataforma de datos de campo · Job para Picnic
+        </span>
+        <h1 className="font-thunder text-[15vw] md:text-[8vw] leading-[0.88] uppercase text-[var(--marco-accent)] text-balance mt-3">
+          Salir del<br />apuro
+        </h1>
+        <p className="mt-8 md:mt-10 text-black/80 text-lg md:text-xl max-w-2xl">
+          Job construye para Picnic la herramienta que hoy le falta: una plataforma donde cada
+          foto de colocación tiene un dueño. El mismo stack, después, sirve para cualquier otro
+          cliente de Job con gente cargando datos desde la calle.
+        </p>
+        <div className="mt-10 md:mt-14 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 pt-8">
+          <div>
+            <span className="text-xs uppercase tracking-wide text-black/50">Puntos / mes</span>
+            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">~3.000</p>
+          </div>
+          <div>
+            <span className="text-xs uppercase tracking-wide text-black/50">Etapas / mes</span>
+            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">83</p>
+          </div>
+          <div>
+            <span className="text-xs uppercase tracking-wide text-black/50">Fase 1</span>
+            <p className="font-thunder text-2xl md:text-3xl text-[var(--marco-accent)] mt-1">
+              4 a 6 semanas
+            </p>
+          </div>
+          <div>
+            <span className="text-xs uppercase tracking-wide text-black/50">Corte del sistema actual</span>
+            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">1° de enero</p>
+          </div>
+        </div>
+      </div>
+
       <ScrollReveal>
-        <ContentBox title="Visión general">
+        <ContentBox title="Visión general" border={false}>
           <p>
-            Picnic gestiona la colocación de cartelería para Pedido Ya a escala nacional:
-            del orden de <strong>3.000 puntos de colocación por mes</strong> repartidos en unas
-            <strong> 80 etapas</strong>, entre backlights, salientes, sombrillas y bicicleteros.
-            Es una operación grande corriendo sobre una herramienta que ya no le da abasto.
+            <strong>Job es prestador de servicios para Picnic</strong>: cartelería y reposición en
+            el campo para cuentas como Pedidos Ya. Esta plataforma la construye y la posee Job,
+            pensada primero para resolver la operación de Picnic — con la puerta abierta a que
+            mañana sirva para cualquier otro cliente de Job.
           </p>
           <p>
-            La propuesta es construir la plataforma propia de Picnic y Job: una sola herramienta
-            donde el colocador carga desde el campo, Picnic gestiona y el cliente consulta — cada
-            uno con su acceso, su vista y su responsabilidad. Y hacerlo <strong>por etapas</strong>,
-            arrancando por lo que hay que tener resuelto antes de la fecha de corte del sistema
-            actual.
+            El problema de fondo es siempre el mismo: <strong>accountability de quien carga el
+            dato desde la calle</strong>. Hoy son los colocadores de cartelería de Pedidos Ya. Job
+            también trabaja con repositores de góndola en otras cuentas, y la idea es que la misma
+            plataforma se adapte a ellos más adelante.
           </p>
           <p>
-            El objetivo de fondo no es sólo reemplazar una herramienta. Es que la operación deje
-            evidencia: quién colocó, dónde, cuándo y con qué material. Eso es lo que después
-            convierte la operación en un dato vendible.
+            La escala de Pedidos Ya sola ya lo justifica: del orden de <strong>3.000 puntos de
+            colocación por mes</strong>, repartidos en <strong>83 etapas</strong>, sobre una
+            herramienta que hoy no da abasto.
           </p>
         </ContentBox>
 
@@ -82,20 +107,13 @@ export default function PicnicJob() {
               ser un archivo que se sube y se procesa solo.
             </li>
             <li>
-              <strong>El cliente ve lo que necesita ver.</strong> El buscador de locales muestra
-              tipo de material y ubicación exacta: si es backlight, saliente o bicicletero, y dónde
-              está puesto. Sin depender de un coordinador que lo confirme por teléfono.
+              <strong>El número está a un click, no a un archivo.</strong> Hoy no se puede saber
+              rápido cuántos backlights se pusieron en lo que va del mes sin revisar los archivos
+              uno por uno. Con dashboard, es una consulta.
             </li>
             <li>
               <strong>Los errores de criterio se detectan solos.</strong> Una colocación marcada
-              como efectiva con los dos materiales en no efectivo deja de pasar desapercibida: la
-              plataforma la marca en el momento, en lugar de aparecer después filtrando el Excel a
-              mano.
-            </li>
-            <li>
-              <strong>El equipo de campo entra al sistema.</strong> Repositores y promotoras dejan
-              de depender de formularios externos: la ruta, la evidencia y el resultado viven en un
-              solo lugar.
+              como efectiva con los dos materiales en no efectivo deja de pasar desapercibida.
             </li>
           </ul>
         </TwoColumnSection>
@@ -103,19 +121,22 @@ export default function PicnicJob() {
         <TwoColumnSection title="Los tres accesos" withBar={false}>
           <ul className="list-disc pl-5 space-y-2">
             <li>
-              <strong>Picnic / Job —</strong> gestión completa. Arma las etapas, asigna, revisa la
-              evidencia que entra, corrige y exporta. Ve todo.
+              <strong>Súper admin — Picnic, Job y Paz —</strong> gestión completa. Arma las
+              etapas, revisa la evidencia que entra, corrige y exporta. Ve todo.
             </li>
             <li>
-              <strong>Cliente —</strong> panel de consulta. Busca por local, provincia o tipo de
-              material, ve la foto, la fecha y el estado de cada punto. No edita nada.
+              <strong>Cliente final — Pedidos Ya —</strong> panel de consulta. Busca por local,
+              provincia o tipo de material, ve la foto, la fecha y el estado de cada punto.
             </li>
             <li>
-              <strong>Colocador / repositor —</strong> vista de campo, pensada para el celular.
-              Ve sólo lo que tiene asignado, carga la foto y los datos del punto, y cierra. Rápido,
-              con pocos toques y con mala señal.
+              <strong>Colocador —</strong> vista de campo para el celular. Ve sólo lo asignado,
+              carga la foto y los datos del punto, y cierra.
             </li>
           </ul>
+          <p className="mt-4 text-sm text-black/70">
+            Los repositores de góndola de otras cuentas de Job se suman en la Fase 3, cuando la
+            plataforma se adapta a esos clientes — la Fase 1 es exclusiva del flujo de Pedidos Ya.
+          </p>
         </TwoColumnSection>
 
         {/* Roadmap y timeline */}
@@ -123,12 +144,12 @@ export default function PicnicJob() {
           <h2 className="font-thunder text-2xl md:text-3xl lg:text-4xl uppercase text-[var(--marco-accent)] mb-8">
             Roadmap y timeline
           </h2>
-          <div className="rounded-lg border border-[var(--marco-border)] bg-[var(--marco-bg)] p-6 md:p-10">
-            <Timeline title="Tres fases + acompañamiento continuo" steps={ROADMAP_STEPS} />
+          <div className="rounded-lg bg-[var(--marco-bg)] p-6 md:p-10">
+            <Timeline title="Tres fases de build" steps={ROADMAP_STEPS} />
           </div>
         </section>
 
-        <ContentBox title="Cómo se lee este presupuesto">
+        <ContentBox title="Cómo se lee este presupuesto" border={false}>
           <p>
             Cada fase se presenta con un <strong>piso y un techo</strong>, no con un número único.
             El piso es lo que cuesta la fase con el alcance tal como está definido hoy; el techo es
@@ -147,141 +168,133 @@ export default function PicnicJob() {
 
         {/* Fase 1 */}
         <PriceBlock
-          title="Fase 1 — La plataforma nueva"
-          meta="4 a 6 semanas hasta prueba estable · incluye diseño, desarrollo, migración, QA y puesta en producción"
-          amount="$10,000 – $13,500"
+          title="Fase 1 — Plataforma & salir del apuro"
+          meta="4 a 6 semanas hasta prueba estable · exclusivo para el flujo de Pedidos Ya"
+          amount="$12,500 – $15,000"
+          border={false}
         >
           <p>
-            Reemplaza el sistema actual completo: autenticación real para los tres tipos de usuario,
-            vistas diferenciadas, carga desde el celular con autoría y sello de cada foto, buscador
-            de locales con tipo de material y ubicación, y panel de gestión para Picnic.
+            Renovación completa de la plataforma de carga: autenticación real con usuario y
+            contraseña, vistas diferenciadas por rol, carga desde el celular con autoría y sello de
+            cada foto, y dashboard con desglose inmediato de lo colocado — sin depender de abrir
+            archivo por archivo.
           </p>
           <p>
-            Incluye la <strong>migración de la operación actual</strong> — los datos históricos y
-            las etapas en curso pasan a la plataforma nueva sin cortar el servicio.
+            La Fase 1 es <strong>sólo para el flujo de Pedidos Ya</strong>: no incluye otros
+            formularios de campo. Esos se contemplan cuando la plataforma se adapta a otros
+            clientes, en la Fase 3.
           </p>
           <p>
-            El calendario es cómodo: arrancando en septiembre, la plataforma queda estable y probada
-            con etapas reales <strong>bastante antes de la fecha de corte del sistema actual</strong>,
-            con margen para ajustar sobre uso real en lugar de llegar justo.
+            Calendario cómodo: arrancando ahora, la plataforma queda estable y probada con etapas
+            reales bastante antes del <strong>1° de enero</strong>, con margen para ajustar sobre
+            uso real en lugar de llegar justo.
           </p>
-          <p className="text-sm text-black/70">
-            Qué mueve el número dentro del rango: el volumen de datos históricos a migrar y cuántos
-            formularios de carga distintos hay que contemplar además del de cartelería.
-          </p>
+          <div className="rounded-lg bg-[var(--marco-accent-light)]/40 px-5 py-4 mt-2">
+            <p className="mb-0">
+              <strong>Migración de datos históricos — opcional, aparte: $1,500 – $2,000.</strong>{' '}
+              Normaliza el historial de las 83 etapas y de cada provincia para que entre a la
+              plataforma nueva sin perder registro de lo ya colocado.
+            </p>
+          </div>
         </PriceBlock>
+
+        <BoxedListSection
+          title="Nice to have — para más adelante"
+          subtitle="No están cotizados en la Fase 1. Se evalúan una vez que la plataforma esté andando y haya datos reales para entrenar contra ellos."
+          border={false}
+          items={[
+            'Mapa interactivo de colocación — ver los puntos del mes en un mapa, no en una lista.',
+            'Agente entrenado que chequea las imágenes cargadas y detecta el tipo de colocación automáticamente.',
+          ]}
+        />
 
         {/* Fase 2 */}
         <PriceBlock
-          title="Fase 2 — La carga, automatizada"
+          title="Fase 2 — Enhancements"
           meta="2 a 3 semanas · se contrata con la Fase 1 en producción"
           amount="$4,500 – $6,500"
+          border={false}
         >
           <p>
-            El archivo de Pedido Ya entra directo a la plataforma. Se sube o se enlaza desde Drive,
-            y el sistema hace solo la división por zona, provincia y punto: lo que hoy son cuatro
-            horas de trabajo manual por etapa pasa a ser <strong>cuestión de minutos</strong>.
+            <strong>Claude conectado por MCP</strong> a la ingesta del archivo de Pedidos Ya: se
+            sube o se enlaza desde Drive, y el modelo hace la lectura, la división por zona,
+            provincia y punto, y la carga — lo que hoy son cuatro horas de trabajo manual por etapa
+            pasa a ser cuestión de minutos.
           </p>
           <p>
-            Incluye normalización de los datos que vienen sucios y detección de inconsistencias
-            antes de cargar, para que los errores se vean en el momento y no tres semanas después.
-          </p>
-          <p>
-            El ahorro es directo y medible: unas <strong>80 etapas por mes</strong> a cuatro horas
-            cada una es tiempo de gestión que vuelve al equipo para hacer otra cosa.
+            Incluye normalización de los datos que vienen sucios, detección de inconsistencias
+            antes de cargar, y los primeros agentes de control de calidad sobre lo que entra a la
+            plataforma — para que los errores se vean en el momento y no tres semanas después.
           </p>
         </PriceBlock>
 
         {/* Fase 3 */}
         <PriceBlock
-          title="Fase 3 — Mobile y multi-cliente"
+          title="Fase 3 — Multicliente"
           meta="Orden de magnitud · alcance a cerrar cuando la Fase 2 esté entregada"
           amount="$15,000 – $22,000"
+          border={false}
         >
           <p>
-            App mobile con geolocalización y armado de rutas para el equipo de campo, más la
-            adaptación de la plataforma para operar <strong>varios clientes en paralelo</strong> —
-            Branca, Morixe, Media Monks y los que vengan — cada uno con sus datos separados.
+            Adaptación de la plataforma a otros clientes de Job, con <strong>formularios
+            dinámicos configurables por cliente</strong> — cada cuenta nueva se da de alta con su
+            propio formulario, sin que Marco Polo tenga que desarrollarlo caso por caso.
           </p>
           <p>
-            Es la fase que convierte la herramienta interna de Picnic en el producto de Job: el mismo
-            stack, sirviendo a varias cuentas, con supervisión de rutas y tiempos reales.
+            App mobile opcional, con geolocalización y armado de rutas, para el control más
+            estricto de gestión que necesitan los repositores en ruta.
           </p>
-          <p className="text-sm text-black/70">
-            El rango es amplio a propósito: falta definición y la fase está a varios meses. Se cierra
-            con número firme cuando llegue el momento, con la Fase 2 andando y sabiendo qué clientes
-            entran primero.
+          <p>
+            Es la fase que convierte la herramienta interna de Picnic en el producto de Job: un
+            proveedor de datos y tecnología para empresas parecidas a Job, que hoy no tienen la
+            potencia técnica que esta herramienta les va a dar.
           </p>
         </PriceBlock>
 
-        <ContentBox title="El acompañamiento mensual — y por qué el control va acá">
+        <ContentBox title="El acompañamiento mensual" border={false}>
           <p>
-            Además del build hay un <strong>contrato mensual</strong>. No es soporte: es el trabajo
-            continuo sobre la plataforma — evolución del producto, ajustes sobre uso real y una
-            reunión periódica para decidir prioridades.
+            Por fuera del build hay un <strong>acompañamiento mensual</strong>: no es soporte, es
+            trabajo continuo sobre la plataforma. Arranca <strong>después de la Fase 3</strong> —o,
+            según se arregle con Picnic y Job, puede reemplazar total o parcialmente el alcance de
+            las Fases 2 y 3, dedicando recursos mes a mes en lugar de un build cerrado.
           </p>
           <p>
-            Y es donde vive <strong>el control de la evidencia</strong>. La verificación de que una
+            Ahí vive <strong>el control de la evidencia</strong>. La verificación de que una
             colocación es real — cruzar la foto contra la ubicación declarada, detectar imágenes
-            reutilizadas de etapas anteriores, marcar lo que no cierra — no es algo que se construye
-            una vez y queda resuelto para siempre. Los métodos para esquivar un control cambian, y
-            el control tiene que cambiar con ellos. Por eso se sostiene mes a mes en lugar de
-            venderse como un módulo cerrado.
+            reutilizadas, marcar lo que no cierra — no es algo que se construye una vez: los
+            métodos para esquivar un control cambian, y el control tiene que cambiar con ellos. Por
+            eso se sostiene mes a mes en lugar de venderse como un módulo cerrado.
           </p>
           <p>
-            Sobre el mismo eje se monta el <strong>leaderboard de efectividad</strong> por colocador
-            y repositor. Planteado como beneficio y no como castigo: el que trabaja bien lo puede
-            demostrar con números, y eso cambia la conversación con los supervisores respecto de
-            imponerles un sistema de control.
+            Sobre el mismo eje se monta el <strong>leaderboard de efectividad</strong> por
+            colocador y repositor — planteado como beneficio y no como castigo, algo que cambia la
+            conversación con los supervisores que hoy resisten cualquier sistema de control.
+          </p>
+          <p className="text-sm text-black/70">
+            El valor del acompañamiento se define con Picnic y Job llegado el momento, según los
+            recursos que quieran alocar al proyecto.
           </p>
         </ContentBox>
 
-        <PriceBlock
-          title="Acompañamiento mensual — durante Fases 1 y 2"
-          meta="Reunión quincenal · evolución continua · control de evidencia"
-          amount="$1,500 / mes"
-        >
-          <p>
-            Horas mensuales aplicadas a la plataforma según la prioridad del momento. Incluye la
-            puesta en marcha del control de evidencia y su ajuste sobre los casos reales que vayan
-            apareciendo.
-          </p>
-        </PriceBlock>
-
-        <PriceBlock
-          title="Acompañamiento mensual — plataforma multi-cliente"
-          meta="Desde la Fase 3 · reunión semanal · varias cuentas en paralelo"
-          amount="$2,500 – $3,500 / mes"
-        >
-          <p>
-            Cuando la plataforma pasa a servir a varios clientes, el acompañamiento sube: más
-            cuentas, más volumen de evidencia a verificar, más superficie de producto y cadencia
-            semanal en lugar de quincenal.
-          </p>
-          <p>
-            Es lo que le permite a Job ofrecer la plataforma como servicio propio sin montar un
-            equipo técnico interno para sostenerla.
-          </p>
-        </PriceBlock>
-
         <BoxedListSection
           title="Oportunidades que abre"
-          subtitle="No están cotizadas. Son consecuencia de tener la operación estructurada, y aparecen solas una vez que la plataforma está andando."
+          subtitle="No están cotizadas. Son consecuencia de tener la operación estructurada."
+          border={false}
           items={[
             'Respuesta inmediata al cliente — cualquier consulta sobre un punto de colocación se contesta desde el panel, sin depender de coordinadores del interior.',
-            'Inteligencia de trade — con los datos estructurados, Picnic y Job pueden ofrecerle a Pedido Ya lectura de mercado que hoy nadie le está dando.',
-            'La plataforma como producto — el mismo stack sirve a cualquier empresa con gente en la calle; el modelo de fee por usuario se evalúa cuando haya un segundo cliente real.',
-            'Reunión conjunta con Pedido Ya — mostrar la solución a medida y posicionar a Picnic como el socio tecnológico de la cuenta, no sólo como el proveedor de colocación.',
+            'Job como proveedor de datos y tecnología — el mismo stack sirve a cualquier empresa con gente en la calle que hoy no tiene la potencia técnica para construirlo.',
+            'Reunión conjunta con Pedidos Ya — mostrar la solución a medida y posicionar a Picnic y Job como el socio tecnológico de la cuenta.',
           ]}
         />
 
         <BoxedListSection
           title="Fuera de alcance"
           subtitle="No está cotizado y no forma parte de la entrega. Se puede sumar más adelante como fase aparte."
+          border={false}
           items={[
-            'Integración directa con los sistemas internos de Pedido Ya — el intercambio sigue siendo por archivo.',
+            'Integración directa con los sistemas internos de Pedidos Ya — el intercambio sigue siendo por archivo.',
             'Facturación y liquidación de pagos a colocadores.',
-            'Migración de los formularios de Movistar Geogestión — se reemplazan en Fase 3, no se integran.',
+            'Los formularios de Movistar Geogestión se reemplazan por el formulario dinámico propio de Job en la Fase 3, no se integran.',
             'Apps nativas en App Store y Google Play durante las Fases 1 y 2 — la carga en campo es web desde el celular.',
           ]}
         />
@@ -289,29 +302,28 @@ export default function PicnicJob() {
         <BoxedListSection
           title="Costos recurrentes de terceros"
           subtitle="No están incluidos en el valor de desarrollo. Se contratan a nombre del cliente y se pagan mes a mes según consumo."
+          border={false}
           items={[
             'Hosting y base de datos — escalan con el volumen de etapas y puntos cargados.',
             'Almacenamiento y entrega de fotos — es el rubro que más pesa dado el volumen mensual.',
             'Servicio de mail transaccional para las notificaciones.',
             'Dominio y certificado.',
-            'Consumo de los modelos de IA en la Fase 2 y en el control de evidencia.',
-            'Cuentas de desarrollador de App Store y Google Play — sólo desde la Fase 3.',
+            'Consumo de los modelos de IA en la Fase 2 y en el control de evidencia del acompañamiento.',
+            'Cuentas de desarrollador de App Store y Google Play — sólo si se avanza con la app mobile de la Fase 3.',
           ]}
         />
 
         <BoxedListSection
           title="Puntos a confirmar"
+          border={false}
           items={[
             'Fecha exacta de corte del sistema actual, para fijar la fecha de salida a producción hacia atrás desde ahí.',
-            'Cuántos años de historial hay que migrar y en qué formato están hoy.',
-            'Si el cliente que consulta es Pedido Ya directamente o el equipo comercial de Picnic.',
-            'Qué formularios de campo hay además del de cartelería — precio, stock, reposición, ofertas y reacomodado de góndola.',
-            'Cuántos colocadores y repositores activos hay que dar de alta en el arranque.',
-            'A nombre de quién se contrata: Picnic, Job, o una figura conjunta.',
+            'Cuántos años de historial hay que migrar y en qué formato están hoy — dimensiona el alcance de la migración opcional.',
+            'Si Pedidos Ya accede directo a la plataforma como cliente final, o si la consulta pasa siempre por el equipo comercial de Picnic.',
           ]}
         />
 
-        <ContentBox title="Condiciones">
+        <ContentBox title="Condiciones" border={false}>
           <p>
             Los valores expresados son <strong>netos, en dólares estadounidenses</strong>, y no
             incluyen IVA ni otros impuestos aplicables.
@@ -322,9 +334,10 @@ export default function PicnicJob() {
             Cambios de alcance por fuera de lo definido en este documento se cotizan aparte.
           </p>
           <p>
-            El acompañamiento mensual se factura por mes adelantado y es cancelable con treinta días
-            de aviso. Los costos recurrentes de infraestructura y servicios de terceros se contratan
-            a nombre del cliente y no forman parte del valor de desarrollo.
+            El acompañamiento mensual se define con el cliente llegado el momento, según los
+            recursos que quiera alocar al proyecto. Los costos recurrentes de infraestructura y
+            servicios de terceros se contratan a nombre del cliente y no forman parte del valor de
+            desarrollo.
           </p>
         </ContentBox>
       </ScrollReveal>

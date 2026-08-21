@@ -4,11 +4,19 @@ type BoxedListSectionProps = {
   /** Optional subtitle inside box */
   subtitle?: string
   id?: string
+  /** Set to false to drop the outer border — default true, unchanged everywhere else. */
+  border?: boolean
 }
 
-export default function BoxedListSection({ title, items, subtitle, id }: BoxedListSectionProps) {
+export default function BoxedListSection({ title, items, subtitle, id, border = true }: BoxedListSectionProps) {
   return (
-    <div id={id} className="border border-[var(--marco-border)] rounded-lg p-7 md:p-8 mb-8 scroll-mt-28 bg-[var(--marco-accent-light)]/30">
+    <div
+      id={id}
+      className={[
+        'rounded-lg p-7 md:p-8 mb-8 scroll-mt-28 bg-[var(--marco-accent-light)]/30',
+        border ? 'border border-[var(--marco-border)]' : '',
+      ].join(' ')}
+    >
       <h3 className="font-thunder text-2xl md:text-4xl uppercase text-[var(--marco-accent)] border-b-2 border-[var(--marco-accent)] pb-3 mb-5">
         {title}
       </h3>

@@ -175,7 +175,7 @@ export default function App() {
         } />
         <Route path="/budget/picnic-job" element={
           <BudgetTemplate
-            title="Plataforma de colocación y reposición — Picnic / Job"
+            title="Plataforma de datos de campo — Job para Picnic"
             timeline="Fase 1: 4 a 6 semanas"
             stack="Web App · Carga en campo · Multi-rol"
             whatLabel="Propuesta por fases"

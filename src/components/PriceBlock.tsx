@@ -5,6 +5,8 @@ type PriceBlockProps = {
   /** Short line under the title — timeline, phase, what the figure covers. */
   meta?: string
   children?: React.ReactNode
+  /** Set to false to drop the outer border — default true, unchanged everywhere else. */
+  border?: boolean
 }
 
 function formatCurrency(value: number | string): string {
@@ -16,10 +18,10 @@ function formatCurrency(value: number | string): string {
  * A single closed figure for a scope of work. Deliberately has no line items:
  * the proposal quotes the option as a whole, not module by module.
  */
-export default function PriceBlock({ title, amount, meta, children }: PriceBlockProps) {
+export default function PriceBlock({ title, amount, meta, children, border = true }: PriceBlockProps) {
   return (
     <section className="mb-14 md:mb-20">
-      <div className="border border-[var(--marco-border)] rounded-lg overflow-hidden">
+      <div className={['rounded-lg overflow-hidden', border ? 'border border-[var(--marco-border)]' : ''].join(' ')}>
         <div className="bg-[var(--marco-accent)] px-7 py-6 md:px-8 md:py-7">
           <h2 className="font-thunder text-2xl md:text-3xl uppercase text-white">
             {title}
