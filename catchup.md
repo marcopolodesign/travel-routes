@@ -1,5 +1,56 @@
 # Marco Polo — Catchup
 
+## 2026-09-02 — Contrato de locación de servicios Picnic BTL, con el diseño del budget ✅
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 16:47 → 17:21 (35 min)
+
+Mateo pasó el texto completo del contrato con Picnic BTL y pidió maquetarlo con el mismo diseño que
+`/budget/picnic-job` (arrancó como canvas de `/design`, terminó como HTML autocontenido en el repo).
+
+**Archivo:** `docs/contratos/picnic-2026-09.html` — imprimible a PDF en A4, fuentes Thunder Bold y TT
+Interphases Pro embebidas en base64 (abre sin conexión), tokens exactos de `src/index.css`
+(`--marco-accent #e66065`, `--marco-accent-light`, `--marco-bg`, `--marco-border`) y componentes del
+budget: topbar de metadatos, `ContentBox` sin borde para "Partes", banners de firma tipo `PriceBlock`,
+logo en el pie. Canvas de trabajo en el artifact `a1376ad8-cba6-4d02-810b-74364d1f3607`.
+
+**Layout de cláusulas:** PRIMERA a VIGÉSIMO PRIMERA con el ordinal en Thunder 34px pisando el ancho de
+la columna y el texto arrancando debajo, indentado a la segunda columna. Sin `border-left` de acento
+(regla de Mateo). Iteraciones: sacar el nav superior, "Partes" sin borde, tipografías mucho más grandes.
+
+**Cambios de fondo sobre el texto legal:**
+- **Patricio no es fiador.** Se eliminó la fianza personal de la DÉCIMO OCTAVA y su bloque de firma
+  (quedan dos: EL PROVEEDOR y EL CLIENTE). La QUINTA ahora dice explícito que las 7 cuotas son
+  financiación del precio otorgada por Marco Polo, sin interés.
+- **Locación de servicios**, no "prestación": título, topbar y encabezado encuadrado en los arts. 1251
+  y ss. del CCyC.
+- Datos de Patricio corregidos: Chile 849, Barrio Ayres Plaza, La Lonja, Pilar; carácter de director.
+  Fecha del encabezado: 1° de septiembre de 2026.
+- **Pedidos del cliente por WhatsApp (aprobados por Mateo):** OCTAVA sin interés punitorio — el valor
+  queda preservado sólo por la nota de débito por diferencia de cotización de la SÉPTIMA; NOVENA sin
+  cancelación anticipada al aprobar la Fase 2 — se mantiene el cronograma de cuotas y, si el retainer
+  arranca antes del 1/4/2027, su importe se suma al pago mensual.
+
+Quedan dos `***` a completar antes de firmar: domicilio de Picnic BTL S.A. y el CBU de Marco Polo
+(cláusula SEXTA). El cliente también preguntó qué queda fuera del valor: servicios de terceros de la
+DÉCIMO TERCERA (hosting, base de datos, almacenamiento de fotos, mail, dominio, consumo de IA) y toda
+tarea no listada en el anexo 1, que va por adenda (DÉCIMO PRIMERA).
+
+## 2026-08-26 — Factura C a BIGG (ajuste +3,5% sobre lo ya cobrado) ✅
+**Source:** Claude Code — Macbook Pro
+
+Mateo facturó el mes pasado $2.229.696,36 y necesitaba ajustar +3,5% ($2.307.735,73) y descontar lo
+que BIGG ya pagó ($1.900.000) → diferencia a facturar $407.735,73. Confirmado destinatario y monto
+antes de disparar (factura real ante ARCA, no reversible fácil).
+
+Emitida vía `POST /api/chat` (`travels.marcopolo.agency`, producción) → tool `arca` `createInvoice`:
+- **Factura C 0003-00000005**, CAE `86349979349956` (vence 05/09/2026)
+- Receptor: HEKTOR S.R.L. (BIGG), CUIT 30-71401537-7
+- Importe: $407.735,73 — pto vta 3, concepto Servicios
+
+PDF generado vía `/api/factura` (branding Marco Polo, QR AFIP) y descargado a `~/Downloads/`, enviado
+a Mateo. `arca/monotributo-2026.md` actualizado: total 2026 $13.129.810,33 (14 facturas), BIGG ahora
+$2.842.810,33 en 8 facturas.
+
 ## 2026-08-20 — Presupuesto por fases para Picnic / Job en `/budget/picnic-job` ✅
 **Source:** Claude Code — Macbook Pro
 
