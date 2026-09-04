@@ -95,7 +95,7 @@ export default function HealthierCierre() {
             <span className="text-xs uppercase tracking-wide text-black/50">
               Puntos para cerrar
             </span>
-            <p className="font-thunder text-2xl md:text-3xl text-[var(--marco-accent)] mt-1">29</p>
+            <p className="font-thunder text-2xl md:text-3xl text-[var(--marco-accent)] mt-1">30</p>
           </div>
         </div>
       </div>
@@ -153,6 +153,11 @@ export default function HealthierCierre() {
                 <strong>Historia clínica.</strong> Completa, con diagnósticos, medicación,
                 alergias y evolución, descargable en PDF —cumpliendo la ley de derechos del
                 paciente—.
+              </li>
+              <li>
+                <strong>Cómo llegar al consultorio.</strong> En el turno presencial, el mapa con
+                la ruta hasta el consultorio en vivo: los minutos y los kilómetros que faltan, y
+                el profesional viendo en su agenda a qué hora llega su paciente.
               </li>
               <li>
                 <strong>Bóveda.</strong> Documentos médicos, análisis y recetas en un solo lugar.
@@ -268,8 +273,10 @@ export default function HealthierCierre() {
             Lo que falta para salir
           </h2>
           <p className="text-black/80 text-[15px] max-w-2xl mb-10">
-            Veintinueve puntos, en siete bloques. Cada uno dice qué es y dónde toca. No hay nada
-            fuera de esta lista.
+            Treinta puntos, en siete bloques. Cada uno dice qué es y dónde toca. No hay nada
+            fuera de esta lista. Actualizado al 4 de septiembre: se cerraron tres puntos de la
+            primera versión —la pre-consulta y el plan nutricional en la app, y el envío de
+            mails— y se sumaron cuatro.
           </p>
         </section>
 
@@ -297,7 +304,7 @@ export default function HealthierCierre() {
             {
               t: 'Confirmaciones por mail',
               donde: 'Web + App',
-              d: 'Los avisos hoy llegan como notificación al teléfono. Falta activar el servicio de correo para que la confirmación de turno y el recordatorio lleguen también por mail.',
+              d: 'La confirmación de turno y el recordatorio ya salen desde la plataforma, tanto para lo que se reserva en la web como en la app. Falta cargar tres registros en el dominio de correo —un trámite de minutos en el panel del proveedor— para que lleguen a la casilla del paciente.',
             },
           ]}
         />
@@ -345,7 +352,7 @@ export default function HealthierCierre() {
           id="b3"
           n="03"
           title="Consultas"
-          meta="El circuito principal funciona entero. Quedan cuatro cosas para redondearlo."
+          meta="El circuito principal funciona entero, y desde el 4 de septiembre la pre-consulta de la app le pregunta al paciente lo mismo que la web. Quedan cuatro cosas para redondearlo."
           items={[
             {
               t: 'Atención sin turno',
@@ -358,14 +365,14 @@ export default function HealthierCierre() {
               d: 'Ya funciona en la consulta presencial. Dentro de la videollamada está apagada hasta terminar de probarla con médicos reales — se enciende con un cambio de configuración.',
             },
             {
-              t: 'Pre-consulta en la app',
-              donde: 'App',
-              d: 'La web le pregunta al paciente por un listado clínico de síntomas; la app todavía pide tres campos de texto libre. Falta emparejarlas para que el médico reciba la misma información en los dos lados.',
-            },
-            {
               t: 'Medicamentos dentro de la consulta',
               donde: 'Web',
               d: 'Que el profesional pueda armar el pedido de farmacia desde la misma pantalla en la que receta, sin cambiar de lugar. Es lo último que queda del módulo de farmacia.',
+            },
+            {
+              t: 'El cobro del turno presencial en la app',
+              donde: 'App',
+              d: 'En la web, el turno presencial se paga al reservarlo, igual que la videoconsulta. En la app todavía se reserva y el cobro queda pendiente. Falta emparejar los dos.',
             },
           ]}
         />
@@ -374,7 +381,7 @@ export default function HealthierCierre() {
           id="b4"
           n="04"
           title="Oferta y especialidades"
-          meta="La plataforma está lista para más especialidades de las que hoy están abiertas. Lo que falta es oferta, no software."
+          meta="La plataforma está lista para más especialidades de las que hoy están abiertas. Lo que falta es oferta y datos de los profesionales, no software."
           items={[
             {
               t: 'Abrir el resto de las especialidades',
@@ -385,6 +392,11 @@ export default function HealthierCierre() {
               t: 'Sumar médicos de guardia',
               donde: 'Decisión',
               d: 'La consulta inmediata de Clínica hoy depende de un solo médico disponible. Tener varios es condición para salir: es la promesa que más se ve en el inicio de la app.',
+            },
+            {
+              t: 'Las direcciones de los consultorios',
+              donde: 'Decisión',
+              d: 'De los profesionales verificados, tres tienen cargada la dirección de su consultorio. Es el dato que hace que el paciente los encuentre en el mapa y que pueda llegar con la ruta en vivo, así que conviene pedírsela a todos los que atienden presencial antes de abrir.',
             },
             {
               t: 'Cerrar los precios',
@@ -398,7 +410,7 @@ export default function HealthierCierre() {
           id="b5"
           n="05"
           title="Bóveda y seguimiento"
-          meta="Análisis, historia clínica y recetas ya son datos reales. El resto de la bóveda todavía muestra contenido de ejemplo."
+          meta="Análisis, historia clínica, recetas y —desde el 4 de septiembre, también en la app— el plan nutricional ya son datos reales. El resto de la bóveda todavía muestra contenido de ejemplo."
           items={[
             {
               t: 'Plan Nutricional, Rehab y Físico, Amigo Peludo',
@@ -406,14 +418,14 @@ export default function HealthierCierre() {
               d: 'Figuran como "Próximamente": las tarjetas están diseñadas y el contenido es de muestra. Hay que decidir cuáles entran al lanzamiento y cuáles se sacan de la vista hasta que tengan datos reales detrás.',
             },
             {
-              t: 'El plan nutricional en la app',
-              donde: 'App',
-              d: 'En la web es real: el nutricionista arma el plan, el paciente marca lo que comió y el profesional ve la adherencia día a día. En la app todavía es una maqueta. Falta portarla.',
-            },
-            {
               t: 'Recetas de comidas con IA',
               donde: 'Web',
               d: 'Dentro del plan nutricional, sugerir una receta con los alimentos del día. Falta activar el servicio para que quede disponible.',
+            },
+            {
+              t: 'El buscador de alimentos del plan nutricional',
+              donde: 'Decisión',
+              d: 'El nutricionista arma el plan con un vademécum propio de 157 alimentos. Para tener el catálogo completo de productos hay que elegir el proveedor: la cuenta actual sólo acepta llamadas desde direcciones dadas de alta a mano, y hay una alternativa abierta y gratuita con buena cobertura de productos argentinos.',
             },
             {
               t: 'Carga de archivos en el resto de las categorías',
@@ -487,7 +499,7 @@ export default function HealthierCierre() {
             Alcance del cierre
           </h2>
           <p className="text-black/80 text-[15px] max-w-2xl mb-8">
-            Con los 29 puntos de arriba entregados y verificados, el trabajo se da por terminado.
+            Con los 30 puntos de arriba entregados y verificados, el trabajo se da por terminado.
             Lo de la derecha no forma parte de la entrega: se puede sumar más adelante como una
             etapa aparte.
           </p>
@@ -498,7 +510,7 @@ export default function HealthierCierre() {
                 Entra
               </p>
               <ul className="space-y-2 text-black/80 text-[15px]">
-                <li>— Los 29 puntos de los siete bloques.</li>
+                <li>— Los 30 puntos de los siete bloques.</li>
                 <li>— La plataforma web completa, ya en producción.</li>
                 <li>— La app de iPhone, publicada en la App Store.</li>
                 <li>— La versión de Android, publicada en Google Play.</li>
