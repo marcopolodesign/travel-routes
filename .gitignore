@@ -8,3 +8,4 @@ dist
 arca/certs/private.key
 arca/certs/solicitud.csr
 migracion-picnic/
+.claude/worktrees/
