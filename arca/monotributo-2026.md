@@ -1,6 +1,6 @@
 # Monotributo & Facturación 2026 — Mateo Aldao Suaya
 **CUIT:** 20-37217936-9  
-**Actualizado:** 2026-06-30  
+**Actualizado:** 2026-07-20  
 **Fuente límites:** arca.gob.ar/monotributo/categorias.asp (vigentes desde 1/02/2026)
 
 ---
@@ -18,13 +18,19 @@
 | 0002-00000163 | 21/05/2026 | HEKTOR S.R.L. | 30-71401537-7 | $381.446,00 |
 | 0002-00000164 | 22/06/2026 | HEKTOR S.R.L. | 30-71401537-7 | $454.296,00 |
 | 0003-00000001 | 01/07/2026 | MOSERINI SAS | 30-71614040-3 | $1.053.500,00 |
-| **TOTAL** | | | | **$8.828.878,24** |
+| 0003-00000002 | 01/07/2026 | MOSERINI SAS | 30-71614040-3 | $3.562.500,00 |
+| 0003-00000003 | 03/07/2026 | Consumidor Final | — | $1.000,00 |
+| 0003-00000004 | 20/07/2026 | HEKTOR S.R.L. | 30-71401537-7 | $329.696,36 |
+| 0003-00000005 | 26/08/2026 | HEKTOR S.R.L. | 30-71401537-7 | $407.735,73 |
+| **TOTAL** | | | | **$13.129.810,33** |
 
 ### Por cliente
 | Razón Social | Facturas | Total |
 |--------------|---------|-------|
-| HEKTOR S.R.L. | 6 | $2.105.378,24 |
+| HEKTOR S.R.L. (BIGG) | 8 | $2.842.810,33 |
 | CARRIQUIRI IGNACIO FEDERICO | 2 | $5.670.000,00 |
+| MOSERINI SAS | 2 | $4.616.000,00 |
+| Consumidor Final | 1 | $1.000,00 |
 
 ---
 
@@ -49,15 +55,16 @@
 
 ---
 
-## Situación al 30/06/2026
+## Situación al 20/07/2026
 
 | | |
 |---|---|
 | **Facturado ene–jun 2026 (pto 2)** | $7.775.378,24 |
-| **Facturado jul 2026 (pto 3)** | $1.053.500,00 |
-| **Total acumulado 2026** | $8.828.878,24 |
-| **Límite Cat A** | $10.277.988 |
-| **Queda para agotar Cat A** | $1.449.110 |
+| **Facturado jul 2026 (pto 3)** | $4.946.696,36 |
+| **Total acumulado 2026** | $12.722.074,60 |
+| **Límite Cat A** | $10.277.988 — **superado en julio** |
+| **Límite Cat B** | $15.058.448 |
+| **Queda para agotar Cat B** | $2.336.373,40 |
 
 ### Proyección a fin de año
 A ritmo constante de ~$1.296.000/mes:

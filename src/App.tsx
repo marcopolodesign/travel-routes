@@ -19,6 +19,7 @@ import Agent from './pages/Agent'
 import Monotributo from './pages/Monotributo'
 import HectorBarea from './pages/HectorBarea'
 import PicnicJob from './pages/PicnicJob'
+import HealthierCierre from './pages/HealthierCierre'
 
 export default function App() {
   return (
@@ -181,6 +182,16 @@ export default function App() {
             whatLabel="Propuesta por fases"
           >
             <PicnicJob />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/healthier-cierre" element={
+          <BudgetTemplate
+            title="Alcance de cierre — Healthier"
+            timeline="Estado a septiembre 2026"
+            stack="Plataforma web · App iPhone y Android"
+            whatLabel="Acta de cierre"
+          >
+            <HealthierCierre />
           </BudgetTemplate>
         } />
         <Route path="/agent" element={<Agent />} />
