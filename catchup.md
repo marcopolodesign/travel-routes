@@ -1,5 +1,46 @@
 # Marco Polo — Catchup
 
+## 2026-09-08 — Picnic: brief de contexto para definir el producto en una sesión aparte
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 08:44 → 10:21 (96 min)
+
+Mateo va a tener una conversación con Claude (chat, no CLI) para volcar todo el
+detalle operativo de Picnic que hoy sólo está en su cabeza y en reuniones que no
+quedaron transcriptas. De ahí sale un MD que después vuelve acá como insumo para
+construir. Este documento es la semilla de esa charla:
+`docs/picnic-brief-producto.md`.
+
+**Objetivo elegido por Mateo entre tres opciones:** definir el producto (spec:
+roles, flujos, modelo de datos, antifraude, alcance por fase). No es un volcado
+de negocio ni estrategia comercial — lo comercial ya está cerrado.
+
+**Qué lleva el brief:**
+- El negocio y la escala (~3.000 puntos, ~80 etapas/mes, 4 hs de carga manual
+  por etapa, el sistema viejo vence el 1° de enero).
+- Los tres motivos por los que nos contrataron: sin autenticación, fraude real
+  ya ocurrido (fotos de 2023 reusadas para 50 locales + una foto generada con
+  IA) y la carga manual.
+- **El esquema real de datos**, sacado de la exportación que ya está en el repo:
+  `migracion-picnic/Etapa 84/Backlights CABA/2026-08-21_locales_BACKLIGHTS CABA.csv`.
+  17 columnas (`etapa`, `grid`, `visita_efectiva`, `saliente_efectivo`,
+  `sticker_efectivo`, `motivo_de_rechazo`, `foto1`, `foto2`…). Es la mejor pista
+  que tenemos de cómo piensa la operación, y el brief la lee explícitamente como
+  inferencia a confirmar, no como verdad.
+- Fases, precios, retainer y las tres decisiones de producto ya tomadas —
+  marcadas como **cerradas** para que el chat no las re-discuta ni mueva alcance
+  de una fase a otra.
+- 8 bloques de preguntas abiertas y el formato exacto del MD que tiene que
+  devolver (9 secciones, con supuestos separados de lo dicho).
+
+**Un hallazgo que salió armándolo y que no está en ningún presupuesto:** las
+fotos históricas viven como URLs sueltas en `pedidosyatrade.com.ar`. Si ese
+sistema se apaga el 1° de enero, se pierden — habría que bajarlas todas antes.
+Quedó como pregunta explícita en el bloque de Migración.
+
+**Sobre el tiempo:** el tramo incluye la espera entre mensajes de Mateo, no son
+96 minutos de trabajo continuo sobre Picnic.
+
 ## 2026-09-02 — Contrato de locación de servicios Picnic BTL, con el diseño del budget ✅
 **Source:** Claude Code — Macbook Pro
 **Tiempo:** 16:47 → 17:21 (35 min)
