@@ -1,5 +1,31 @@
 # Marco Polo — Catchup
 
+## 2026-09-10 — `/budget/picnic-plataforma`: las maquetas de Picnic online
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 15:13 → 15:48 (36 min)
+
+Página nueva con las ocho pantallas de la plataforma de Picnic, armadas contra la
+etapa 83 de septiembre (datos reales, no un set de demo). Sigue el sistema de
+`SendaAdsMes1`: `ScrollNav`, `TwoColumnSection`, `ContentBox`, y un componente local
+`Pantalla` para las capturas con su pie.
+
+Cierra con "Lo que necesitamos de ustedes" — las ocho decisiones abiertas, escritas
+en criollo y sin exponer nada de lo que salió mal del lado nuestro.
+
+**Las imágenes tuvieron que rehacerse.** Primero salieron a 2880px (`--force-device-scale-factor=2`
+sobre artboards de 1440×900) y en webp pesaban 1,1 MB. El servidor las servía con 200
+pero **el browser no las decodificaba**: `naturalWidth` quedaba en 0 aun con la imagen
+adentro del viewport y con opacidad 1, y una llamada a `Runtime.evaluate` llegó a
+tirar timeout con el renderer trabado. Bajarlas a **1800px de ancho** (`cwebp -resize 1800 0`)
+lo resolvió de una: 572 KB en total y las ocho cargan. También se sacó el
+`loading="lazy"`, que a ese peso sólo escondía el problema.
+
+Para la próxima: **una captura de artboard a 2x es demasiado grande para una página
+web**; 1800px de ancho alcanza y sobra para verse nítida.
+
+Assets en `public/picnic/*.webp`, ruta en `App.tsx` con `BudgetTemplate`.
+
 ## 2026-09-08 — Picnic: brief de contexto para definir el producto en una sesión aparte
 
 **Source:** Claude Code — Macbook Pro
