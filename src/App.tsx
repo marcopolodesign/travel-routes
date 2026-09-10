@@ -19,6 +19,7 @@ import Agent from './pages/Agent'
 import Monotributo from './pages/Monotributo'
 import HectorBarea from './pages/HectorBarea'
 import PicnicJob from './pages/PicnicJob'
+import PicnicPlataforma from './pages/PicnicPlataforma'
 import HealthierCierre from './pages/HealthierCierre'
 
 export default function App() {
@@ -182,6 +183,16 @@ export default function App() {
             whatLabel="Propuesta por fases"
           >
             <PicnicJob />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/picnic-plataforma" element={
+          <BudgetTemplate
+            title="La plataforma por dentro — Picnic BTL"
+            timeline="Etapa 83 · Septiembre 2026"
+            stack="Panel de Picnic · Carga en el celular · Vista del cliente"
+            whatLabel="Las pantallas"
+          >
+            <PicnicPlataforma />
           </BudgetTemplate>
         } />
         <Route path="/budget/healthier-cierre" element={
