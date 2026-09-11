@@ -1,5 +1,51 @@
 # Marco Polo — Catchup
 
+## 2026-09-11 — `/deck/picnic`: el mismo contenido, como presentación
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 14:30 → 14:49 (20 min)
+
+Mateo pidió el material de Picnic en formato presentación, para mandárselo al cliente
+y revisarlo él desde el teléfono. Quince láminas a pantalla completa con
+`scroll-snap-type: y mandatory`: con el dedo en móvil, con flechas / rueda / espacio en
+escritorio. Barra de avance arriba, numeración y la firma de Marco Polo abajo.
+
+**Ruta sin `BudgetTemplate`** (`/deck/picnic`, junto a `/agent` y `/monotributo`): el
+encabezado de documento no tiene sentido en un deck, acá la presentación es la página.
+
+### Dos cosas que se descubrieron y valen para todo el repo
+
+**1 · Las clases `max-w-[Npx]` arbitrarias de Tailwind no se están generando.** La
+captura vertical del teléfono se mostraba a ancho completo —768 px de alto— y reventaba
+la lámina. Se verificó en el DOM: la clase estaba puesta y el `max-width` computado era
+`100%`. **Pasaba también en `/budget/picnic-plataforma`**, donde `max-w-[300px]` nunca
+había aplicado. Resuelto con CSS propio en el deck y con `style={{maxWidth:300}}` en la
+página. Si aparece otra maqueta vertical, no confiar en la clase arbitraria.
+
+**2 · Ojo con la especificidad.** El primer intento fue `.deck-phone { max-width }`,
+que perdía contra `.deck-slide img { max-width: 100% }`. Hubo que subirlo a
+`.deck-slide img.deck-phone`.
+
+### Cómo se verificó el móvil, que fue lo que más costó
+
+`resize_window` del MCP mueve la ventana del sistema pero **el `innerWidth` de la
+página sigue devolviendo el tamaño viejo**, y `chrome --headless --window-size=414,896`
+maqueta a un ancho mayor y recorta la captura — las dos cosas hacen creer que hay
+desborde horizontal cuando no lo hay.
+
+**Lo que sí funciona: un iframe de 414 px servido desde el mismo origen**, y medir
+`scrollWidth` / `scrollHeight` de cada lámina desde la página contenedora. Ahí apareció
+el único problema real (la lámina del colocador, 1069 px contra 896 de alto) y se
+confirmó que no había desborde lateral en ninguna. El arnés se borró después.
+
+### Y una del deploy
+
+El `until READY` sobre el último deployment agarró un `READY` **de otro deploy** que
+estaba en vuelo (uno de TAG), así que el deck parecía roto en producción: la ruta no
+matcheaba y la página salía en blanco. **Hay que esperar el deployment cuyo
+`githubCommitSha` sea el propio**, y después confirmar que el bundle servido contiene
+algo del código nuevo antes de diagnosticar nada.
+
 ## 2026-09-10 — `/budget/picnic-plataforma`: las maquetas de Picnic online
 
 **Source:** Claude Code — Macbook Pro
