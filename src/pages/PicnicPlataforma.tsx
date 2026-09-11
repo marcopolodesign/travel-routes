@@ -32,11 +32,10 @@ function Pantalla({
       <img
         src={src}
         alt={alt}
-        className={
-          telefono
-            ? 'w-full max-w-[300px] rounded-lg border border-[var(--marco-border)]'
-            : 'w-full rounded-lg border border-[var(--marco-border)]'
-        }
+        className={`w-full rounded-lg border border-[var(--marco-border)] ${
+          telefono ? 'pic-phone' : ''
+        }`}
+        style={telefono ? { maxWidth: 300 } : undefined}
       />
       <figcaption className="text-sm text-black/50 mt-3 max-w-2xl">{pie}</figcaption>
     </figure>

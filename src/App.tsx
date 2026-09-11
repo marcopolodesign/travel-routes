@@ -21,6 +21,7 @@ import Monotributo from './pages/Monotributo'
 import HectorBarea from './pages/HectorBarea'
 import PicnicJob from './pages/PicnicJob'
 import PicnicPlataforma from './pages/PicnicPlataforma'
+import PicnicDeck from './pages/PicnicDeck'
 import HealthierCierre from './pages/HealthierCierre'
 
 export default function App() {
@@ -216,6 +217,8 @@ export default function App() {
             <HealthierCierre />
           </BudgetTemplate>
         } />
+        {/* deck a pantalla completa: sin BudgetTemplate, la presentación es la página */}
+        <Route path="/deck/picnic" element={<PicnicDeck />} />
         <Route path="/agent" element={<Agent />} />
         <Route path="/monotributo" element={<Monotributo />} />
       </Routes>
