@@ -148,9 +148,10 @@ export default function PicnicPlataforma() {
           cierra el panel y se sigue donde se estaba.
         </p>
         <p>
-          Adentro de la zona, cada local muestra si la visita fue efectiva y cómo salió
-          cada material por separado — el saliente puede quedar puesto y el sticker no,
-          y eso queda registrado tal cual.
+          Adentro de la zona, cada local muestra el resultado de su visita. En el kit
+          básico se ve además cómo salió cada material por separado —el saliente puede
+          quedar puesto y el sticker no—; en un backlight, que es un material único, se
+          registra sólo si la visita fue efectiva.
         </p>
         <Pantalla
           src="/picnic/zona.webp"
@@ -169,7 +170,8 @@ export default function PicnicPlataforma() {
         <p>
           Adentro está la prueba completa: las dos fotos, qué verificó el servidor sobre
           ellas —cuándo se tomaron, a qué distancia del local, si esa imagen se usó
-          antes—, el resultado por material y quién la controló.
+          antes—, el resultado y quién la controló. El colocador puede corregirla
+          durante <strong>7 días hábiles</strong> desde que la sube.
         </p>
         <p>
           Abajo, <strong>las etapas anteriores del mismo local</strong>. Es lo que
@@ -206,10 +208,9 @@ export default function PicnicPlataforma() {
           aprueba o se rechaza con el teclado y pasa sola a la siguiente.
         </p>
         <p>
-          Al rechazar, el motivo sale de una lista — la misma que Picnic ya usa, más
-          "local repetido en base de datos" — con un campo libre para lo que no entre en
-          ninguna. Al estar tabulados, después se puede ver en qué zonas se traba el
-          trabajo y por qué.
+          El motivo sale de la lista cerrada de once que nos pasaron, con un comentario
+          libre para lo extraordinario. Al ser una lista y no texto suelto, después se
+          puede ver en qué zonas se traba el trabajo y por qué.
         </p>
         <Pantalla
           src="/picnic/corrector.webp"
@@ -237,20 +238,25 @@ export default function PicnicPlataforma() {
       </TwoColumnSection>
 
       {/* ── Cliente ───────────────────────────────────────────── */}
-      <TwoColumnSection title="Y lo que podría ver PedidosYa" id="cliente">
+      <TwoColumnSection title="Lo que ve PedidosYa" id="cliente">
         <p className="text-lg">
-          Una vista propia, con la marca de PedidosYa, donde ven el avance de la etapa y
-          cada acreditación con su foto, su fecha y su lugar. Sin el detalle interno de
-          la operación.
+          Una vista propia, con su marca, donde ven el avance de la etapa y cada
+          acreditación con su foto, su fecha y su lugar. El dato duro completo: qué se
+          coloca, cuándo y dónde.
         </p>
         <p>
-          <strong>Es una propuesta para discutir, no una definición.</strong> Qué ve el
-          cliente y qué puede hacer es una de las decisiones que quedan abiertas.
+          <strong>Lo único que no ven es quién.</strong> Ni el colocador ni el
+          coordinador aparecen en ninguna pantalla de esta vista — y no es un filtro que
+          se pueda esquivar, el recorte vive en la base de datos.
+        </p>
+        <p>
+          Pueden <strong>buscar un local</strong> y <strong>descargar informes</strong>.
+          Nada más: no aprueban, no comentan y no editan.
         </p>
         <Pantalla
           src="/picnic/cliente.webp"
-          alt="Vista del cliente con el avance de la etapa"
-          pie="Un punto de partida para la vista de PedidosYa, con su propia marca."
+          alt="Vista del cliente con el avance de la etapa y el buscador de locales"
+          pie="La vista de PedidosYa, con su marca, el buscador y la descarga de informes."
         />
       </TwoColumnSection>
 
@@ -262,32 +268,25 @@ export default function PicnicPlataforma() {
         </p>
         <ul className="space-y-2 text-black/80 text-[15px]">
           <li>
-            — <strong>El tercer material:</strong> ¿"chapa" y "saliente" son el mismo, o
-            son dos? Y el bicicletero, ¿sigue en uso?
+            — <strong>"No quiere o puede perforable"</strong> no está en la lista de once
+            motivos, y hoy es de los que más se usan en la operación. ¿Queda afuera a
+            propósito, o lo sumamos?
           </li>
           <li>
-            — <strong>Los motivos:</strong> la lista actual dice por qué no se pudo
-            colocar. ¿El rechazo de una foto usa esos mismos motivos, o conviene una
-            lista aparte?
+            — <strong>La clave de una zona:</strong> hoy es una sola para toda la zona, así
+            que quien la tiene abre todos sus locales y el sistema no sabe quién entró.
+            Dejarla abierta resuelve el vencimiento; ¿querés además una clave por persona?
           </li>
           <li>
-            — <strong>El coordinador:</strong> hasta dónde llega su territorio, y si
-            asigna él los locales o lo hace Picnic central.
-          </li>
-          <li>
-            — <strong>El link de una zona:</strong> hoy la clave abre la zona completa
-            para quien la tenga. ¿La dejamos así, le ponemos vencimiento, o pasa a ser
-            una clave por persona?
+            — <strong>El coordinador:</strong> hasta dónde llega su territorio, y si asigna
+            él los locales o lo hace Picnic central.
           </li>
           <li>
             — <strong>Rebranding y locales nuevos:</strong> ¿los quieren ver separados en
-            los reportes?
+            los informes, y sobre cuál se factura?
           </li>
           <li>
-            — <strong>La vista de PedidosYa:</strong> qué ven y qué pueden hacer.
-          </li>
-          <li>
-            — <strong>Una casilla nueva a nombre de Picnic</strong>, del tipo
+            — <strong>La casilla a nombre de Picnic</strong>, del tipo
             plataforma@wearepicnic.com, para abrir a su nombre las cuentas de los
             servicios de la plataforma.
           </li>
