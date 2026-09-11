@@ -14,6 +14,7 @@ import SendaArqAds from './pages/SendaArqAds'
 import SendaAdsMes1 from './pages/SendaAdsMes1'
 import SendaAdsPreviews from './pages/SendaAdsPreviews'
 import TagMetaAgosto from './pages/TagMetaAgosto'
+import TagAgostoCierre from './pages/TagAgostoCierre'
 import Home from './pages/Home'
 import Agent from './pages/Agent'
 import Monotributo from './pages/Monotributo'
@@ -153,6 +154,16 @@ export default function App() {
             whatLabel="Estado y plan"
           >
             <TagMetaAgosto />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/tag-agosto-cierre" element={
+          <BudgetTemplate
+            title="Cierre de agosto — The Acting Garage"
+            timeline="1 al 31 de agosto 2026"
+            stack="Meta Ads · WhatsApp + Web · 3 campañas"
+            whatLabel="Resultados del mes"
+          >
+            <TagAgostoCierre />
           </BudgetTemplate>
         } />
         <Route path="/docs/senda-ads-previews" element={
