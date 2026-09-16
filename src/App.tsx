@@ -199,10 +199,10 @@ export default function App() {
         } />
         <Route path="/budget/picnic-plataforma" element={
           <BudgetTemplate
-            title="La plataforma por dentro — Picnic BTL"
-            timeline="Etapa 83 · Septiembre 2026"
+            title="Plataforma de gestión de campo — Picnic BTL"
+            timeline="Fase 1 · entrega 13 de octubre"
             stack="Panel de Picnic · Carga en el celular · Vista del cliente"
-            whatLabel="Las pantallas"
+            whatLabel="Diseño de producto"
           >
             <PicnicPlataforma />
           </BudgetTemplate>
