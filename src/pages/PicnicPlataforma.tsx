@@ -144,6 +144,16 @@ export default function PicnicPlataforma() {
           atenuada detrás: al cerrar el panel se retoma en el mismo punto.
         </p>
         <p>
+          Los filtros principales son los de las colocaciones: su estado —cargadas, sin
+          cargar, a revisar, rechazadas— y el material. Debajo quedan el coordinador y
+          los colocadores.
+        </p>
+        <p>
+          Una zona puede tener <strong>varios colocadores</strong>, así que el
+          desplegable es de selección múltiple: se marcan con una casilla los que se
+          quieran ver, uno o varios a la vez, con la cantidad que cargó cada uno.
+        </p>
+        <p>
           Dentro de la zona, cada local muestra el resultado de su visita. En el kit
           básico se registra cada material por separado —el saliente puede quedar
           colocado y el sticker no—; en backlight, que es un material único, se
@@ -152,7 +162,7 @@ export default function PicnicPlataforma() {
         <Pantalla
           src="/picnic/zona.webp"
           alt="Panel de detalle de zona abierto sobre la vista de etapa"
-          pie="Detalle de zona, con el resultado de cada material."
+          pie="Detalle de zona: arriba los filtros de colocaciones, y el desplegable de colocadores abierto."
         />
       </TwoColumnSection>
 

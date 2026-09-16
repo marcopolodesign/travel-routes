@@ -83,13 +83,14 @@ const SLIDES: Slide[] = [
     bajada:
       'Al seleccionar una zona se abre un panel sobre la pantalla anterior. La vista de etapa queda atenuada detrás: al cerrar el panel se retoma en el mismo punto.',
     puntos: [
+      'Los filtros principales son los de las colocaciones: estado y material',
+      'Una zona puede tener varios colocadores: el desplegable es de selección múltiple',
       'En el kit básico se registra cada material por separado',
       'En backlight, que es un material único, sólo si la visita fue efectiva',
-      'Y la asignación de cada local',
     ],
     img: '/picnic/zona.webp',
     alt: 'Panel de detalle de zona abierto sobre la vista de etapa',
-    pie: 'Detalle de zona, con el resultado de cada material.',
+    pie: 'Filtros de colocaciones arriba, y el desplegable de colocadores abierto.',
   },
   {
     id: 'local',
