@@ -357,7 +357,7 @@ export default function PicnicDeck() {
   // el índice también en un ref: si se pulsa la flecha mientras el scroll suave
   // todavía corre, calcularlo de scrollTop devuelve la lámina vieja y no avanza
   const indice = useRef(0)
-  const animacion = useRef(0)
+  const respaldo = useRef(0)
 
   const irA = (i: number) => {
     const el = scroller.current
@@ -372,29 +372,18 @@ export default function PicnicDeck() {
     // —la de decisiones es más alta que la pantalla— y en el teléfono la barra
     // de Safari cambia la altura, así que el múltiplo deja de coincidir.
     const destino = lamina.offsetTop
-    const desde = el.scrollTop
-    if (Math.abs(destino - desde) < 2) return
+    if (Math.abs(destino - el.scrollTop) < 2) return
+    el.scrollTo({ top: destino, behavior: 'smooth' })
 
-    // La animación es propia. `scrollTo({ behavior: 'smooth' })` no hace nada en
-    // un contenedor con scroll-snap: queda en la posición vieja mientras el
-    // índice ya avanzó, y las flechas parecen muertas. Se apaga el snap mientras
-    // dura, para que el motor de snap no reapunte a mitad de camino.
-    cancelAnimationFrame(animacion.current)
-    const snap = el.style.scrollSnapType
-    el.style.scrollSnapType = 'none'
-    const arranque = performance.now()
-    const DURACION = 380
-    const paso = (ahora: number) => {
-      const t = Math.min(1, (ahora - arranque) / DURACION)
-      const suave = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
-      el.scrollTop = desde + (destino - desde) * suave
-      if (t < 1) {
-        animacion.current = requestAnimationFrame(paso)
-      } else {
-        el.style.scrollSnapType = snap
+    // Red de seguridad: si el scroll suave no llegó —lo cancela un gesto, o el
+    // navegador no lo anima—, se salta sin animación. Sin esto el índice avanza
+    // y la pantalla no, que es justo cómo se ve una flecha muerta.
+    window.clearTimeout(respaldo.current)
+    respaldo.current = window.setTimeout(() => {
+      if (indice.current === n && Math.abs(el.scrollTop - destino) > 4) {
+        el.scrollTop = destino
       }
-    }
-    animacion.current = requestAnimationFrame(paso)
+    }, 600)
   }
 
   useEffect(() => {
@@ -445,7 +434,7 @@ export default function PicnicDeck() {
       window.removeEventListener('keydown', onKey)
       el.removeEventListener('scroll', onScroll)
       if (pedido) cancelAnimationFrame(pedido)
-      cancelAnimationFrame(animacion.current)
+      window.clearTimeout(respaldo.current)
     }
   }, [])
 
