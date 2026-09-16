@@ -186,7 +186,7 @@ const SLIDES: Slide[] = [
     id: 'definido',
     eyebrow: '12',
     titulo: 'Lo que ya quedó definido',
-    bajada: 'Entre la reunión de arranque y sus respuestas, diez decisiones cerradas.',
+    bajada: 'Entre la reunión de arranque y sus respuestas, doce decisiones cerradas.',
     tabla: [
       { a: 'Ventana de corrección', b: '7 días hábiles desde que se sube el dato' },
       { a: 'La foto', b: 'Se admite la galería. La verificación corre en el servidor' },
@@ -201,6 +201,11 @@ const SLIDES: Slide[] = [
       { a: 'El código del local', b: 'Obligatorio, seis caracteres' },
       { a: 'El estado', b: 'Efectivo / no efectivo, y en el kit básico por material' },
       { a: 'El branding', b: 'Panel interno de Picnic, vista de cliente de PedidosYa' },
+      {
+        a: 'El coordinador',
+        b: 'Asigna colocadores a los locales de su célula. Las zonas las asigna Picnic',
+      },
+      { a: 'Rebranding y locales nuevos', b: 'Se distinguen en los informes' },
     ],
   },
   {
@@ -209,11 +214,10 @@ const SLIDES: Slide[] = [
     titulo: 'Puntos a definir',
     bajada: 'Ninguno frena el trabajo de esta semana.',
     puntos: [
-      'Motivos: “No quiere o puede perforable” no figura en la lista de once y aparece con frecuencia en los registros anteriores. ¿Queda excluido a propósito?',
-      'Acceso por zona: hoy la clave es única por zona. ¿Suman además una clave por persona?',
-      'Coordinador: alcance de su territorio y si asigna él o Picnic central',
-      'Rebranding y locales nuevos: si deben distinguirse en los informes',
-      'Identidad visual de Picnic, para el panel interno',
+      'Motivos: “No quiere o puede perforable” no figura en la lista de once, y es de los que más aparecen en los registros anteriores. ¿Queda afuera a propósito o lo sumamos?',
+      'El acceso para cargar hoy es un link por zona, no por persona: quien lo tiene abre todos los locales de esa zona y no queda registrado quién cargó. ¿Alcanza así, o cada colocador tiene su propio acceso y cada carga queda firmada?',
+      'En saliente y sticker aparece un tercer valor, PENDIENTE, además de sí y no. ¿Qué significa en la operación?',
+      'La etapa que está corriendo tiene locales cargados dos veces y filas con las columnas corridas. ¿Con cuál nos quedamos al importar?',
     ],
   },
   {
@@ -353,6 +357,7 @@ export default function PicnicDeck() {
   // el índice también en un ref: si se pulsa la flecha mientras el scroll suave
   // todavía corre, calcularlo de scrollTop devuelve la lámina vieja y no avanza
   const indice = useRef(0)
+  const animacion = useRef(0)
 
   const irA = (i: number) => {
     const el = scroller.current
@@ -362,9 +367,34 @@ export default function PicnicDeck() {
     if (!lamina) return
     indice.current = n
     setActual(n)
-    // offsetTop real, no n * clientHeight: en el teléfono la barra de Safari
-    // cambia la altura y el múltiplo deja de coincidir con la lámina
-    el.scrollTo({ top: lamina.offsetTop, behavior: 'smooth' })
+
+    // offsetTop real, no n * clientHeight: las láminas no miden todas lo mismo
+    // —la de decisiones es más alta que la pantalla— y en el teléfono la barra
+    // de Safari cambia la altura, así que el múltiplo deja de coincidir.
+    const destino = lamina.offsetTop
+    const desde = el.scrollTop
+    if (Math.abs(destino - desde) < 2) return
+
+    // La animación es propia. `scrollTo({ behavior: 'smooth' })` no hace nada en
+    // un contenedor con scroll-snap: queda en la posición vieja mientras el
+    // índice ya avanzó, y las flechas parecen muertas. Se apaga el snap mientras
+    // dura, para que el motor de snap no reapunte a mitad de camino.
+    cancelAnimationFrame(animacion.current)
+    const snap = el.style.scrollSnapType
+    el.style.scrollSnapType = 'none'
+    const arranque = performance.now()
+    const DURACION = 380
+    const paso = (ahora: number) => {
+      const t = Math.min(1, (ahora - arranque) / DURACION)
+      const suave = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+      el.scrollTop = desde + (destino - desde) * suave
+      if (t < 1) {
+        animacion.current = requestAnimationFrame(paso)
+      } else {
+        el.style.scrollSnapType = snap
+      }
+    }
+    animacion.current = requestAnimationFrame(paso)
   }
 
   useEffect(() => {
@@ -415,6 +445,7 @@ export default function PicnicDeck() {
       window.removeEventListener('keydown', onKey)
       el.removeEventListener('scroll', onScroll)
       if (pedido) cancelAnimationFrame(pedido)
+      cancelAnimationFrame(animacion.current)
     }
   }, [])
 

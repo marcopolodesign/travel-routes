@@ -276,26 +276,24 @@ export default function PicnicPlataforma() {
         <ul className="space-y-2 text-black/80 text-[15px]">
           <li>
             — <strong>Motivos de rechazo:</strong> "No quiere o puede perforable" no
-            figura en la lista de once que nos enviaron, y aparece con frecuencia en los
-            registros anteriores. ¿Queda excluido a propósito o lo incorporamos?
+            figura en la lista de once que nos enviaron, y es de los que más aparecen en
+            los registros anteriores. ¿Queda afuera a propósito o lo incorporamos?
           </li>
           <li>
-            — <strong>Acceso por zona:</strong> hoy la clave es única por zona, de modo
-            que quien la tiene accede a todos sus locales y el sistema no identifica a la
-            persona. Mantenerla abierta resuelve el vencimiento; queda definir si además
-            quieren una clave por persona.
+            — <strong>El acceso para cargar:</strong> hoy es un link por zona, no por
+            persona. Quien lo tiene abre todos los locales de esa zona y no queda
+            registrado quién cargó. ¿Alcanza así, o preferís que cada colocador tenga su
+            propio acceso y que cada carga quede firmada con su nombre?
           </li>
           <li>
-            — <strong>Coordinador:</strong> alcance de su territorio y si la asignación
-            de locales la hace él o Picnic central.
+            — <strong>El valor <code>PENDIENTE</code>:</strong> en saliente y sticker
+            aparece un tercer valor además de sí y no. Queda definir qué significa en la
+            operación para representarlo bien.
           </li>
           <li>
-            — <strong>Rebranding y locales nuevos:</strong> si deben distinguirse en los
-            informes y sobre cuál de los dos se factura.
-          </li>
-          <li>
-            — <strong>Identidad visual de Picnic</strong> para el panel interno. La vista
-            de PedidosYa ya utiliza la de ellos.
+            — <strong>La etapa que está corriendo:</strong> tiene locales cargados dos
+            veces y filas con las columnas corridas. Queda definir con cuál nos quedamos
+            al importar.
           </li>
         </ul>
       </ContentBox>
