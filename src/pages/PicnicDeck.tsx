@@ -350,44 +350,78 @@ function Lamina({ s, n, total }: { s: Slide; n: number; total: number }) {
 export default function PicnicDeck() {
   const scroller = useRef<HTMLDivElement>(null)
   const [actual, setActual] = useState(0)
+  // el índice también en un ref: si se pulsa la flecha mientras el scroll suave
+  // todavía corre, calcularlo de scrollTop devuelve la lámina vieja y no avanza
+  const indice = useRef(0)
 
-  // flechas, espacio, inicio y fin — para pasarlo en una pantalla
+  const irA = (i: number) => {
+    const el = scroller.current
+    if (!el) return
+    const n = Math.max(0, Math.min(SLIDES.length - 1, i))
+    const lamina = el.children[n] as HTMLElement | undefined
+    if (!lamina) return
+    indice.current = n
+    setActual(n)
+    // offsetTop real, no n * clientHeight: en el teléfono la barra de Safari
+    // cambia la altura y el múltiplo deja de coincidir con la lámina
+    el.scrollTo({ top: lamina.offsetTop, behavior: 'smooth' })
+  }
+
   useEffect(() => {
     const el = scroller.current
     if (!el) return
-    const ir = (i: number) => {
-      const n = Math.max(0, Math.min(SLIDES.length - 1, i))
-      el.scrollTo({ top: n * el.clientHeight, behavior: 'smooth' })
-    }
+
     const onKey = (e: KeyboardEvent) => {
-      const i = Math.round(el.scrollTop / el.clientHeight)
       if (['ArrowDown', 'ArrowRight', 'PageDown', ' '].includes(e.key)) {
         e.preventDefault()
-        ir(i + 1)
+        irA(indice.current + 1)
       } else if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) {
         e.preventDefault()
-        ir(i - 1)
+        irA(indice.current - 1)
       } else if (e.key === 'Home') {
         e.preventDefault()
-        ir(0)
+        irA(0)
       } else if (e.key === 'End') {
         e.preventDefault()
-        ir(SLIDES.length - 1)
+        irA(SLIDES.length - 1)
       }
     }
-    const onScroll = () => setActual(Math.round(el.scrollTop / el.clientHeight))
+
+    // la lámina activa es la que está más cerca del borde de arriba, medida sobre
+    // las posiciones reales — con láminas más altas que la pantalla no hay múltiplo
+    let pedido = 0
+    const onScroll = () => {
+      if (pedido) return
+      pedido = requestAnimationFrame(() => {
+        pedido = 0
+        const y = el.scrollTop
+        let cerca = 0
+        let dist = Infinity
+        for (let k = 0; k < el.children.length; k++) {
+          const d = Math.abs((el.children[k] as HTMLElement).offsetTop - y)
+          if (d < dist) {
+            dist = d
+            cerca = k
+          }
+        }
+        indice.current = cerca
+        setActual(cerca)
+      })
+    }
+
     window.addEventListener('keydown', onKey)
     el.addEventListener('scroll', onScroll, { passive: true })
     return () => {
       window.removeEventListener('keydown', onKey)
       el.removeEventListener('scroll', onScroll)
+      if (pedido) cancelAnimationFrame(pedido)
     }
   }, [])
 
   const avance = ((actual + 1) / SLIDES.length) * 100
 
   return (
-    <div className="fixed inset-0 bg-[var(--marco-bg)]">
+    <div className="deck-marco bg-[var(--marco-bg)]">
       {/* barra de avance */}
       <div className="absolute top-0 left-0 right-0 h-[3px] z-20 bg-black/5">
         <div
@@ -401,33 +435,77 @@ export default function PicnicDeck() {
         <MarcopoloLogo className="h-3 md:h-3.5 w-auto text-black/30" />
       </div>
 
-      <div
-        ref={scroller}
-        className="deck-scroll h-full overflow-y-auto overscroll-y-contain"
-      >
+      {/* flechas: la salida segura si un gesto no se registra */}
+      <div className="absolute bottom-4 right-[7vw] md:right-[9vw] z-30 flex gap-2">
+        <button
+          type="button"
+          aria-label="Lámina anterior"
+          onClick={() => irA(indice.current - 1)}
+          disabled={actual === 0}
+          className="deck-nav"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6" /></svg>
+        </button>
+        <button
+          type="button"
+          aria-label="Lámina siguiente"
+          onClick={() => irA(indice.current + 1)}
+          disabled={actual === SLIDES.length - 1}
+          className="deck-nav"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </button>
+      </div>
+
+      <div ref={scroller} className="deck-scroll overscroll-y-contain">
         {SLIDES.map((s, i) => (
           <Lamina key={s.id} s={s} n={i + 1} total={SLIDES.length} />
         ))}
       </div>
 
       <style>{`
-        .deck-scroll { scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; overflow-x: hidden; }
-        /* en el teléfono cualquier palabra larga (un mail, un código) empuja la lámina
-           a lo ancho y se pierde el margen derecho: que corte en vez de desbordar */
-        .deck-slide { overflow-x: hidden; overflow-wrap: anywhere; }
+        /* El marco ocupa la pantalla visible. En el teléfono 100vh es la ventana
+           "grande" (sin la barra de Safari), así que las láminas quedaban corridas
+           respecto de lo que se ve: 100dvh sigue a la barra cuando aparece y se va. */
+        .deck-marco { position: fixed; inset: 0; height: 100vh; height: 100dvh; }
+        .deck-scroll {
+          height: 100%;
+          overflow-y: auto;
+          overflow-x: hidden;
+          scroll-snap-type: y proximity;
+          -webkit-overflow-scrolling: touch;
+        }
+        .deck-scroll::-webkit-scrollbar { width: 0; height: 0; }
+        .deck-scroll { scrollbar-width: none; }
+
+        /* 🔴 La lámina NO lleva overflow propio. Poner overflow-x:hidden fuerza
+           overflow-y a auto (regla de CSS: si uno no es visible, el otro deja de
+           serlo), y entonces cada lámina más alta que la pantalla se convertía en
+           su propio contenedor de scroll — el dedo movía ese, no el deck, y al
+           llegar al final no encadenaba: ahí se trababa y no avanzaba ni volvía.
+           Con height:auto la lámina crece y el scroll es siempre el del deck. */
+        .deck-slide {
+          scroll-snap-align: start;
+          min-height: 100%;
+          height: auto;
+          overflow-wrap: anywhere;
+        }
         .deck-slide img { max-width: 100%; }
         /* la captura del teléfono es vertical: sin tope se come la lámina entera */
         .deck-slide img.deck-phone { max-width: 132px; }
         @media (min-width: 640px)  { .deck-slide img.deck-phone { max-width: 190px; } }
         @media (min-width: 1024px) { .deck-slide img.deck-phone { max-width: 240px; } }
-        .deck-scroll::-webkit-scrollbar { width: 0; height: 0; }
-        .deck-scroll { scrollbar-width: none; }
-        .deck-slide {
-          scroll-snap-align: start;
-          scroll-snap-stop: always;
-          height: 100%;
-          min-height: 100%;
+
+        .deck-nav {
+          width: 34px; height: 34px; border-radius: 9999px;
+          display: flex; align-items: center; justify-content: center;
+          background: rgba(255,255,255,.82); color: #1f2937;
+          border: 1px solid rgba(0,0,0,.09);
+          backdrop-filter: blur(6px);
+          -webkit-backdrop-filter: blur(6px);
         }
+        .deck-nav:disabled { opacity: .3; }
+
         @media (max-height: 560px) and (orientation: landscape) {
           .deck-slide { padding-top: 3rem; padding-bottom: 3rem; }
         }
