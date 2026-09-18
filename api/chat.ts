@@ -137,7 +137,7 @@ async function wsfeCall(method: string, innerXml: string, token: string, sign: s
   return afipPost(url, body, { 'Content-Type': 'text/xml; charset=utf-8', SOAPAction: `http://ar.gov.afip.dif.FEV1/${method}` })
 }
 
-async function runArca(args: Record<string, unknown>): Promise<unknown> {
+export async function runArca(args: Record<string, unknown>): Promise<unknown> {
   const cuit = (args.cuit as string) ?? process.env.ARCA_CUIT ?? '20372179369'
   const year = (args.year as number) ?? new Date().getFullYear()
   const production = process.env.ARCA_ENV !== 'homologacion'

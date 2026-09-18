@@ -1,5 +1,48 @@
 # Marco Polo — Catchup
 
+## 2026-09-18 — Factura C 0003-00000006 a Picnic (primera cuota del contrato)
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 14:16 → 14:22 (6 min)
+
+Emitida la **Factura C 0003-00000006** a **PICNIC BTL S.A.** (CUIT 30-71428207-3) por
+**$5.390.000** — CAE `86383668260575`, vence 28/09/2026. Es la **cuota 1 de 7** del
+contrato de locación de servicios (cláusula QUINTA: U$S 3.500 para septiembre), convertida
+a pesos al tipo de cambio que fijó Mateo: **1.540**. Concepto Servicios, período
+01/09–30/09/2026, vencimiento de pago 18/09/2026. PDF en
+`~/Downloads/Factura-C-0003-00000006-PICNIC.pdf`.
+
+**Cómo se emitió — nuevo camino sin el LLM en el medio.** Hasta ahora la emisión pasaba
+por `/api/chat` en producción, con el modelo decidiendo los parámetros del tool. Ahora hay
+un CLI directo: `scripts/arca-cli.ts`, que carga los certificados de `arca/certs/` como
+`ARCA_CERT_BASE64`/`ARCA_KEY_BASE64` (los mismos que están en Vercel) y llama a `runArca`
+con el JSON exacto de argumentos. Para que eso fuera posible, `runArca` en `api/chat.ts`
+pasó de función interna a exportada — único cambio de código, sin efecto sobre el handler.
+
+```bash
+npx tsx scripts/arca-cli.ts '{"action":"getBillingSummary"}'
+npx tsx scripts/arca-cli.ts '{"action":"getLastInvoices","limit":6}'
+npx tsx scripts/arca-cli.ts '{"action":"createInvoice","ptoVta":3,"receptorCuit":"...","importe":...}'
+```
+
+El PDF sigue saliendo del `pdfUrl` que devuelve `createInvoice` (`/api/factura?data=<base64url>`,
+stateless, se puede bajar con `curl` contra producción).
+
+**Salvedad contractual, para tenerla anotada.** La cláusula SEXTA del contrato
+(`docs/contratos/picnic-2026-09.html`) dice que cada cuota se factura **con Factura A** por
+un **EL EMISOR responsable inscripto**, que además hay que comunicarle a Picnic por escrito
+con 5 días hábiles de antelación. Esta se emitió como **Factura C desde el monotributo de
+Mateo**, por decisión suya. Si Picnic necesita el crédito fiscal del IVA, esta factura no
+se lo da. El importe facturado es U$S 3.500 **sin** el IVA que la cláusula QUINTA adiciona.
+
+**Estado del monotributo.** Con esta factura el punto de venta 0003 queda en **$10.744.432**
+facturados en 2026 ($5.354.432 antes). Sumado al punto 0002, el año va por **$18.519.810**,
+o sea **por encima del límite de Categoría B ($15.058.448)** — corresponde recategorizar a
+**C ($21.113.697)**, que con las 6 cuotas que faltan de Picnic (U$S 15.500) también queda
+justa. Hay que mirarlo antes de la próxima.
+
+---
+
 ## 2026-09-11 — `/deck/picnic`: el mismo contenido, como presentación
 
 **Source:** Claude Code — Macbook Pro

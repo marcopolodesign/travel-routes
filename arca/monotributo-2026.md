@@ -1,6 +1,6 @@
 # Monotributo & Facturación 2026 — Mateo Aldao Suaya
 **CUIT:** 20-37217936-9  
-**Actualizado:** 2026-07-20  
+**Actualizado:** 2026-09-18  
 **Fuente límites:** arca.gob.ar/monotributo/categorias.asp (vigentes desde 1/02/2026)
 
 ---
@@ -22,12 +22,14 @@
 | 0003-00000003 | 03/07/2026 | Consumidor Final | — | $1.000,00 |
 | 0003-00000004 | 20/07/2026 | HEKTOR S.R.L. | 30-71401537-7 | $329.696,36 |
 | 0003-00000005 | 26/08/2026 | HEKTOR S.R.L. | 30-71401537-7 | $407.735,73 |
-| **TOTAL** | | | | **$13.129.810,33** |
+| 0003-00000006 | 18/09/2026 | PICNIC BTL S.A. | 30-71428207-3 | $5.390.000,00 |
+| **TOTAL** | | | | **$18.519.810,33** |
 
 ### Por cliente
 | Razón Social | Facturas | Total |
 |--------------|---------|-------|
 | HEKTOR S.R.L. (BIGG) | 8 | $2.842.810,33 |
+| PICNIC BTL S.A. | 1 | $5.390.000,00 |
 | CARRIQUIRI IGNACIO FEDERICO | 2 | $5.670.000,00 |
 | MOSERINI SAS | 2 | $4.616.000,00 |
 | Consumidor Final | 1 | $1.000,00 |
@@ -55,54 +57,26 @@
 
 ---
 
-## Situación al 20/07/2026
+## Situación al 18/09/2026
 
 | | |
 |---|---|
 | **Facturado ene–jun 2026 (pto 2)** | $7.775.378,24 |
-| **Facturado jul 2026 (pto 3)** | $4.946.696,36 |
-| **Total acumulado 2026** | $12.722.074,60 |
-| **Límite Cat A** | $10.277.988 — **superado en julio** |
-| **Límite Cat B** | $15.058.448 |
-| **Queda para agotar Cat B** | $2.336.373,40 |
+| **Facturado jul–sep 2026 (pto 3)** | $10.744.432,09 |
+| **Total acumulado 2026** | $18.519.810,33 |
+| **Límite Cat A** | $10.277.988 — superado en julio |
+| **Límite Cat B** | $15.058.448 — **superado el 18/09 con la factura de Picnic** |
+| **Límite Cat C** | $21.113.697 — **queda $2.593.886,67** |
 
-### Proyección a fin de año
-A ritmo constante de ~$1.296.000/mes:
-- **Agosto 2026** → superaría límite Cat A ($10.28M)
-- **Noviembre 2026** → superaría límite Cat B ($15.06M)
-- **Cierre 2026** → ~$15.55M → necesita **Cat C** para el año completo
+### Lo que viene comprometido
+Las 6 cuotas que restan del contrato de Picnic son **U$S 15.500** (U$S 3.500 en octubre y
+noviembre; U$S 2.500 en diciembre, enero y febrero; U$S 2.000 en marzo de 2027). Sólo las
+de octubre y noviembre de 2026, a una cotización parecida a la de septiembre, son unos
+$10,8M — muy por encima de lo que queda de Cat C dentro de este año calendario.
 
----
-
-## Recategorización semestral — Julio 2026
-
-- **Vencimiento:** 20 de julio de 2026
-- **Qué evalúa ARCA:** ingresos brutos de los últimos 12 meses
-- **Situación semestral ene–jun:** $7.775.378 < $10.277.988 (Cat A) → **no hay obligación de subir en julio**
-- **Recomendación:** monitorear el acumulado en agosto. Si se proyecta superar $10.28M antes de fin de año, recategorizar preventivamente a Cat B.
-
----
-
-## Puntos de venta
-
-| Nro | Tipo | Sistema | Queryable via API |
-|-----|------|---------|-------------------|
-| 002 | Factura en Línea - Monotributo | RCEL (web) | ❌ No |
-| 003 | Factura Electrónica - Monotributo - Web Services | WSFEv1 | ✅ Sí |
-
-> **Nota:** Pto 003 fue creado el 30/06/2026. Las facturas emitidas desde travels.marcopolo.agency saldrán por pto 3 y serán consultables via `getBillingSummary` en la API.
-
----
-
-## API de consulta
-
-```
-POST https://travels.marcopolo.agency/api/chat
-{ "messages": [{ "role": "user", "content": "Cuánto facturé en 2026?" }] }
-```
-
-Herramientas disponibles en el asistente:
-- `getBillingSummary` — total facturado por año y punto de venta (solo pto 3 via API)
-- `getLastInvoices` — últimas facturas emitidas por el punto de venta WS
-- `getMonotributoLimits` — categorías y límites vigentes (actualizados 1/02/2026)
-- `createInvoice` — emite Factura C real con CAE autorizado por ARCA. Parámetros: `receptorCuit`, `receptorRazonSocial`, `importe`, `descripcion`, `concepto` (default: 2=Servicios), `fecha` (default: hoy). Retorna CAE + `pdfUrl` para descargar la factura en PDF con branding Marco Polo y QR AFIP.
+### Qué hacer
+1. **Recategorizar a C** (o a la que corresponda) en la recategorización de **enero de 2027**,
+   que toma los 12 meses cerrados a diciembre.
+2. Antes de emitir la cuota de octubre, recalcular contra el límite: con Picnic y BIGG
+   corriendo juntos, **2026 cierra cerca o por encima de Cat D ($26.212.853)**.
+3. El tope de exclusión del régimen es Cat K ($108.357.084) — sin riesgo por ahora.
