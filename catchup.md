@@ -7,7 +7,14 @@
 
 Emitida la **Factura C 0003-00000007** a **HEKTOR S.R.L.** (BIGG, CUIT 30-71401537-7) por
 **$488.506,48** — CAE `86384087976115`, vence 01/10/2026. Concepto Servicios, pto vta 3,
-descripción "Ajuste de facturación mensual (+3,5%) sobre servicios de agosto".
+descripción **"Servicios de desarrollo — BIGG"**.
+
+🔴 **La descripción no viaja a ARCA** — `createInvoice` la mete sólo en el payload del PDF
+(`api/chat.ts:384`), el SOAP de WSFEv1 lleva sólo importes, fechas y tipo de documento. Se emitió
+con "Ajuste de facturación mensual (+3,5%) sobre servicios de agosto" y Mateo pidió sacarlo — que
+el ajuste no quede a la vista del cliente. Se regeneró el PDF con la descripción neutra (la misma
+que usó la 0003-00000004) y **no hubo que rehacer ni anular nada ante ARCA**. Para la próxima: la
+descripción de una factura a cliente no nombra el mecanismo de ajuste.
 
 **De dónde sale el número.** Se reconstruyó desde `INBOX.Sent Items` de `m@marcopolo.agency`
 (`TO pagos@bigg.fit`, 40 mails desde 2023). El último es del 26/08/2026, asunto *FC Mateo
