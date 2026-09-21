@@ -1,6 +1,6 @@
 # Monotributo & Facturación 2026 — Mateo Aldao Suaya
 **CUIT:** 20-37217936-9  
-**Actualizado:** 2026-09-18  
+**Actualizado:** 2026-09-21  
 **Fuente límites:** arca.gob.ar/monotributo/categorias.asp (vigentes desde 1/02/2026)
 
 ---
@@ -23,12 +23,13 @@
 | 0003-00000004 | 20/07/2026 | HEKTOR S.R.L. | 30-71401537-7 | $329.696,36 |
 | 0003-00000005 | 26/08/2026 | HEKTOR S.R.L. | 30-71401537-7 | $407.735,73 |
 | 0003-00000006 | 18/09/2026 | PICNIC BTL S.A. | 30-71428207-3 | $5.390.000,00 |
-| **TOTAL** | | | | **$18.519.810,33** |
+| 0003-00000007 | 21/09/2026 | HEKTOR S.R.L. | 30-71401537-7 | $488.506,48 |
+| **TOTAL** | | | | **$19.008.316,81** |
 
 ### Por cliente
 | Razón Social | Facturas | Total |
 |--------------|---------|-------|
-| HEKTOR S.R.L. (BIGG) | 8 | $2.842.810,33 |
+| HEKTOR S.R.L. (BIGG) | 9 | $3.331.316,81 |
 | PICNIC BTL S.A. | 1 | $5.390.000,00 |
 | CARRIQUIRI IGNACIO FEDERICO | 2 | $5.670.000,00 |
 | MOSERINI SAS | 2 | $4.616.000,00 |
@@ -57,16 +58,16 @@
 
 ---
 
-## Situación al 18/09/2026
+## Situación al 21/09/2026
 
 | | |
 |---|---|
 | **Facturado ene–jun 2026 (pto 2)** | $7.775.378,24 |
-| **Facturado jul–sep 2026 (pto 3)** | $10.744.432,09 |
-| **Total acumulado 2026** | $18.519.810,33 |
+| **Facturado jul–sep 2026 (pto 3)** | $11.232.938,57 |
+| **Total acumulado 2026** | $19.008.316,81 |
 | **Límite Cat A** | $10.277.988 — superado en julio |
 | **Límite Cat B** | $15.058.448 — **superado el 18/09 con la factura de Picnic** |
-| **Límite Cat C** | $21.113.697 — **queda $2.593.886,67** |
+| **Límite Cat C** | $21.113.697 — **queda $2.105.380,19** |
 
 ### Lo que viene comprometido
 Las 6 cuotas que restan del contrato de Picnic son **U$S 15.500** (U$S 3.500 en octubre y

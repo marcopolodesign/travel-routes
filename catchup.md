@@ -1,5 +1,40 @@
 # Marco Polo — Catchup
 
+## 2026-09-21 — Factura C 0003-00000007 a BIGG (ajuste +3,5% sobre agosto)
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 16:45 → 16:51 (6 min)
+
+Emitida la **Factura C 0003-00000007** a **HEKTOR S.R.L.** (BIGG, CUIT 30-71401537-7) por
+**$488.506,48** — CAE `86384087976115`, vence 01/10/2026. Concepto Servicios, pto vta 3,
+descripción "Ajuste de facturación mensual (+3,5%) sobre servicios de agosto".
+
+**De dónde sale el número.** Se reconstruyó desde `INBOX.Sent Items` de `m@marcopolo.agency`
+(`TO pagos@bigg.fit`, 40 mails desde 2023). El último es del 26/08/2026, asunto *FC Mateo
+Julio*: "Te mando la diferencia de Julio. Total $2.307.735,73", con la FC 0003-00000005 de
+$407.735,73 adjunta — o sea el total del mes es factura + los $1.900.000 que BIGG paga por
+fuera. Entonces: 2.307.735,73 × 1,035 = **2.388.506,48**; menos 1.900.000 = **488.506,48**.
+El mismo mecanismo que en julio (2.229.696,36 × 1,035 = 2.307.735,73) y en junio.
+
+**Emisión.** `npx tsx scripts/arca-cli.ts '{"action":"createInvoice","ptoVta":3,...}'` — el
+camino que quedó de la factura de Picnic, sin pasar por el LLM de `/api/chat`. Monto
+confirmado con Mateo antes de disparar (es irreversible).
+
+🔴 **`createInvoice` no recibe `receptorRazonSocial` si no se lo pasás explícito** y cae al
+default `'Consumidor Final'` (`api/chat.ts:286`). El comprobante ante ARCA sale bien igual
+—lo que vale es el CUIT— pero el **PDF salía con "Consumidor Final" en el recuadro RECEPTOR**.
+Se regeneró la URL de `/api/factura` a mano (el `data` es base64url del JSON, stateless) con
+`receptorRazonSocial: "HEKTOR S.R.L."`. **Para la próxima: pasarlo en el JSON del CLI.**
+
+PDF en `~/Downloads/Marco-Polo-Factura-BIGG-0003-00000007.pdf`, verificado (receptor, importe
+y CAE). Mail a Santi redactado siguiendo los dos anteriores del hilo —"Santi, cómo va? … Abrazo
+y gracias, M", sin firma de imagen, que es como le escribe a BIGG— **pendiente del OK de Mateo
+para enviarlo**.
+
+**Ledger.** `arca/monotributo-2026.md`: total 2026 **$19.008.316,81** (15 facturas), BIGG
+acumula **$3.331.316,81** en 9. Quedan **$2.105.380,19** para agotar Cat C, y las cuotas de
+octubre y noviembre de Picnic (U$S 3.500 c/u) ya no entran ahí.
+
 ## 2026-09-18 — Factura C 0003-00000006 a Picnic (primera cuota del contrato)
 
 **Source:** Claude Code — Macbook Pro
