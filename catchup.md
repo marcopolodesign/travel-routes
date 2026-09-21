@@ -34,9 +34,14 @@ Se regeneró la URL de `/api/factura` a mano (el `data` es base64url del JSON, s
 `receptorRazonSocial: "HEKTOR S.R.L."`. **Para la próxima: pasarlo en el JSON del CLI.**
 
 PDF en `~/Downloads/Marco-Polo-Factura-BIGG-0003-00000007.pdf`, verificado (receptor, importe
-y CAE). Mail a Santi redactado siguiendo los dos anteriores del hilo —"Santi, cómo va? … Abrazo
-y gracias, M", sin firma de imagen, que es como le escribe a BIGG— **pendiente del OK de Mateo
-para enviarlo**.
+y CAE). **Mail enviado** a `pagos@bigg.fit` el 21/09 16:57, asunto *FC Mateo Agosto*, con el PDF adjunto
+y copia guardada en `INBOX.Sent Items`. Cuerpo: "Santi, cómo va? Te mando la fc de agosto. /
+Abrazo y gracias, M" — **sin el total del mes**, que Mateo pidió sacar por lo mismo que la
+descripción: es de donde se deduce el ajuste. Lleva la firma de siempre de `m@marcopolo.agency`
+(nombre, teléfono, marcopolo.agency + `Firma.png` inline), que se sacó de un enviado real.
+`mail-mp.py enviar` sólo manda texto plano sin adjuntos, así que se armó el mensaje a mano
+—mixed[ alternative[plain, related[html, Firma.png]], pdf ]— y se entregó con `mm.entregar()`,
+que ya resuelve el SMTP y el append a Enviados.
 
 **Ledger.** `arca/monotributo-2026.md`: total 2026 **$19.008.316,81** (15 facturas), BIGG
 acumula **$3.331.316,81** en 9. Quedan **$2.105.380,19** para agotar Cat C, y las cuotas de
