@@ -1,5 +1,25 @@
 # Marco Polo — Catchup
 
+## 2026-09-25 — Healthier: informe de la semana 18–24/9 en /budget
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 10:55 → 10:58 (4 min)
+
+Página nueva `/budget/healthier-semana-2026-09-25` (`src/pages/HealthierSemana.tsx`, ruta en
+`App.tsx`), modelada sobre `PicnicPlataforma.tsx`: portada con 4 cifras, nueve secciones
+(`TwoColumnSection`) con lista, chip de dónde/estado y grilla de capturas, y un `ContentBox`
+"Qué sigue" con las decisiones del cliente. Texto base del `contenido.md` que armó la otra sesión
+(job 57737293); se sacaron "Customer.io" y "receta electrónica" (regla: no nombrar el proveedor).
+
+Capturas: 15 de la app iOS en `public/healthier-semana/` (700 px, más el GIF del logo). Sin
+capturas de la web, a pedido de Mateo: una línea "También en la web" donde aplica. Grilla
+`grid-cols-2 md:grid-cols-3` con `style={{maxWidth:240}}` (las `max-w-[Npx]` no se generan).
+🔴 Se sacó `loading="lazy"`: dentro del iframe de 414 px las imágenes quedaban en 0 px al saltar
+con `scrollIntoView`.
+
+Verificado: `tsc` limpio, local desktop + iframe 414 px (sin scroll horizontal), deploy
+`9a78b2f` READY, producción con `?cb=` carga las 15 imágenes. Sin card en Home.
+
 ## 2026-09-21 — Factura C 0003-00000007 a BIGG (ajuste +3,5% sobre agosto)
 
 **Source:** Claude Code — Macbook Pro
