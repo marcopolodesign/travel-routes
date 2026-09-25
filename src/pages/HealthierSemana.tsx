@@ -5,6 +5,7 @@ import type { NavItem } from '../components/ScrollNav'
 
 const NAV: NavItem[] = [
   { id: 'inicio', label: 'Inicio' },
+  { id: 'notificaciones', label: 'Notificaciones' },
   { id: 'boveda', label: 'Bóveda' },
   { id: 'planes', label: 'Planes y mascotas' },
   { id: 'perfil', label: 'Perfil' },
@@ -141,7 +142,6 @@ export default function HealthierSemana() {
             'Ver en el inicio qué especialidades tienen un profesional en línea y empezar la consulta con un toque.',
             'Sacar un turno al instante cuando no hay nadie conectado, desde una hoja que lo explica.',
             'Buscar profesionales por nombre y ver quién está disponible ahora y quién está en consulta.',
-            'Recibir avisos en una campana nueva —recetas, pedidos, resúmenes de consulta, comprobantes—, aunque no tenga activadas las notificaciones del teléfono.',
             'Encontrar "Agendá tu consulta médica" en la pestaña Turnos, con una burbuja de color por especialidad.',
           ]}
         />
@@ -169,7 +169,44 @@ export default function HealthierSemana() {
           ]}
         />
         <TambienWeb>
-          el paciente ve el mismo inicio y la campana de avisos desde su panel.
+          el paciente ve el mismo inicio desde su panel.
+        </TambienWeb>
+      </TwoColumnSection>
+
+      {/* ── 1b. Notificaciones ────────────────────────────────── */}
+      <TwoColumnSection title="Notificaciones" id="notificaciones">
+        <p className="text-lg">
+          El paciente tiene ahora un centro de notificaciones. La campana del inicio y de la
+          Bóveda muestra cuántos avisos nuevos hay, y al abrirla aparecen todos en orden: recetas
+          emitidas, turnos confirmados, pedidos de farmacia, resúmenes de consulta y
+          devoluciones. Tocar un aviso lleva directo a lo que corresponde, y llegan aunque la
+          persona no tenga activadas las notificaciones del teléfono.
+        </p>
+        <Lista
+          items={[
+            'Ver en la campana cuántos avisos nuevos hay.',
+            'Repasar todos los avisos en una sola lista, con cuándo llegó cada uno.',
+            'Abrir la receta, el pedido o el resumen con un toque desde el aviso.',
+            'Los profesionales reciben un aviso diez minutos antes de que venza su disponibilidad para consulta inmediata: "¿Seguís disponible?".',
+          ]}
+        />
+        <Estado donde="App y web" estado="App en TestFlight · web lista para salir" />
+        <Pantallas
+          items={[
+            {
+              src: '15-campana-inicio.jpg',
+              alt: 'Inicio del paciente con la campana y el contador de avisos',
+              pie: 'La campana del inicio, con los avisos nuevos.',
+            },
+            {
+              src: '16-notificaciones.jpg',
+              alt: 'Lista de notificaciones del paciente',
+              pie: 'Todos los avisos en una lista, con cuándo llegó cada uno.',
+            },
+          ]}
+        />
+        <TambienWeb>
+          el paciente ve la campana y la lista de avisos desde su panel.
         </TambienWeb>
       </TwoColumnSection>
 
