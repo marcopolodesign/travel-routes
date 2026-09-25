@@ -1,5 +1,26 @@
 # Marco Polo — Catchup
 
+## 2026-09-25 — Healthier: el informe semanal pasa a /updates/healthier
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 11:05 → 11:14 (9 min)
+
+🔴 **Convención nueva (pedido de Mateo): los informes de avance por proyecto van en
+`/updates/<proyecto>`**, no en `/budget/...`. `/budget` queda para propuestas, presupuestos y
+cierres de sprint.
+
+- `src/App.tsx`: ruta `/updates/healthier` con `HealthierSemana` y el mismo `BudgetTemplate`.
+- `/budget/healthier-semana-2026-09-25` → `<Navigate to="/updates/healthier" replace />`, por si
+  el link ya se compartió.
+- `vercel.json` no se tocó: el rewrite catch-all `/((?!.*\\.[^/]*$).*)` → `/index.html` ya cubre
+  `/updates/*`. Las imágenes usan ruta absoluta (`/healthier-semana/...`), no dependen de la URL.
+
+Verificado: `tsc` limpio; local, el link viejo redirige y las 15 imágenes cargan; deploy
+`1f6aae0` READY; en producción `/updates/healthier?cb=` carga con las 15 imágenes (200, image/*)
+y `/budget/healthier-semana-2026-09-25` termina en `/updates/healthier`.
+Control: no hay test automático de rutas en este repo; la verificación es el chequeo manual de
+arriba (queda anotado como pendiente de automatizar).
+
 ## 2026-09-25 — Healthier: informe de la semana 18–24/9 en /budget
 
 **Source:** Claude Code — Macbook Pro
