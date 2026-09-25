@@ -1,5 +1,12 @@
 # Marco Polo — Catchup
 
+## 2026-09-25 — Healthier: /updates/healthier pide el D-U-N-S, no testers
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 11:15 → 11:25 (10 min)
+
+Corrección de Mateo: en Android y en "Qué sigue" se sacó la línea de testers; lo que falta para Google Play es el número D-U-N-S de United (cuenta de organización para apps de salud → publica directo a producción). `src/pages/HealthierSemana.tsx`.
+
 ## 2026-09-25 — Healthier: el informe semanal pasa a /updates/healthier
 
 **Source:** Claude Code — Macbook Pro

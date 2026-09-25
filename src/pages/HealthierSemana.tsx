@@ -415,18 +415,17 @@ export default function HealthierSemana() {
       <TwoColumnSection title="Android y Google Play" id="android">
         <p className="text-lg">
           La ficha de Healthier en Google Play está completa: textos, ícono, gráfico destacado,
-          capturas y todas las declaraciones de contenido y datos. Con una cuenta de
-          organización, la app se publica directo a producción, sin el período de prueba de 14
-          días.
+          capturas y todas las declaraciones de contenido y datos. Para publicarla, Google pide
+          que las apps de salud salgan desde una cuenta de organización; la abrimos con el número
+          D-U-N-S de United, y con esa cuenta la app se publica directo a producción.
         </p>
         <Lista
           items={[
             'Ficha completa en español, con el eslogan "Tu salud, más cerca".',
             'Las 11 declaraciones de contenido y seguridad de datos, cargadas.',
-            'Lista de testers internos armada: Healthier y Hyppo.',
           ]}
         />
-        <Estado donde="App Android" estado="Lista para publicar con la cuenta de organización" />
+        <Estado donde="App Android" estado="Lista para publicar con el D-U-N-S de United" />
       </TwoColumnSection>
 
       {/* ── Decisiones ────────────────────────────────────────── */}
@@ -450,9 +449,9 @@ export default function HealthierSemana() {
             salir cuando decidan la fecha.
           </li>
           <li>
-            — <strong>Android:</strong> crear la cuenta de desarrollador de organización a nombre
-            de United (con número D-U-N-S, que es gratuito) y transferir la app. Con eso se
-            publica directo a producción.
+            — <strong>Android:</strong> el número D-U-N-S de United, para abrir la cuenta de
+            organización que Google pide a las apps de salud. Con esa cuenta, la app se publica
+            directo a producción.
           </li>
           <li>
             — <strong>Veterinaria:</strong> decidir cuándo habilitar la vertical; las mascotas y
