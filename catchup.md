@@ -1,5 +1,12 @@
 # Marco Polo — Catchup
 
+## 2026-09-25 — Healthier: sección Notificaciones en /updates/healthier
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 11:28 → 11:31 (3 min)
+
+Sección "Notificaciones" después de Inicio (con entrada en el ScrollNav), capturas `15-campana-inicio.jpg` y `16-notificaciones.jpg` en `public/healthier-semana/`; se sacó el bullet de la campana de Inicio. `src/pages/HealthierSemana.tsx`. Verificado en producción con `?cb=`.
+
 ## 2026-09-25 — Healthier: /updates/healthier pide el D-U-N-S, no testers
 
 **Source:** Claude Code — Macbook Pro
