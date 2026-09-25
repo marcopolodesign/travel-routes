@@ -23,6 +23,7 @@ import PicnicJob from './pages/PicnicJob'
 import PicnicPlataforma from './pages/PicnicPlataforma'
 import PicnicDeck from './pages/PicnicDeck'
 import HealthierCierre from './pages/HealthierCierre'
+import HealthierSemana from './pages/HealthierSemana'
 
 export default function App() {
   return (
@@ -215,6 +216,16 @@ export default function App() {
             whatLabel="Acta de cierre"
           >
             <HealthierCierre />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/healthier-semana-2026-09-25" element={
+          <BudgetTemplate
+            title="Avances de la semana — Healthier"
+            timeline="Semana del 18 al 24 de septiembre"
+            stack="App iPhone · Plataforma web · Google Play"
+            whatLabel="Informe semanal"
+          >
+            <HealthierSemana />
           </BudgetTemplate>
         } />
         {/* deck a pantalla completa: sin BudgetTemplate, la presentación es la página */}
