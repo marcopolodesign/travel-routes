@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import BudgetTemplate from './components/BudgetTemplate'
 import HealthMvp from './pages/HealthMvp'
 import TecnoFit from './pages/TecnoFit'
@@ -218,7 +218,8 @@ export default function App() {
             <HealthierCierre />
           </BudgetTemplate>
         } />
-        <Route path="/budget/healthier-semana-2026-09-25" element={
+        {/* informes de avance por proyecto: /updates/<proyecto> */}
+        <Route path="/updates/healthier" element={
           <BudgetTemplate
             title="Avances de la semana — Healthier"
             timeline="Semana del 18 al 24 de septiembre"
@@ -228,6 +229,8 @@ export default function App() {
             <HealthierSemana />
           </BudgetTemplate>
         } />
+        {/* link viejo, por si ya se compartió */}
+        <Route path="/budget/healthier-semana-2026-09-25" element={<Navigate to="/updates/healthier" replace />} />
         {/* deck a pantalla completa: sin BudgetTemplate, la presentación es la página */}
         <Route path="/deck/picnic" element={<PicnicDeck />} />
         <Route path="/agent" element={<Agent />} />
