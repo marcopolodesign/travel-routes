@@ -24,6 +24,22 @@
       "destination": "/deck/tecnofit/index.html"
     },
     {
+      "source": "/deck/tecnofit-capitalizacion-v1",
+      "destination": "/deck/tecnofit-capitalizacion-v1/index.html"
+    },
+    {
+      "source": "/deck/tecnofit-capitalizacion-v1/",
+      "destination": "/deck/tecnofit-capitalizacion-v1/index.html"
+    },
+    {
+      "source": "/deck/tecnofit-capitalizacion-v2",
+      "destination": "/deck/tecnofit-capitalizacion-v2/index.html"
+    },
+    {
+      "source": "/deck/tecnofit-capitalizacion-v2/",
+      "destination": "/deck/tecnofit-capitalizacion-v2/index.html"
+    },
+    {
       "source": "/((?!.*\\.[^/]*$).*)",
       "destination": "/index.html"
     }
