@@ -10,7 +10,7 @@ estructura de `PicnicJob.tsx` y el alcance del sitio de Senda (sitio público + 
 Referencia rpbw.com (el sitio no se pudo abrir desde cloud — egress bloqueado; se describió de
 memoria). Las dos capturas que pasó Mateo (Home y Proyectos) están en `public/asz/` como
 "primera dirección visual", acotadas a 360px porque son de baja resolución.
-Valores propuestos, **a validar por Mateo**: sitio + panel U$4.000–5.000 (hasta 20 obras),
+Valores propuestos, **a validar por Mateo**: sitio + panel U$3.500–4.500 (bajado de 4–5k a pedido de Mateo) (hasta 20 obras),
 inglés U$600–800, mapa de obras U$800–1.200, bloque de 10 obras U$300, pago 50/50.
 Verificado con Playwright en local (1440 y 390px, sin errores ni scroll horizontal).
 Commiteado en `claude/presupuesto-asz-arquitectos-9gyhrf`, no mergeado a `main`.

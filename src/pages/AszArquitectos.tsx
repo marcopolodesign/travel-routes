@@ -235,7 +235,7 @@ export default function AszArquitectos() {
         <PriceBlock
           title="Sitio web + panel del estudio"
           meta="5 a 6 semanas · diseño, desarrollo, carga inicial y salida al aire"
-          amount="$4,000 – $5,000"
+          amount="$3,500 – $4,500"
           border={false}
         >
           <p>
