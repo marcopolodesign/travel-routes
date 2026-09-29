@@ -315,7 +315,7 @@ export default function AszArquitectos() {
             incluyen IVA ni otros impuestos aplicables.
           </p>
           <p>
-            Forma de pago: <strong>40% por adelantado, al inicio del proyecto</strong>, y el 60% restante en pagos mensuales iguales, a acordar con el estudio. Cambios de
+            Forma de pago: <strong>40% por adelantado, al inicio del proyecto</strong>, y el 60% restante en <strong>tres pagos mensuales de 20%</strong> cada uno. Cambios de
             alcance por fuera de lo definido en este documento se cotizan aparte.
           </p>
         </ContentBox>
