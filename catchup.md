@@ -1,6 +1,17 @@
 # Marco Polo — Catchup
 
 
+
+## 2026-09-29 (2) — `/budget/maria-sioli`: el mismo presupuesto de sitio web, para María Sioli
+
+**Source:** Claude Code — cloud
+
+Copia de `/budget/asz-arquitectos` (`src/pages/MariaSioli.tsx`) sin la referencia de diseño:
+fuera la sección de rpbw.com, las maquetas y toda mención de ASZ/RPBW. Mismo alcance, mismos
+precios y las mismas dos formas de pago. No hay contexto de María Sioli en repos ni en Granola:
+se asumió estudio de arquitectura y el copy quedó genérico (tipologías sin listar, "quién está
+detrás del estudio" en vez de "los socios"). Verificado con Playwright en local (1440 y 390px).
+
 ## 2026-09-29 — `/budget/asz-arquitectos`: presupuesto de sitio web para ASZ Arquitectos
 
 **Source:** Claude Code — cloud

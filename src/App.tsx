@@ -23,6 +23,7 @@ import PicnicJob from './pages/PicnicJob'
 import PicnicPlataforma from './pages/PicnicPlataforma'
 import PicnicDeck from './pages/PicnicDeck'
 import AszArquitectos from './pages/AszArquitectos'
+import MariaSioli from './pages/MariaSioli'
 import HealthierCierre from './pages/HealthierCierre'
 import HealthierSemana from './pages/HealthierSemana'
 
@@ -207,6 +208,16 @@ export default function App() {
             whatLabel="Propuesta"
           >
             <AszArquitectos />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/maria-sioli" element={
+          <BudgetTemplate
+            title="Sitio web — María Sioli"
+            timeline="5 a 6 semanas"
+            stack="Sitio web · Panel de carga de obras"
+            whatLabel="Propuesta"
+          >
+            <MariaSioli />
           </BudgetTemplate>
         } />
         <Route path="/budget/picnic-plataforma" element={
