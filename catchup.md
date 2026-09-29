@@ -11,7 +11,7 @@ Referencia rpbw.com (el sitio no se pudo abrir desde cloud — egress bloqueado;
 memoria). Las dos capturas que pasó Mateo (Home y Proyectos) están en `public/asz/` como
 "primera dirección visual", acotadas a 360px porque son de baja resolución.
 Valores propuestos, **a validar por Mateo**: sitio + panel U$3.500–4.500 (bajado de 4–5k a pedido de Mateo) (hasta 20 obras),
-inglés U$600–800, mapa de obras U$800–1.200, bloque de 10 obras U$300, pago 40% adelantado + 60% en 3 pagos mensuales de 20%.
+inglés U$600–800, mapa de obras U$800–1.200, bloque de 10 obras U$300, pago: dos opciones — 50/50 a U$3.500–4.500, o 40% + 3 pagos de 20% a U$3.850–4.950 (último ≤30 días post-lanzamiento).
 Verificado con Playwright en local (1440 y 390px, sin errores ni scroll horizontal).
 Commiteado en `claude/presupuesto-asz-arquitectos-9gyhrf`, no mergeado a `main`.
 

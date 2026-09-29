@@ -250,6 +250,36 @@ export default function AszArquitectos() {
           </p>
         </PriceBlock>
 
+        <section className="mb-20 md:mb-28 scroll-mt-28">
+          <h2 className="font-thunder text-2xl md:text-3xl lg:text-4xl uppercase text-[var(--marco-accent)] mb-3">
+            Dos formas de pago
+          </h2>
+          <p className="text-black/80 max-w-2xl mb-8">El estudio elige la que le quede más cómoda.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="border border-[var(--marco-border)] rounded-lg p-6">
+              <p className="font-thunder uppercase text-black text-2xl mb-1">En dos pagos</p>
+              <p className="font-thunder text-4xl md:text-5xl text-[var(--marco-accent)] leading-none mt-3 mb-5">
+                $3,500 – $4,500
+              </p>
+              <ul className="space-y-2 text-black/80 text-[15px]">
+                <li>— 50% al inicio del proyecto</li>
+                <li>— 50% a la salida al aire</li>
+              </ul>
+            </div>
+            <div className="border border-[var(--marco-border)] rounded-lg p-6">
+              <p className="font-thunder uppercase text-black text-2xl mb-1">En cuatro pagos</p>
+              <p className="font-thunder text-4xl md:text-5xl text-[var(--marco-accent)] leading-none mt-3 mb-5">
+                $3,850 – $4,950
+              </p>
+              <ul className="space-y-2 text-black/80 text-[15px]">
+                <li>— 40% al inicio del proyecto</li>
+                <li>— 60% restante en tres pagos mensuales de 20%</li>
+                <li>— El último, dentro de los 30 días de la salida al aire</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
         <BoxedListSection
           title="Adicionales"
           subtitle="No están incluidos en el valor del sitio. Se pueden sumar al inicio o más adelante."
@@ -315,7 +345,7 @@ export default function AszArquitectos() {
             incluyen IVA ni otros impuestos aplicables.
           </p>
           <p>
-            Forma de pago: <strong>40% por adelantado, al inicio del proyecto</strong>, y el 60% restante en <strong>tres pagos mensuales de 20%</strong> cada uno. Cambios de
+            La forma de pago se elige al inicio, entre las dos opciones de arriba. Cambios de
             alcance por fuera de lo definido en este documento se cotizan aparte.
           </p>
         </ContentBox>
