@@ -22,6 +22,7 @@ import HectorBarea from './pages/HectorBarea'
 import PicnicJob from './pages/PicnicJob'
 import PicnicPlataforma from './pages/PicnicPlataforma'
 import PicnicDeck from './pages/PicnicDeck'
+import AszArquitectos from './pages/AszArquitectos'
 import HealthierCierre from './pages/HealthierCierre'
 import HealthierSemana from './pages/HealthierSemana'
 
@@ -196,6 +197,16 @@ export default function App() {
             whatLabel="Propuesta por fases"
           >
             <PicnicJob />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/asz-arquitectos" element={
+          <BudgetTemplate
+            title="Sitio web — ASZ Arquitectos"
+            timeline="5 a 6 semanas"
+            stack="Sitio web · Panel de carga de obras"
+            whatLabel="Propuesta"
+          >
+            <AszArquitectos />
           </BudgetTemplate>
         } />
         <Route path="/budget/picnic-plataforma" element={

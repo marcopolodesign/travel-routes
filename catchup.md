@@ -1,5 +1,20 @@
 # Marco Polo — Catchup
 
+
+## 2026-09-29 — `/budget/asz-arquitectos`: presupuesto de sitio web para ASZ Arquitectos
+
+**Source:** Claude Code — cloud
+
+Página nueva (`src/pages/AszArquitectos.tsx`, ruta en `App.tsx` con `BudgetTemplate`), con la
+estructura de `PicnicJob.tsx` y el alcance del sitio de Senda (sitio público + panel de carga).
+Referencia rpbw.com (el sitio no se pudo abrir desde cloud — egress bloqueado; se describió de
+memoria). Las dos capturas que pasó Mateo (Home y Proyectos) están en `public/asz/` como
+"primera dirección visual", acotadas a 360px porque son de baja resolución.
+Valores propuestos, **a validar por Mateo**: sitio + panel U$4.000–5.000 (hasta 20 obras),
+inglés U$600–800, mapa de obras U$800–1.200, bloque de 10 obras U$300, pago 50/50.
+Verificado con Playwright en local (1440 y 390px, sin errores ni scroll horizontal).
+Commiteado en `claude/presupuesto-asz-arquitectos-9gyhrf`, no mergeado a `main`.
+
 ## 2026-09-25 — Healthier: sección Notificaciones en /updates/healthier
 
 **Source:** Claude Code — Macbook Pro
