@@ -2,6 +2,16 @@
 
 
 
+
+## 2026-09-30 — Reunión TecnoFit: la sala en vivo, publicada
+
+**Source:** Claude Code — Macbook Pro
+
+- `public/reunion/tecnofit-sala-en-vivo/index.html` + rewrites en `vercel.json` →
+  https://travels.marcopolo.agency/reunion/tecnofit-sala-en-vivo. Primer "Documento de Reunión para cliente"
+  (formato de los docs de Picnic). Fuente: `Tecno/docs/reports/reunion-sala-en-vivo-2026-09-30.html`.
+  Verificado en vivo (desktop y mobile, los dos videos cargan).
+
 ## 2026-09-29 (2) — `/budget/maria-sioli`: el mismo presupuesto de sitio web, para María Sioli
 
 **Source:** Claude Code — cloud
