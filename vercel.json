@@ -40,6 +40,14 @@
       "destination": "/deck/tecnofit-capitalizacion-v2/index.html"
     },
     {
+      "source": "/reunion/tecnofit-sala-en-vivo",
+      "destination": "/reunion/tecnofit-sala-en-vivo/index.html"
+    },
+    {
+      "source": "/reunion/tecnofit-sala-en-vivo/",
+      "destination": "/reunion/tecnofit-sala-en-vivo/index.html"
+    },
+    {
       "source": "/((?!.*\\.[^/]*$).*)",
       "destination": "/index.html"
     }
