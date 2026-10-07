@@ -1,5 +1,4 @@
 import type { CSSProperties, ReactNode } from 'react'
-import ContentBox from '../components/ContentBox'
 import TwoColumnSection from '../components/TwoColumnSection'
 import ScrollNav from '../components/ScrollNav'
 import ScrollReveal from '../components/ScrollReveal'
@@ -495,21 +494,6 @@ export default function HealthierFase1() {
           </div>
         </Seccion>
 
-        {/* Lo que se entrega con el cierre — puntos del acta que se terminan dentro de la Fase 1 */}
-        <ContentBox title="Se entregan con el cierre" id="cierre" border={false}>
-          <p className="text-[15px] text-black/80 max-w-2xl">
-            Tres ajustes del acta de septiembre que forman parte de esta fase y se entregan con el
-            cierre:
-          </p>
-          <Lista
-            items={[
-              'Aviso por WhatsApp al coordinador y a la tripulación cuando entra una emergencia, además del aviso al teléfono.',
-              'Recetas de comidas con IA dentro del plan nutricional, con los alimentos del día.',
-              'Subir archivos propios en las carpetas de Salud Mental, Rehabilitación y Preparador Físico de la Bóveda web, como ya se hace en Análisis y en la app.',
-            ]}
-          />
-        </ContentBox>
-
         {/* 9 · Fase 1.1 — Farmacia */}
         <Seccion
           id="farmacia"
@@ -706,9 +690,6 @@ export default function HealthierFase1() {
             <p>Lo que ya tiene los cimientos puestos y se puede sumar como una etapa aparte:</p>
             <Lista
               items={[
-                'Atención sin turno: una fila para atenderse en el momento con el primero que se libere.',
-                'La nota clínica con IA también dentro de la videollamada.',
-                'Armar el pedido de farmacia desde la misma pantalla en la que se receta.',
                 'Despacho a varios médicos a la vez en la consulta inmediata, cuando haya volumen.',
                 'Obras sociales y prepagas, y facturación electrónica automática.',
               ]}
