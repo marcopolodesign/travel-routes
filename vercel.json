@@ -56,6 +56,22 @@
       "destination": "/reunion/tecnofit-tvs-nuevas/index.html"
     },
     {
+      "source": "/tecno/motor-como-decide",
+      "destination": "/tecno/motor-como-decide/index.html"
+    },
+    {
+      "source": "/tecno/motor-como-decide/",
+      "destination": "/tecno/motor-como-decide/index.html"
+    },
+    {
+      "source": "/tecno/tvs-nuevas",
+      "destination": "/tecno/tvs-nuevas/index.html"
+    },
+    {
+      "source": "/tecno/tvs-nuevas/",
+      "destination": "/tecno/tvs-nuevas/index.html"
+    },
+    {
       "source": "/((?!.*\\.[^/]*$).*)",
       "destination": "/index.html"
     }
