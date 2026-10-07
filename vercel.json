@@ -48,6 +48,14 @@
       "destination": "/reunion/tecnofit-sala-en-vivo/index.html"
     },
     {
+      "source": "/reunion/tecnofit-tvs-nuevas",
+      "destination": "/reunion/tecnofit-tvs-nuevas/index.html"
+    },
+    {
+      "source": "/reunion/tecnofit-tvs-nuevas/",
+      "destination": "/reunion/tecnofit-tvs-nuevas/index.html"
+    },
+    {
       "source": "/((?!.*\\.[^/]*$).*)",
       "destination": "/index.html"
     }
