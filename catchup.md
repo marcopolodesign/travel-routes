@@ -31,6 +31,10 @@ no `/updates`): https://travels.marcopolo.agency/cliente/healthier-fase-1
   con IA en la videollamada y pedido de farmacia desde el recetario en "Próxima etapa".
 - Verificado: `tsc` limpio; local y producción en Chrome, desktop y 390 px (iframe): 49
   imágenes cargadas, 0 rotas, 0 scroll lateral.
+- **Actualización (respuesta de Mateo):** ninguno de los 6 puntos va en el documento. Se sacó
+  el recuadro "Se entregan con el cierre" y los 3 ítems de "Próxima etapa" (quedan despacho a
+  varios médicos y obras sociales/facturación). Commit `6427b79`, verificado en prod (desktop y
+  390 px, 49 capturas, 0 scroll lateral, ningún texto de los 6 puntos).
 - Commit `a10cd00` a `main` (rama `worktree-healthier-fase-1`). No se mandó el link a nadie.
 - ⚠️ El checkout principal tiene sin commitear una entrada del 2026-10-06 (factura de Candela):
   al commitearla puede chocar con ésta en `catchup.md`.
