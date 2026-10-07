@@ -26,6 +26,7 @@ import AszArquitectos from './pages/AszArquitectos'
 import MariaSioli from './pages/MariaSioli'
 import HealthierCierre from './pages/HealthierCierre'
 import HealthierSemana from './pages/HealthierSemana'
+import HealthierFase1 from './pages/HealthierFase1'
 
 export default function App() {
   return (
@@ -238,6 +239,17 @@ export default function App() {
             whatLabel="Acta de cierre"
           >
             <HealthierCierre />
+          </BudgetTemplate>
+        } />
+        {/* documentos para cliente: /cliente/<slug> */}
+        <Route path="/cliente/healthier-fase-1" element={
+          <BudgetTemplate
+            title="Cierre de la Fase 1 — Healthier"
+            timeline="Fase 1 + Fase 1.1 · Octubre 2026"
+            stack="Plataforma web · App iPhone y Android"
+            whatLabel="Cierre de fase"
+          >
+            <HealthierFase1 />
           </BudgetTemplate>
         } />
         {/* informes de avance por proyecto: /updates/<proyecto> */}
