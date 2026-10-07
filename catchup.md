@@ -3,6 +3,38 @@
 
 
 
+## 2026-10-07 — Documento para cliente: cierre de la Fase 1 de Healthier (`/cliente/healthier-fase-1`)
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 14:20 → 14:35 (15 min)
+
+Pedido de Mateo (vía la sesión Healthier): cierre de Fase 1 para United Health (Nacho y Uri),
+modelo Picnic, con Fase 1.1 = Farmacia aparte. **Ruta nueva bajo `/cliente/`** (no `/budget`,
+no `/updates`): https://travels.marcopolo.agency/cliente/healthier-fase-1
+
+- `src/pages/HealthierFase1.tsx` + ruta en `App.tsx` (`BudgetTemplate`, "Cierre de fase").
+  Acento verde Healthier por override de `--marco-accent` en el wrapper de la página (decisión
+  de Mateo; el marco de Marco Polo queda salmón). Secciones como Picnic: cómo viaja una
+  consulta, roles, paciente, profesional, administración, emergencias, apps, cumplimiento,
+  "Se entregan con el cierre", Fase 1.1 farmacia, configuración y accesos, operar sin nosotros
+  (links a `https://www.healthier.com.ar/guia/<rol>`), recorrido de la demo (sin contraseñas:
+  la página es pública), qué necesitamos de United, lo que sigue.
+- Capturas: 48 webp (~1,2 MB) en `public/healthier-fase-1/`, sacadas de la guía de uso
+  (`public/guia-img/` de `origin/main` de healthier, clone shallow) + 2 de
+  `public/docs/screenshots-emergencias/` (médico a bordo, ambulancia asignada). Todas de
+  staging con datos de prueba. No hizo falta capturar nada nuevo.
+- Los 30 puntos del acta (`HealthierCierre.tsx`) verificados contra catchup/nextsteps, el código
+  de `origin/main` (web) y la base de prod (sólo lectura). Detalle en el catchup de Healthier.
+- **Default aplicado a la pregunta abierta** (6 puntos no hechos que no dependen de United):
+  opción A — WhatsApp en emergencias, recetas de comidas con IA y subir archivos en Salud
+  Mental/Rehab/Preparador web como "Se entregan con el cierre"; atención sin turno, nota clínica
+  con IA en la videollamada y pedido de farmacia desde el recetario en "Próxima etapa".
+- Verificado: `tsc` limpio; local y producción en Chrome, desktop y 390 px (iframe): 49
+  imágenes cargadas, 0 rotas, 0 scroll lateral.
+- Commit `a10cd00` a `main` (rama `worktree-healthier-fase-1`). No se mandó el link a nadie.
+- ⚠️ El checkout principal tiene sin commitear una entrada del 2026-10-06 (factura de Candela):
+  al commitearla puede chocar con ésta en `catchup.md`.
+
 ## 2026-09-30 — Reunión TecnoFit: la sala en vivo, publicada
 
 **Source:** Claude Code — Macbook Pro
