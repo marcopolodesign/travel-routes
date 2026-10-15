@@ -37,11 +37,31 @@
 
 ---
 
-## Categorías Monotributo — Vigentes desde 1/02/2026
-*(Locaciones y prestaciones de servicios)*
+## Categorías Monotributo — Vigentes desde 1/08/2026
+*(Locaciones y prestaciones de servicios — fuente: arca.gob.ar/monotributo/categorias.asp, leída el 06/10/2026)*
 
 | Cat | Ingresos brutos anuales | Cuota mensual total* |
 |-----|------------------------|----------------------|
+| A | $12.009.410,45 | $49.527,18 |
+| B | $17.595.182,74 | $56.379,08 |
+| C | $24.670.494,31 | $66.020,12 |
+| D | $30.628.651,43 | $84.612,93 |
+| E | $36.028.231,33 | $119.811,45 |
+| F | $45.151.659,41 | $150.784,21 |
+| G | $53.995.798,87 | $230.312,94 |
+| H | $81.924.660,37 | $522.706,68 |
+| I | $91.699.761,90 | $963.747,86 |
+| J | $105.012.519,20 | $1.167.299,76 |
+| K | $126.610.838,75 | $1.614.446,04 |
+
+*\* Total = Impuesto integrado + Aportes SIPA + Aportes obra social*
+
+Tabla anterior (1/02/2026), para referencia: A $10.277.988 · B $15.058.448 · C $21.113.697 ·
+D $26.212.853 · E $30.833.964 · F $38.642.048 · G $46.211.109 · H $70.113.407 · I $78.479.212 ·
+J $89.872.640 · K $108.357.084. La "Situación al 21/09" de abajo se calculó con esa tabla:
+con la vigente, los $19.008.316,81 de 2026 quedan dentro de **Cat C** (tope $24.670.494,31).
+
+-----|------------------------|----------------------|
 | A | $10.277.988 | $42.387 |
 | B | $15.058.448 | $48.251 |
 | C | $21.113.697 | $56.502 |
@@ -55,6 +75,20 @@
 | K | $108.357.084 | $1.381.688 |
 
 *\* Total = Impuesto integrado + Aportes SIPA + Aportes obra social*
+
+---
+
+## Situación al 15/10/2026
+
+| | |
+|---|---|
+| **Total al 21/09** | $19.008.316,81 |
+| 0003-00000008 (15/10, Consumidor Final — prueba, revisar) | $1.000,00 |
+| 0003-00000009 (15/10, HEKTOR / BIGG septiembre) | $572.104,21 |
+| **Total acumulado 2026** | **$19.581.421,02** |
+| **Límite Cat C** | $21.113.697 — **queda $1.532.275,98** |
+
+La cuota de octubre de Picnic se facturó desde el CUIT de Candela: no entra acá.
 
 ---
 

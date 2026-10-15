@@ -3,6 +3,80 @@
 
 
 
+## 2026-10-15 — Factura C 0003-00000009 a BIGG (septiembre)
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 16:40 → 17:18 (38 min)
+
+Emitida la **Factura C 0003-00000009** a **HEKTOR S.R.L.** (CUIT 30-71401537-7) por
+**$572.104,21** — CAE `86427879698088`, vence 25/10/2026. Pto vta 3, Servicios, período 01/09–30/09,
+descripción "Servicios de desarrollo — BIGG", con `receptorRazonSocial` explícito.
+
+**Número:** mismo mecanismo de siempre. (488.506,48 de la FC de agosto + 1.900.000 que BIGG paga por
+fuera) × 1,035 = **2.472.104,21** de total del mes; menos 1.900.000 = **572.104,21**. Emitida con
+`scripts/arca-cli.ts` tras el OK de Mateo.
+
+**Mail** a `pagos@bigg.fit`, asunto *FC Mateo Septiembre*, PDF adjunto + firma de siempre (HTML y
+`Firma.png` copiados del enviado de agosto), guardado en `INBOX.Sent Items`. Esta vez **con el total
+del mes** en el cuerpo ("Total $2.472.104,21") — Mateo lo aprobó así. PDF guardado en
+`arca/facturas/` (ahora gitignoreado; `~/Downloads` colgaba el shell por permisos de macOS).
+
+⚠️ En el pto 3 apareció una **0003-00000008 de hoy por $1.000 a Consumidor Final** (CAE
+`86427805834316`) que no emitió esta sesión — probablemente una prueba de FacturAI con el cert de
+Marco Polo. Queda como comprobante real ante ARCA; ver si hay que anularla con nota de crédito.
+
+La cuota de octubre de Picnic **la facturó Candela** (otro CUIT), así que no suma a este ledger.
+
+## 2026-10-07 — Reunión TecnoFit: cómo decide el motor y el foco del día, publicada
+
+**Source:** Claude Code — Macbook Pro
+
+- `public/reunion/tecnofit-motor-foco/index.html` + rewrites (6b8c79a) → https://travels.marcopolo.agency/reunion/tecnofit-motor-foco.
+  Fuente: `Tecno/docs/reports/motor-como-decide-2026-10-07.html`. Verificado en vivo (desktop y mobile oscuro).
+
+## 2026-10-06 — Factura C 0002-00000001 de Candela a Picnic (cuota 2, octubre)
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 13:43 → 15:46 (123 min)
+
+Por pedido de Mateo, la cuota de octubre de Picnic **no** sale de su monotributo sino del de
+**Candela** (COVOS SUAYA CANDELA MONICA, CUIT 27-42374789-2), conectada a ARCA vía FacturAI
+el 05/10. Emitida la **Factura C 0002-00000001** a **PICNIC BTL S.A.** (30-71428207-3) por
+**$5.390.000** (U$S 3.500 × 1.540) — CAE `86406436908602`, vence 16/10/2026. Concepto 2
+(Servicios), período 01/10–31/10/2026, vto. de pago 06/10 (mismo patrón que la 0003-00000006:
+mes en curso, vto = emisión). Verificada después con `FECompConsultar` (pto 2, nro 1,
+$5.390.000, doc 30714282073).
+
+**Cómo.** Mismo `runArca` de `api/chat.ts` que usa `scripts/arca-cli.ts`, pero con el
+certificado de Candela: se descifra de `arca_credentials` de FacturAI (`ENCRYPTION_KEY` de
+`facturai/.env.local`) y se carga como `ARCA_CERT_BASE64`/`ARCA_KEY_BASE64` + `cuit`
+explícito. Script fuera del repo (`~/.claude/jobs/549ce1ae/tmp/emit-cande.ts`); no se tocó
+código.
+
+**PDF** `~/Downloads/Factura-C-0002-00000001-PICNIC-Candela.pdf`: mismo template de
+`api/factura.tsx`, renderizado local desde una copia temporal (borrada) con el emisor de
+Candela — el template tiene a Mateo hardcodeado (nombre, CUIT, domicilio Juncal), así que
+**el `/api/factura` de producción no sirve para facturas de Candela**. Descripción "Diseño" +
+línea "Plataforma Picnic" (la descripción sólo vive en el PDF; ARCA no la recibe, se puede
+regenerar sin tocar el comprobante). Sin domicilio del emisor: no lo tenemos. QR y código de
+barras con el CUIT de Candela.
+
+**Pendiente / para mirar.**
+- Categoría de Candela y lo que facturó en los 12 meses previos: **sin dato**. Facturaba por
+  Factura en Línea (pto 1), que WSFE no deja consultar (error 11002), y su cert no está
+  autorizado para el padrón. Con la tabla vigente (1/08/2026) esta factura sola entra en A
+  ($12.009.410); con >$6,62M previos pasa a B. Noviembre (~$5,4M más) la deja al borde de A.
+- Igual que la anterior: el contrato pide Factura A; ésta es C.
+- `arca/monotributo-2026.md`: tabla de categorías actualizada a la vigente desde 1/08/2026.
+  Con ella, el año de Mateo ($19.008.316,81) queda en Cat C con margen (tope $24.670.494).
+
+## 2026-10-07 — Reunión TecnoFit: las TVs nuevas, publicada
+
+**Source:** Claude Code — Macbook Pro
+
+- `public/reunion/tecnofit-tvs-nuevas/index.html` + rewrites en `vercel.json` (c62e860, sin línea de coautor) →
+  https://travels.marcopolo.agency/reunion/tecnofit-tvs-nuevas. Fuente: `Tecno/docs/reports/reunion-tvs-nuevas-2026-10-07.html`.
+  Verificado en vivo (desktop y mobile).
 ## 2026-10-07 — Documento para cliente: cierre de la Fase 1 de Healthier (`/cliente/healthier-fase-1`)
 
 **Source:** Claude Code — Macbook Pro
