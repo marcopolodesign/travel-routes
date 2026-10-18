@@ -27,6 +27,7 @@ import MariaSioli from './pages/MariaSioli'
 import HealthierCierre from './pages/HealthierCierre'
 import HealthierSemana from './pages/HealthierSemana'
 import HealthierFase1 from './pages/HealthierFase1'
+import PacerAvances from './pages/PacerAvances'
 
 export default function App() {
   return (
@@ -261,6 +262,16 @@ export default function App() {
             whatLabel="Informe semanal"
           >
             <HealthierSemana />
+          </BudgetTemplate>
+        } />
+        <Route path="/updates/pacer" element={
+          <BudgetTemplate
+            title="Avances — Pacer"
+            timeline="Del 16 al 18 de octubre de 2026"
+            stack="App iPhone · Anillo Pacer"
+            whatLabel="Informe de avance"
+          >
+            <PacerAvances />
           </BudgetTemplate>
         } />
         {/* link viejo, por si ya se compartió */}
