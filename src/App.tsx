@@ -28,6 +28,7 @@ import HealthierCierre from './pages/HealthierCierre'
 import HealthierSemana from './pages/HealthierSemana'
 import HealthierFase1 from './pages/HealthierFase1'
 import PacerAvances from './pages/PacerAvances'
+import HealthierAvancesOctubre from './pages/HealthierAvancesOctubre'
 
 export default function App() {
   return (
@@ -251,6 +252,16 @@ export default function App() {
             whatLabel="Cierre de fase"
           >
             <HealthierFase1 />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/healthier-avances-16-18-octubre" element={
+          <BudgetTemplate
+            title="Avances — Healthier"
+            timeline="Del 16 al 18 de octubre de 2026"
+            stack="Plataforma web · App iPhone y Android · Super admin"
+            whatLabel="Informe de avance"
+          >
+            <HealthierAvancesOctubre />
           </BudgetTemplate>
         } />
         {/* informes de avance por proyecto: /updates/<proyecto> */}
