@@ -3,6 +3,25 @@
 
 
 
+## 2026-10-18 — Documento para cliente: avances de Healthier del 16 al 18 de octubre
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 22:48 → 23:15 (28 min)
+
+Página nueva **`/budget/healthier-avances-16-18-octubre`** (`src/pages/HealthierAvancesOctubre.tsx`, ruta en `src/App.tsx`),
+formato de `HealthierSemana.tsx`. Fuente: `~/Local/Healthier/catchup.md` 16–17/10 + `git log origin/main` de website + `asc.py estado Healthier`.
+
+- **Ya en producción (4):** ficha REFEPS con la matrícula declarada primero; chapa y filtro "Extranjeros" en el super admin (dato también en cio para Hyppo);
+  receta del NutriPlan y lectura de análisis de la app desde Edge Functions; app 1.1.2 aprobada (`PENDING_DEVELOPER_RELEASE`) + procedimiento de incidentes RENAPER.
+- **Listo para publicar (staging):** verticales administrables + onboarding "¿En qué área atendés?", carrusel con disponibles primero, Odontología y Psiquiatría,
+  Preparación física, herramientas por vertical (HC/receta), firma de HC con matrícula real, alergias desde el detalle, DNI en el registro del profesional.
+- **En desarrollo:** registro del paciente por pasos (sin entrada en el catchup de Healthier todavía; se puso porque lo indicó la sesión principal).
+- **Qué sigue:** OK para publicar verticales, precio + encendido de Odontología, fotos de Odontología/Veterinaria, fecha de la 1.1.2, responsables de United en el procedimiento RENAPER.
+- Sólo aciertos: sin rondas de revisión ni bugs (alergias contadas como mejora); sin nombrar al proveedor de recetas; links a `www.healthier.com.ar`.
+- Verificado: `tsc` limpio; local y producción en Chromium headless 1440 y 390, claro y oscuro (sin scroll horizontal, sin errores de consola).
+  La página no tiene tema oscuro propio (igual que el resto de /budget): en oscuro se ve clara.
+- Deploy: push a `main` desde el worktree `.claude/worktrees/healthier-48h` (commit sin coautor) → Vercel READY `a6eae06`, sin bloqueo.
+
 ## 2026-10-15 — Factura C 0003-00000009 a BIGG (septiembre)
 
 **Source:** Claude Code — Macbook Pro
