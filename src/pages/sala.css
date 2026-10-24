@@ -1,6 +1,8 @@
 /* Sala — chat en vivo. Estructura de Buzz (block/buzz) con la paleta de Marco Polo.
    Diseño: Felipe, 2026-10-24 (docs/sala-mocks). Todo queda bajo .sala para no tocar el resto de travels. */
 @font-face { font-family: 'TT Interphases Pro'; src: url('/fonts/TTInterphasesPro-Md.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'TT Interphases Pro'; src: url('/fonts/TTInterphasesPro-Rg.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'TT Interphases Pro'; src: url('/fonts/TTInterphasesPro-DmBd.woff2') format('woff2'); font-weight: 600; font-display: swap; }
 @font-face { font-family: 'TT Interphases Pro Mono'; src: url('/fonts/TTInterphasesPro-MonoRg.woff2') format('woff2'); font-weight: 400; font-display: swap; }
 
 .sala {
@@ -141,8 +143,9 @@
 .sala .body ol { list-style: decimal; }
 .sala .body li + li { margin-top: 2px; }
 .sala .body blockquote { margin: 6px 0 0; padding: 2px 0 2px 12px; color: var(--ink-2); white-space: pre-wrap; box-shadow: inset 2px 0 0 var(--line); }
-.sala .body .gone { color: var(--muted); font-style: italic; }
-.sala .log .copy { position: absolute; top: 6px; right: 6px; height: 28px; padding: 0 10px; border-radius: 8px; display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); background: var(--card); box-shadow: 0 0 0 1px var(--line); opacity: 0; transition: opacity .15s; }
+.sala .body .gone { font-style: normal; color: var(--muted); font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.sala .log .copy { position: absolute; top: 6px; right: 6px; height: 28px; padding: 0 10px; border-radius: 8px; display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); background: var(--sunken); box-shadow: -16px 0 12px var(--sunken), 0 0 0 1px var(--line); opacity: 0; transition: opacity .15s; }
+.sala .log pre { padding-right: 96px; }
 .sala .log:hover .copy, .sala .log .copy:focus-visible { opacity: 1; }
 .sala .log .copy svg { width: 14px; height: 14px; }
 @media (hover: none) { .sala .log .copy { opacity: 1; } }
@@ -158,23 +161,23 @@
 .sala .tools button:hover { background: var(--hover); color: var(--ink); }
 .sala .tools button svg { width: 17px; height: 17px; }
 .sala .tools .em { font-size: 17px; line-height: 1; }
-@media (hover: none) { .sala .msg:hover .tools { display: none; } .sala .msg.act .tools { display: flex; } .sala .msg:hover { background: none; } .sala .msg.act { background: var(--hover-msg); } }
+@media (hover: none) { .sala .msg:hover .tools { display: none; } .sala .msg.act .tools { display: flex; position: static; margin: 8px 0 0; width: max-content; } .sala .msg:hover { background: none; } .sala .msg.act { background: var(--hover-msg); } }
 
 /* Reacciones y estado (👀 lo está viendo un Claude, ✓ atendido) */
-.sala .reacts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.sala .reacts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .sala .rchip { height: 26px; padding: 0 9px 0 7px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; line-height: 1; background: var(--sunken); color: var(--ink-2); box-shadow: inset 0 0 0 1px transparent; font-variant-numeric: tabular-nums; }
 .sala .rchip .e { font-size: 14px; display: grid; place-items: center; }
 .sala .rchip .e svg { width: 14px; height: 14px; }
 .sala .rchip:not(:disabled):hover { box-shadow: inset 0 0 0 1px var(--line); }
 .sala .rchip.mine { background: var(--accent-wash); color: var(--accent-ink); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent); }
-.sala .rchip.st { background: transparent; padding-left: 2px; font-family: var(--mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.sala .rchip.st { height: 20px; background: transparent; padding-left: 2px; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .sala .rchip.st .e svg { color: #3F9A6E; }
 
 /* Hilos */
 .sala .thread-row { margin-top: 6px; margin-left: -6px; display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 10px 0 6px; border-radius: 10px; font-size: 13px; color: var(--muted); max-width: 100%; }
 .sala .thread-row:hover { background: var(--card); box-shadow: 0 0 0 1px var(--line); }
 .sala .thread-row .stack .av { box-shadow: 0 0 0 2px var(--card); }
-.sala .thread-row .cnt { font-weight: 600; color: var(--accent-ink); }
+.sala .thread-row .cnt { font-weight: 600; color: var(--ink); }
 .sala .thread-row .last { white-space: nowrap; }
 .sala .thread-row .go { display: none; color: var(--ink-2); }
 .sala .thread-row:hover .go { display: inline; }
@@ -198,6 +201,8 @@
 .sala .tpanel .msg { padding-left: 20px; padding-right: 20px; }
 .sala .tpanel .dock { padding: 0 16px 6px 20px; }
 .sala .only-m { display: none; }
+.sala .tpanel .tools { top: 4px; right: 12px; }
+.sala .edited { display: inline; margin-left: 6px; font-size: 13px; color: var(--muted); }
 
 /* Editar y borrar */
 .sala .editbox { margin-top: 4px; border: 1px solid var(--muted); border-radius: var(--r-block); background: var(--card); }

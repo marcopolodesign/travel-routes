@@ -157,6 +157,7 @@ function enLinea(texto: string, nombres: string[], equipo: string[]): React.Reac
   })
 }
 
+const recortar = (t: string, n: number) => { const l = t.replace(/\s+/g, ' ').trim(); return l.length > n ? l.slice(0, n - 1).trimEnd() + '…' : l }
 const esPdf = (nombre?: string | null) => !!nombre && /\.pdf$/i.test(nombre)
 const esVideo = (nombre?: string | null) => !!nombre && /\.(mp4|mov|webm|m4v)$/i.test(nombre)
 const peso = (b: number) => b >= 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`
@@ -383,13 +384,12 @@ function Fila({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolean; ctx:
         {!cont && (
           <div className="meta">
             <span className="who">{m.autor}</span>{agente && <span className="tag">Agente</span>}
-            <span className="time">{hora(m.creado)}</span>{m.editado && !m.borrado && <span className="time">(editado)</span>}
+            <span className="time">{hora(m.creado)}</span>{m.editado && !m.borrado && <span className="edited">(editado)</span>}
           </div>
         )}
-        {cont && m.editado && !m.borrado && <div className="meta"><span className="time">(editado)</span></div>}
         {raiz && (
           <button className="in-thread" onClick={() => ctx.abrirHilo(raiz.id)}>
-            {I.hilo}<span>Respondió en un hilo: <b>{raiz.borrado ? 'mensaje borrado' : (raiz.texto || raiz.archivo_nombre || '').slice(0, 70)}</b></span>
+            {I.hilo}<span>Respondió en un hilo: <b>{raiz.borrado ? 'mensaje borrado' : recortar(raiz.texto || raiz.archivo_nombre || '', 70)}</b></span>
           </button>
         )}
         <div className="body">
@@ -409,6 +409,7 @@ function Fila({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolean; ctx:
               </div>
             ) : <>
               <Texto texto={m.texto} nombres={nombres} equipo={equipo} />
+              {cont && m.editado && <span className="edited">(editado)</span>}
               <Adjunto m={m} lado={ladoDe(m.autor, equipo)} />
             </>}
         </div>
@@ -443,19 +444,19 @@ function Fila({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolean; ctx:
             <span className="go">Ver hilo</span>
           </button>
         )}
+        {!m.pendiente && !m.borrado && !editando && (
+          <div className="tools" onClick={(e) => e.stopPropagation()}>
+            {emojis
+              ? REACCIONES.map((e) => <button key={e} className="em" onClick={() => { ctx.reaccionar(m, e); setEmojis(false); setActivo(false) }} title={e}>{e}</button>)
+              : <>
+                <button onClick={() => setEmojis(true)} title="Reaccionar">{I.smile}</button>
+                {!enHilo && <button onClick={() => { setActivo(false); ctx.abrirHilo(m.respuesta_a ?? m.id) }} title="Responder en hilo">{I.hilo}</button>}
+                {mio && <button onClick={() => { setBorrador(m.texto); setEditando(true); setActivo(false) }} title="Editar">{I.edit}</button>}
+                {mio && <button onClick={() => { setBorrando(true); setActivo(false) }} title="Borrar">{I.trash}</button>}
+              </>}
+          </div>
+        )}
       </div>
-      {!m.pendiente && !m.borrado && !editando && (
-        <div className="tools" onClick={(e) => e.stopPropagation()}>
-          {emojis
-            ? REACCIONES.map((e) => <button key={e} className="em" onClick={() => { ctx.reaccionar(m, e); setEmojis(false); setActivo(false) }} title={e}>{e}</button>)
-            : <>
-              <button onClick={() => setEmojis(true)} title="Reaccionar">{I.smile}</button>
-              {!enHilo && <button onClick={() => { setActivo(false); ctx.abrirHilo(m.respuesta_a ?? m.id) }} title="Responder en hilo">{I.hilo}</button>}
-              {mio && <button onClick={() => { setBorrador(m.texto); setEditando(true); setActivo(false) }} title="Editar">{I.edit}</button>}
-              {mio && <button onClick={() => { setBorrando(true); setActivo(false) }} title="Borrar">{I.trash}</button>}
-            </>}
-        </div>
-      )}
     </div>
   )
 }
