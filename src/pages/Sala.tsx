@@ -15,11 +15,11 @@ const MAX_ARCHIVO = 8 * 1024 * 1024
 type Mensaje = {
   id: number; autor: string; texto: string; creado: string
   archivo_nombre?: string | null; archivo_url?: string | null
-  pendiente?: boolean
+  pendiente?: boolean; is_ai?: boolean
 }
 type Miembro = { autor: string; tipo: string; estado?: string | null; visto?: string | null }
-type Yo = { sala: string; autor: string; tipo: string; titulo: string; subtitulo: string | null; anfitrion: string }
-type Invitacion = { sala: string; titulo: string; subtitulo: string | null; anfitrion: string; miembros: Miembro[] }
+type Yo = { sala: string; autor: string; tipo: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[] }
+type Invitacion = { sala: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[]; miembros: Miembro[] }
 
 const leer = (k: string) => { try { return localStorage.getItem(k) } catch { return null } }
 const guardar = (k: string, v: string | null) => {
@@ -48,16 +48,16 @@ const I = {
   plus: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>,
 }
 
-// Lado (color) y forma (persona/agente) de cada autor.
-function ladoDe(autor: string, anfitrion: string) {
-  return autor === anfitrion || autor === `Claude de ${anfitrion}` ? 'mp' : 'bg'
+// Lado (color): el equipo de la sala (nuestro lado) va en coral. Forma: persona círculo, IA cuadrado.
+function ladoDe(autor: string, equipo: string[]) {
+  return equipo.includes(autor) ? 'mp' : 'bg'
 }
 const esAgente = (autor: string, tipo?: string) => tipo ? tipo === 'agente' : /^claude\b/i.test(autor)
 
-function Avatar({ autor, tipo, anfitrion, size }: { autor: string; tipo?: string; anfitrion: string; size: 24 | 32 | 36 }) {
+function Avatar({ autor, tipo, equipo, size }: { autor: string; tipo?: string; equipo: string[]; size: 24 | 32 | 36 }) {
   const agente = esAgente(autor, tipo)
   return (
-    <div className={`av ${agente ? 'a' : 'h'} ${ladoDe(autor, anfitrion)} av-${size}`} title={autor}>
+    <div className={`av ${agente ? 'a' : 'h'} ${ladoDe(autor, equipo)} av-${size}`} title={autor}>
       {agente ? I.spark : autor.trim().charAt(0).toUpperCase()}
     </div>
   )
@@ -76,24 +76,24 @@ const extension = (nombre: string) => (nombre.split('.').pop() || 'arch').slice(
 const esImagen = (nombre?: string | null) => !!nombre && /\.(png|jpe?g|gif|webp)$/i.test(nombre)
 
 // Texto liviano: ```bloques``` como log, `código`, @menciones y links.
-function Texto({ texto, nombres, anfitrion }: { texto: string; nombres: string[]; anfitrion: string }) {
+function Texto({ texto, nombres, equipo }: { texto: string; nombres: string[]; equipo: string[] }) {
   const partes = texto.split(/```(?:\w+\n)?([\s\S]*?)```/g)
   return (
     <>
       {partes.map((parte, i) => i % 2 === 1
         ? <div className="log" key={i}><pre>{parte.replace(/^\n+|\n+$/g, '')}</pre></div>
-        : parte.trim() && <p key={i}>{enLinea(parte.trim(), nombres, anfitrion)}</p>)}
+        : parte.trim() && <p key={i}>{enLinea(parte.trim(), nombres, equipo)}</p>)}
     </>
   )
 }
-function enLinea(texto: string, nombres: string[], anfitrion: string) {
+function enLinea(texto: string, nombres: string[], equipo: string[]) {
   const menciones = [...nombres].sort((a, b) => b.length - a.length).map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
   const re = new RegExp(`(\`[^\`]+\`|https?://\\S+${menciones.length ? `|@(?:${menciones.join('|')})` : ''})`, 'g')
   return texto.split(re).map((t, i) => {
     if (i % 2 === 0) return t
     if (t.startsWith('`')) return <code key={i}>{t.slice(1, -1)}</code>
     if (t.startsWith('http')) return <a key={i} href={t} target="_blank" rel="noreferrer">{t}</a>
-    return <span key={i} className={`at ${ladoDe(t.slice(1), anfitrion)}`}>{t}</span>
+    return <span key={i} className={`at ${ladoDe(t.slice(1), equipo)}`}>{t}</span>
   })
 }
 
@@ -185,10 +185,10 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
         <div className="logo"><MarcopoloLogo /></div>
         <div className="label">Sala{inv?.subtitulo ? ` · ${inv.subtitulo}` : ''}</div>
         <h1>{inv?.titulo ?? 'Sala'}</h1>
-        <p className="lede">Un chat directo con {inv?.anfitrion ?? 'Mateo'} y su Claude. Mandá logs, fotos o archivos, y bajá lo que te manden.</p>
+        <p className="lede">Un chat directo con {listar(inv?.equipo ?? ['Mateo'])}. Mandá fotos, archivos o lo que necesites, y bajá lo que te manden.</p>
         {adentro.length > 0 && inv && (
           <div className="who-in">
-            <div className="stack">{adentro.slice(0, 4).map((m) => <Avatar key={m.autor} autor={m.autor} tipo={m.tipo} anfitrion={inv.anfitrion} size={32} />)}</div>
+            <div className="stack">{adentro.slice(0, 4).map((m) => <Avatar key={m.autor} autor={m.autor} tipo={m.tipo} equipo={inv.equipo} size={32} />)}</div>
             <div className="tx">{listar(adentro.map((m) => m.autor))} {adentro.length === 1 ? 'ya está' : 'ya están'} adentro.</div>
           </div>
         )}
@@ -324,7 +324,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     } catch (e) { manejar(e); setAviso((e as Error).message) }
   }
 
-  const anfitrion = yo?.anfitrion ?? 'Mateo'
+  const equipo = yo?.equipo ?? ['Mateo', 'Claude de Mateo']
   const tipoDe = useMemo(() => Object.fromEntries(miembros.map((m) => [m.autor, m.tipo])), [miembros])
   const trabajando = miembros.filter((m) => m.estado === 'trabajando')
   const archivos = mensajes.filter((m) => m.archivo_nombre && m.archivo_url)
@@ -338,7 +338,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       <div className="sec label">En la sala</div>
       {miembros.map((m) => (
         <div className="row" key={m.autor}>
-          <Avatar autor={m.autor} tipo={m.tipo} anfitrion={anfitrion} size={24} />
+          <Avatar autor={m.autor} tipo={m.tipo} equipo={equipo} size={24} />
           <span className="n">{m.autor}{m.autor === yo.autor ? ' (vos)' : ''}</span>
           {m.estado === 'trabajando' ? <span className="spin" title="Trabajando" /> : <span className={`dot ${conectado(m) ? '' : 'off'}`} title={conectado(m) ? 'Conectado' : 'Sin conexión'} />}
         </div>
@@ -352,7 +352,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       ))}
       <div className="me">
         <div className="me-row">
-          <Avatar autor={yo.autor} tipo={yo.tipo} anfitrion={anfitrion} size={32} />
+          <Avatar autor={yo.autor} tipo={yo.tipo} equipo={equipo} size={32} />
           <div><div className="t">{yo.autor}</div><div className="s">Conectado desde este dispositivo</div></div>
         </div>
         {yo.tipo === 'persona' && !miembros.some((m) => m.autor === `Claude de ${yo.autor}`) && (
@@ -368,15 +368,15 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   for (const m of mensajes) {
     if (!anterior || dia(anterior.creado) !== dia(m.creado)) filas.push(<div className="day" key={'d' + m.id}><span className="label">{dia(m.creado)}</span></div>)
     const cont = !!anterior && anterior.autor === m.autor && dia(anterior.creado) === dia(m.creado) && new Date(m.creado).getTime() - new Date(anterior.creado).getTime() < 5 * 60_000
-    const agente = esAgente(m.autor, tipoDe[m.autor])
+    const agente = m.is_ai ?? esAgente(m.autor, tipoDe[m.autor])
     filas.push(
       <div className={`msg ${cont ? 'cont' : ''} ${m.pendiente ? 'pend' : ''}`} key={m.id}>
-        {cont ? <div /> : <Avatar autor={m.autor} tipo={tipoDe[m.autor]} anfitrion={anfitrion} size={36} />}
+        {cont ? <div /> : <Avatar autor={m.autor} tipo={m.is_ai === undefined ? tipoDe[m.autor] : m.is_ai ? 'agente' : 'persona'} equipo={equipo} size={36} />}
         <div>
           {!cont && <div className="meta"><span className="who">{m.autor}</span>{agente && <span className="tag">Agente</span>}<span className="time">{hora(m.creado)}</span></div>}
           <div className="body">
-            <Texto texto={m.texto} nombres={nombres} anfitrion={anfitrion} />
-            <Adjunto m={m} lado={ladoDe(m.autor, anfitrion)} />
+            <Texto texto={m.texto} nombres={nombres} equipo={equipo} />
+            <Adjunto m={m} lado={ladoDe(m.autor, equipo)} />
           </div>
         </div>
       </div>,
@@ -401,7 +401,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
             <div className="s">{miembros.length} en la sala{trabajando.length ? ` · ${trabajando.length} trabajando` : ''}</div>
           </div>
           <div className="grow" />
-          <div className="stack">{miembros.slice(0, 5).map((m) => <Avatar key={m.autor} autor={m.autor} tipo={m.tipo} anfitrion={anfitrion} size={24} />)}</div>
+          <div className="stack">{miembros.slice(0, 5).map((m) => <Avatar key={m.autor} autor={m.autor} tipo={m.tipo} equipo={equipo} size={24} />)}</div>
           <button className="iconbtn hide-m" onClick={alternarTema} title={tema === 'dark' ? 'Modo claro' : 'Modo oscuro'}>{I.moon}</button>
         </div>
         <div className="stream" ref={streamRef} onScroll={alScrollear}>
@@ -409,7 +409,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
             {filas.length ? filas : <div className="empty">Todavía no hay mensajes. Escribí el primero.</div>}
             {trabajando.map((m) => (
               <div className="msg" key={'w' + m.autor}>
-                <Avatar autor={m.autor} tipo={m.tipo} anfitrion={anfitrion} size={36} />
+                <Avatar autor={m.autor} tipo={m.tipo} equipo={equipo} size={36} />
                 <div>
                   <div className="meta"><span className="who">{m.autor}</span><span className="tag work">Trabajando</span></div>
                   <div className="working"><span className="spin" /><span>Leyendo y haciendo los cambios…</span></div>
