@@ -9,7 +9,7 @@
   --ink: #191410; --ink-2: #4A4139; --muted: #776E65; --line: #ECE4DB;
   --accent: #E66065; --accent-ink: #B8383D; --accent-wash: #FCEBEA;
   --bigg: #9CC4B5; --bigg-ink: #2F5E4F; --bigg-wash: #E5F0EB;
-  --chrome: rgba(25,20,16,.55); --hover: rgba(25,20,16,.05); --row-active: rgba(255,255,255,.7);
+  --chrome: rgba(25,20,16,.55); --hover: rgba(25,20,16,.05); --hover-msg: rgba(25,20,16,.025); --row-active: rgba(255,255,255,.7);
   --btn: #191410; --btn-ink: #FFFFFF;
   --lift: 0 0 0 1px rgba(25,20,16,.05), 0 1px 3px rgba(25,20,16,.06), 0 12px 40px rgba(120,40,30,.08);
   --r-card: 16px; --r-block: 14px; --r-ctl: 12px; --r-chip: 6px;
@@ -28,7 +28,7 @@
   --ink: #F1ECE5; --ink-2: #C7BFB5; --muted: #988E83; --line: #2F2925;
   --accent: #F07479; --accent-ink: #FF9EA1; --accent-wash: #3A1E1E;
   --bigg-ink: #AED5C6; --bigg-wash: #1B2925;
-  --chrome: rgba(255,255,255,.55); --hover: rgba(255,255,255,.05); --row-active: rgba(255,255,255,.12);
+  --chrome: rgba(255,255,255,.55); --hover: rgba(255,255,255,.05); --hover-msg: rgba(255,255,255,.025); --row-active: rgba(255,255,255,.12);
   --btn: #F1ECE5; --btn-ink: #191410;
   --lift: 0 0 0 1px rgba(255,255,255,.04), 0 12px 40px rgba(0,0,0,.35);
 }
@@ -92,7 +92,13 @@
 .sala .empty { margin: auto; text-align: center; color: var(--muted); font-size: 14px; padding: 40px 24px; }
 .sala .day { display: flex; align-items: center; gap: 12px; margin: 10px 24px 8px; }
 .sala .day::before, .sala .day::after { content: ''; flex: 1; height: 1px; background: var(--line); }
-.sala .msg { display: grid; grid-template-columns: 36px minmax(0, 1fr); column-gap: 12px; padding: 8px 24px 4px; }
+.sala .msg { position: relative; display: grid; grid-template-columns: 36px minmax(0, 1fr); column-gap: 12px; padding: 8px 24px 4px; }
+.sala .msg .main { min-width: 0; }
+.sala .msg .gutter { display: flex; justify-content: center; }
+.sala .msg .time-h { font-size: 11px; line-height: 22px; color: var(--muted); font-variant-numeric: tabular-nums; opacity: 0; }
+.sala .msg:hover { background: var(--hover-msg); }
+.sala .msg:hover .time-h, .sala .msg.act .time-h { opacity: 1; }
+.sala .msg.act { background: var(--hover-msg); }
 .sala .msg.cont { padding-top: 0; }
 .sala .msg .meta { display: flex; align-items: baseline; gap: 8px; min-height: 20px; }
 .sala .msg .who { font-size: 15px; line-height: 20px; font-weight: 600; }
@@ -122,12 +128,93 @@
 .sala .shot { display: block; margin-top: 10px; width: 300px; max-width: 100%; border-radius: var(--r-block); overflow: hidden; border: 1px solid var(--line); }
 .sala .shot img { display: block; width: 100%; height: auto; }
 
-.sala .log { margin-top: 10px; max-width: 640px; background: var(--sunken); border-radius: var(--r-block); overflow: hidden; }
+.sala .log { position: relative; margin-top: 10px; max-width: 640px; background: var(--sunken); border-radius: var(--r-block); overflow: hidden; }
 .sala .log pre { font-variant-ligatures: none; font-feature-settings: 'liga' 0, 'calt' 0; font-family: var(--mono); font-size: 13px; line-height: 20px; padding: 12px 14px; margin: 0; overflow-x: auto; color: var(--ink-2); white-space: pre; }
 
 .sala .spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--accent-wash); border-top-color: var(--accent); animation: sala-sp 1s linear infinite; flex: none; }
 @keyframes sala-sp { to { transform: rotate(360deg); } }
 .sala .working { display: flex; align-items: center; gap: 10px; color: var(--ink-2); margin-top: 4px; }
+
+/* Markdown liviano */
+.sala .body strong { font-weight: 600; }
+.sala .body ul, .sala .body ol { margin: 4px 0 0; padding-left: 22px; list-style: disc; font-size: 15px; line-height: 22px; }
+.sala .body ol { list-style: decimal; }
+.sala .body li + li { margin-top: 2px; }
+.sala .body blockquote { margin: 6px 0 0; padding: 2px 0 2px 12px; color: var(--ink-2); white-space: pre-wrap; box-shadow: inset 2px 0 0 var(--line); }
+.sala .body .gone { color: var(--muted); font-style: italic; }
+.sala .log .copy { position: absolute; top: 6px; right: 6px; height: 28px; padding: 0 10px; border-radius: 8px; display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); background: var(--card); box-shadow: 0 0 0 1px var(--line); opacity: 0; transition: opacity .15s; }
+.sala .log:hover .copy, .sala .log .copy:focus-visible { opacity: 1; }
+.sala .log .copy svg { width: 14px; height: 14px; }
+@media (hover: none) { .sala .log .copy { opacity: 1; } }
+.sala .media { margin-top: 10px; max-width: 480px; }
+.sala .media video { display: block; width: 100%; max-height: 360px; border-radius: var(--r-block); background: #000; }
+.sala .media .pdf { display: block; width: 100%; height: 380px; border: 1px solid var(--line); border-radius: var(--r-block); background: var(--sunken); }
+.sala .media .file { margin-top: 8px; }
+
+/* Acciones al pasar el mouse (en táctil: al tocar el mensaje) */
+.sala .tools { position: absolute; top: -14px; right: 20px; display: none; align-items: center; gap: 2px; padding: 3px; background: var(--card); border-radius: 12px; box-shadow: 0 0 0 1px var(--line), 0 4px 14px rgba(25,20,16,.08); z-index: 2; }
+.sala .msg:hover .tools, .sala .msg.act .tools { display: flex; }
+.sala .tools button { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; color: var(--ink-2); }
+.sala .tools button:hover { background: var(--hover); color: var(--ink); }
+.sala .tools button svg { width: 17px; height: 17px; }
+.sala .tools .em { font-size: 17px; line-height: 1; }
+@media (hover: none) { .sala .msg:hover .tools { display: none; } .sala .msg.act .tools { display: flex; } .sala .msg:hover { background: none; } .sala .msg.act { background: var(--hover-msg); } }
+
+/* Reacciones y estado (👀 lo está viendo un Claude, ✓ atendido) */
+.sala .reacts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.sala .rchip { height: 26px; padding: 0 9px 0 7px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; line-height: 1; background: var(--sunken); color: var(--ink-2); box-shadow: inset 0 0 0 1px transparent; font-variant-numeric: tabular-nums; }
+.sala .rchip .e { font-size: 14px; display: grid; place-items: center; }
+.sala .rchip .e svg { width: 14px; height: 14px; }
+.sala .rchip:not(:disabled):hover { box-shadow: inset 0 0 0 1px var(--line); }
+.sala .rchip.mine { background: var(--accent-wash); color: var(--accent-ink); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent); }
+.sala .rchip.st { background: transparent; padding-left: 2px; font-family: var(--mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.sala .rchip.st .e svg { color: #3F9A6E; }
+
+/* Hilos */
+.sala .thread-row { margin-top: 6px; margin-left: -6px; display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 10px 0 6px; border-radius: 10px; font-size: 13px; color: var(--muted); max-width: 100%; }
+.sala .thread-row:hover { background: var(--card); box-shadow: 0 0 0 1px var(--line); }
+.sala .thread-row .stack .av { box-shadow: 0 0 0 2px var(--card); }
+.sala .thread-row .cnt { font-weight: 600; color: var(--accent-ink); }
+.sala .thread-row .last { white-space: nowrap; }
+.sala .thread-row .go { display: none; color: var(--ink-2); }
+.sala .thread-row:hover .go { display: inline; }
+.sala .thread-row .news { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+.sala .in-thread { display: inline-flex; align-items: center; gap: 6px; margin-top: 2px; font-size: 13px; line-height: 18px; color: var(--muted); max-width: 100%; text-align: left; }
+.sala .in-thread svg { width: 14px; height: 14px; flex: none; }
+.sala .in-thread span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sala .in-thread b { font-weight: 500; color: var(--ink-2); }
+.sala .in-thread:hover b { text-decoration: underline; }
+.sala .tsep { display: flex; align-items: center; gap: 12px; margin: 6px 24px 4px; }
+.sala .tsep span { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.sala .tsep::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.sala .nuevos { display: flex; align-items: center; gap: 10px; margin: 10px 24px 4px; }
+.sala .nuevos::before { content: ''; flex: 1; height: 1px; background: var(--accent); opacity: .6; }
+.sala .nuevos span { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-ink); }
+.sala .jump { position: absolute; left: 50%; transform: translateX(-50%); bottom: 118px; height: 34px; padding: 0 14px; border-radius: 999px; background: var(--btn); color: var(--btn-ink); font-size: 13px; font-weight: 600; box-shadow: var(--lift); z-index: 3; }
+.sala .card { position: relative; }
+.sala .app.con-hilo { grid-template-columns: 272px minmax(0, 1fr) 400px; }
+.sala .tpanel .head .t { font-size: 15px; }
+.sala .tpanel .stream > .inner { margin-top: 0; padding-top: 8px; }
+.sala .tpanel .msg { padding-left: 20px; padding-right: 20px; }
+.sala .tpanel .dock { padding: 0 16px 6px 20px; }
+.sala .only-m { display: none; }
+
+/* Editar y borrar */
+.sala .editbox { margin-top: 4px; border: 1px solid var(--muted); border-radius: var(--r-block); background: var(--card); }
+.sala .editbox textarea { display: block; width: 100%; resize: vertical; border: 0; outline: 0; background: transparent; color: var(--ink); padding: 10px 12px 4px; font: inherit; font-size: 15px; line-height: 22px; }
+.sala .editbox .acts { display: flex; align-items: center; gap: 6px; padding: 6px 8px 8px 12px; }
+.sala .editbox .grow { flex: 1; }
+.sala .editbox .hint { font-size: 12px; color: var(--muted); }
+.sala .confirm { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 8px 8px 12px; border-radius: var(--r-ctl); background: var(--accent-wash); font-size: 14px; color: var(--ink); }
+.sala .confirm span { flex: 1; min-width: 180px; }
+.sala .btn.sm { height: 32px; padding: 0 12px; border-radius: 9px; font-size: 13px; }
+.sala .btn.danger { background: var(--accent-ink); color: #fff; }
+
+.sala .also { display: inline-flex; align-items: center; gap: 7px; margin-left: 6px; font-size: 13px; color: var(--ink-2); cursor: pointer; user-select: none; }
+.sala .also input { width: 15px; height: 15px; accent-color: var(--accent); margin: 0; }
+.sala .fine-s { margin-top: 12px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--chrome); }
+.sala .fine-s svg { width: 15px; height: 15px; }
+.sala .side .ghost + .ghost { margin-top: 8px; }
 
 /* Composer */
 .sala .dock { flex: none; padding: 0 20px 6px 24px; }
@@ -208,5 +295,15 @@
   .sala .composer textarea { font-size: 16px; }
   .sala .composer .hint { display: none; }
   .sala .ecard { padding: 28px 22px 34px; }
+  .sala .app.con-hilo { grid-template-columns: minmax(0, 1fr); }
+  .sala .tpanel { position: fixed; inset: 0; z-index: 25; margin: 0; border-radius: 0; padding-top: env(safe-area-inset-top); }
+  .sala .tpanel .head { padding: 0 12px 0 6px; gap: 6px; }
+  .sala .tpanel .msg { padding-left: 16px; padding-right: 16px; }
+  .sala .tpanel .dock { padding: 0 10px calc(10px + env(safe-area-inset-bottom)); }
+  .sala .only-m { display: grid; }
+  .sala .tools { right: 12px; }
+  .sala .media .pdf { height: 300px; }
+  .sala .tsep, .sala .nuevos { margin-left: 16px; margin-right: 16px; }
+  .sala .jump { bottom: 104px; }
   .sala .ecard h1 { font-size: 64px; }
 }
