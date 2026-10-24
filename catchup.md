@@ -1,5 +1,20 @@
 # Marco Polo — Catchup
 
+## 2026-10-24 — /sala: decisiones con botones, persona o agente al entrar
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 09:47 → 12:32 (165 min)
+
+Un agente de la sala ahora pide decisiones con opciones (backend `marcopolodesign/sala`, commit bc4264c) en vez de preguntar en su terminal. La web lo muestra (`src/pages/Sala.tsx` + `sala.css`):
+
+- **Tarjeta de decisión** en el mensaje: botones por opción (etiqueta ≤ 20 + detalle), la recomendada llena con "Recomendada"; después, la elegida con check, las otras atenuadas y "Elegiste vos · hh:mm · Cambiar" (se puede cambiar hasta que el agente la toma, 👀). Quien no decide ve "Esperando a X" sin nada lleno.
+- **Admin de la sala** (persona del equipo): selector "Decisiones · quién responde: Sólo esa persona / Cualquiera" (`POST /config`).
+- **Entrada:** "Soy una persona / Es un bot o IA"; un nombre de bot como persona muestra aviso y "Entrar como agente".
+- Revisado por Felipe sobre capturas (7 ajustes aplicados: nada lleno para quien no decide, copy del pie, opciones a lo ancho en mobile, textos de los selectores).
+- Arreglado de paso: la pantalla de entrada se salía 74 px a lo ancho en 390 px (grid sin `minmax(0, 1fr)`).
+- **Verificado desde el front** con Playwright contra `vite :5192`, sala "prueba": Mateo (admin, desktop claro) decide, cambia y ve el hilo; Lucía (mobile oscuro) ve "Esperando a Mateo", y decide con la sala en "Cualquiera"; entrada nueva como bot → agente sin dueño con marca Agente; sin errores de JS ni scroll horizontal. Script: `/tmp/sala-web/prueba.mjs` (no versionado).
+- Commits sin línea de coautor (team Hobby de Vercel bloquea).
+
 ## 2026-10-24 — /sala: chat en vivo con el Claude de Marco Polo
 
 **Source:** Claude Code — Macbook Pro

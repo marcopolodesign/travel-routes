@@ -23,9 +23,13 @@ type Mensaje = {
   reacciones?: Reaccion[]; menciones?: string[]
   respuestas?: number; ultima_respuesta?: string; ultima_respuesta_id?: number; respondieron?: string[]
   editado?: string | null; borrado?: string | null
+  opciones?: Opcion[] | null; pregunta_para?: string[] | null; decision?: Decision | null
 }
+type Opcion = { id: string; etiqueta?: string; texto: string; recomendada?: boolean }
+// En la pregunta: {opcion, texto, autor, cuando, respuesta_id}. En el "Elegí: …": {pregunta, opcion, …}.
+type Decision = { opcion: string; texto: string; etiqueta?: string; autor: string; cuando: string; respuesta_id?: number; pregunta?: number; cambiada?: boolean }
 type Miembro = { autor: string; tipo: string; dueno?: string | null; estado?: string | null; visto?: string | null }
-type Yo = { sala: string; autor: string; tipo: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[] }
+type Yo = { sala: string; autor: string; tipo: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[]; decide?: 'dirigida' | 'todos'; admin?: boolean }
 type Invitacion = { sala: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[]; miembros: Miembro[] }
 
 const leer = (k: string) => { try { return localStorage.getItem(k) } catch { return null } }
@@ -39,7 +43,7 @@ async function api<T>(ruta: string, clave: string | null, init: RequestInit = {}
     headers: { 'content-type': 'application/json', ...(clave ? { authorization: 'Bearer ' + clave } : {}) },
   })
   const cuerpo = await r.json().catch(() => ({}))
-  if (!r.ok) throw Object.assign(new Error(cuerpo.error || `Error ${r.status}`), { status: r.status })
+  if (!r.ok) throw Object.assign(new Error(cuerpo.error || `Error ${r.status}`), { status: r.status, decision: cuerpo.decision })
   return cuerpo as T
 }
 
@@ -232,7 +236,9 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
   const [inv, setInv] = useState<Invitacion | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [nombre, setNombre] = useState('')
+  const [tipo, setTipo] = useState<'persona' | 'agente'>('persona')
   const [enviando, setEnviando] = useState(false)
+  const pareceBot = tipo === 'persona' && esNombreDeBot(nombre)
 
   useEffect(() => {
     api<Invitacion>(`/invitacion?codigo=${encodeURIComponent(codigo)}`, null)
@@ -242,10 +248,10 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
 
   const entrar = async (ev: React.FormEvent) => {
     ev.preventDefault()
-    if (nombre.trim().length < 2 || enviando) return
+    if (nombre.trim().length < 2 || enviando || pareceBot) return
     setEnviando(true); setError(null)
     try {
-      const r = await api<{ clave: string }>('/canjear', null, { method: 'POST', body: JSON.stringify({ codigo, autor: nombre.trim() }) })
+      const r = await api<{ clave: string }>('/canjear', null, { method: 'POST', body: JSON.stringify({ codigo, autor: nombre.trim(), tipo }) })
       onEntrar(r.clave)
     } catch (e) { setError((e as Error).message); setEnviando(false) }
   }
@@ -266,16 +272,32 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
         )}
         {inv && <>
           <div className="fld">
-            <label htmlFor="sala-nombre">Tu nombre</label>
-            <input id="sala-nombre" className="inp" value={nombre} onChange={(e) => setNombre(e.target.value)} autoFocus autoComplete="given-name" maxLength={40} />
+            <span className="flabel">Quién entra</span>
+            <div className="seg" role="radiogroup" aria-label="Quién entra">
+              <button type="button" role="radio" aria-checked={tipo === 'persona'} className={tipo === 'persona' ? 'on' : ''} onClick={() => setTipo('persona')}>Soy una persona</button>
+              <button type="button" role="radio" aria-checked={tipo === 'agente'} className={tipo === 'agente' ? 'on' : ''} onClick={() => setTipo('agente')}>Es un bot o IA</button>
+            </div>
           </div>
-          <button className="cta" type="submit" disabled={nombre.trim().length < 2 || enviando}>{enviando ? 'Entrando…' : <>Entrar a la sala {I.arrow}</>}</button>
+          <div className="fld">
+            <label htmlFor="sala-nombre">{tipo === 'agente' ? 'Nombre del agente' : 'Tu nombre'}</label>
+            <input id="sala-nombre" className="inp" value={nombre} onChange={(e) => setNombre(e.target.value)} autoFocus autoComplete={tipo === 'persona' ? 'given-name' : 'off'} maxLength={40}
+              placeholder={tipo === 'agente' ? 'Ej: Grok de Martín' : undefined} />
+            {pareceBot && (
+              <p className="fld-hint">Ese nombre parece de un bot o una IA. <button type="button" className="lnk" onClick={() => setTipo('agente')}>Entrar como agente</button></p>
+            )}
+          </div>
+          <button className="cta" type="submit" disabled={nombre.trim().length < 2 || enviando || pareceBot}>{enviando ? 'Entrando…' : <>{tipo === 'agente' ? 'Sumar al agente' : 'Entrar a la sala'} {I.arrow}</>}</button>
         </>}
-        <p className={`fine ${error ? 'err' : ''}`}>{error ?? 'El link es tu acceso: no lo reenvíes. Tu nombre queda guardado en este dispositivo.'}</p>
+        <p className={`fine ${error ? 'err' : ''}`}>{error ?? (tipo === 'agente'
+          ? 'Va a aparecer con la marca Agente y sus mensajes cuentan como de una IA. El link es el acceso: no lo reenvíes.'
+          : 'El link es tu acceso: no lo reenvíes. Tu nombre queda guardado en este dispositivo.')}</p>
       </form>
     </div>
   )
 }
+
+// Mismo criterio que el servidor: "ia" y "bot" como palabra suelta; grok, gpt, gemini y claude en cualquier parte.
+const esNombreDeBot = (n: string) => /(^|[^\p{L}\p{N}])(ia|bot|bots)($|[^\p{L}\p{N}])|grok|gpt|gemini|claude/iu.test(n.trim())
 
 const listar = (xs: string[]) => xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} y ${xs[xs.length - 1]}`
 
@@ -354,6 +376,61 @@ type Ctx = {
   borrar: (m: Mensaje) => void
   hiloConNovedad: (m: Mensaje) => boolean
   porId: Record<number, Mensaje>
+  decidir: (m: Mensaje, opcion: string) => Promise<void>
+}
+
+// Tarjeta de decisión: un agente pide que alguien elija. Botones para quien decide (la recomendada
+// llena y con su etiqueta), "Esperando a…" para los demás, y después qué se eligió.
+function Pregunta({ m, ctx }: { m: Mensaje; ctx: Ctx }) {
+  const { yo } = ctx
+  const [cambiando, setCambiando] = useState(false)
+  const [enviando, setEnviando] = useState<string | null>(null)
+  const ops = m.opciones ?? []
+  const para = m.pregunta_para ?? []
+  const puede = para.includes(yo.autor) || (yo.decide === 'todos' && yo.tipo === 'persona' && m.autor !== yo.autor)
+  const d = m.decision
+  const resp = d?.respuesta_id ? ctx.porId[d.respuesta_id] : undefined
+  const tomada = !!resp?.reacciones?.some((r) => (r.emoji === '👀' || r.emoji === '✓') && r.autores.includes(m.autor))
+  const abierta = puede && (!d || cambiando)
+  const elegir = async (id: string) => {
+    if (enviando) return
+    setEnviando(id)
+    await ctx.decidir(m, id)
+    setEnviando(null); setCambiando(false)
+  }
+  return (
+    <div className={`decide ${d && !cambiando ? 'done' : ''} ${!puede ? 'wait' : ''}`}>
+      <div className="dhead">
+        <span className="label">{d && !cambiando ? 'Decisión' : 'Necesita una decisión'}</span>
+        {!d && !puede && <span className="dwait">Esperando a {listar(para)}</span>}
+      </div>
+      <div className="opts">
+        {ops.map((o) => {
+          const elegida = d?.opcion === o.id && !cambiando
+          const detalle = o.etiqueta && o.texto !== o.etiqueta ? o.texto : null
+          return (
+            <button key={o.id} type="button" disabled={!abierta || !!enviando}
+              className={`opt ${o.recomendada ? 'rec' : ''} ${elegida ? 'chosen' : ''} ${d && !cambiando && !elegida ? 'dim' : ''} ${enviando === o.id ? 'busy' : ''}`}
+              onClick={() => elegir(o.id)}>
+              <span className="ot">{elegida && <span className="ok">{I.check}</span>}{o.etiqueta || o.texto}</span>
+              {detalle && <span className="od">{detalle}</span>}
+              {o.recomendada && <span className="orec">Recomendada</span>}
+            </button>
+          )
+        })}
+      </div>
+      {d && !cambiando && (
+        <div className="dfoot">
+          <span>{d.cambiada
+            ? (d.autor === yo.autor ? 'Cambiaste la elección' : `${d.autor} cambió la elección`)
+            : (d.autor === yo.autor ? 'Elegiste vos' : `Eligió ${d.autor}`)} · {hora(d.cuando)}</span>
+          {tomada ? <span className="dtaken">{m.autor} ya la tomó</span>
+            : puede && <button type="button" className="lnk" onClick={() => setCambiando(true)}>Cambiar</button>}
+        </div>
+      )}
+      {cambiando && <div className="dfoot"><span>Elegí otra opción mientras {m.autor} no la tome.</span><button type="button" className="lnk" onClick={() => setCambiando(false)}>Cancelar</button></div>}
+    </div>
+  )
 }
 
 function Fila({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolean; ctx: Ctx; enHilo?: boolean; nuevo?: boolean }) {
@@ -410,6 +487,7 @@ function Fila({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolean; ctx:
             ) : <>
               <Texto texto={m.texto} nombres={nombres} equipo={equipo} />
               {cont && m.editado && <span className="edited">(editado)</span>}
+              {!!m.opciones?.length && <Pregunta m={m} ctx={ctx} />}
               <Adjunto m={m} lado={ladoDe(m.autor, equipo)} />
             </>}
         </div>
@@ -723,6 +801,28 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       .catch((e) => { manejar(e); setAviso('No se pudo borrar: ' + (e as Error).message) })
   }, [clave, manejar])
 
+  const decidir = useCallback(async (m: Mensaje, opcion: string) => {
+    if (!yo) return
+    const op = m.opciones?.find((o) => o.id === opcion)
+    try {
+      const r = await api<{ decision: Decision }>('/decidir', clave, { method: 'POST', body: JSON.stringify({ id: m.id, opcion }) })
+      setPorId((prev) => prev[m.id] ? { ...prev, [m.id]: { ...prev[m.id], decision: r.decision } } : prev)
+      setAviso(null)
+    } catch (e) {
+      manejar(e)
+      const d = (e as { decision?: Decision }).decision
+      if (d) setPorId((prev) => prev[m.id] ? { ...prev, [m.id]: { ...prev[m.id], decision: d } } : prev)
+      setAviso(`No se pudo elegir "${op?.etiqueta || op?.texto || opcion}": ${(e as Error).message}`)
+    }
+  }, [yo, clave, manejar])
+
+  const cambiarDecide = async (decide: 'dirigida' | 'todos') => {
+    try {
+      await api('/config', clave, { method: 'POST', body: JSON.stringify({ decide }) })
+      setYo((y) => y ? { ...y, decide } : y)
+    } catch (e) { manejar(e); setAviso((e as Error).message) }
+  }
+
   const sumarClaude = async () => {
     try {
       const r = await api<{ comando: string }>('/agente', clave, { method: 'POST', body: '{}' })
@@ -737,7 +837,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   const archivos = canal.filter((m) => m.archivo_nombre && m.archivo_url && !m.borrado)
   const conectado = (m: Miembro) => m.visto && Date.now() - new Date(m.visto).getTime() < 90_000
   const miClaude = yo ? miembros.find((m) => m.autor === `Claude de ${yo.autor}`) : undefined
-  const ctx: Ctx | null = yo ? { yo, equipo, nombres, tipoDe, reaccionar, abrirHilo, editar, borrar, hiloConNovedad, porId } : null
+  const ctx: Ctx | null = yo ? { yo, equipo, nombres, tipoDe, reaccionar, abrirHilo, editar, borrar, hiloConNovedad, porId, decidir } : null
 
   const lateral = yo && (
     <>
@@ -758,6 +858,15 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
           <span className="ftile">{extension(m.archivo_nombre!)}</span><span className="n">{m.archivo_nombre}</span>
         </a>
       ))}
+      {yo.admin && (
+        <div className="cfg">
+          <div className="label">Decisiones · quién responde</div>
+          <div className="seg sm" role="radiogroup" aria-label="Quién responde las decisiones">
+            <button type="button" role="radio" aria-checked={yo.decide !== 'todos'} className={yo.decide !== 'todos' ? 'on' : ''} onClick={() => cambiarDecide('dirigida')}>Sólo esa persona</button>
+            <button type="button" role="radio" aria-checked={yo.decide === 'todos'} className={yo.decide === 'todos' ? 'on' : ''} onClick={() => cambiarDecide('todos')}>Cualquiera</button>
+          </div>
+        </div>
+      )}
       <div className="me">
         <div className="me-row">
           <Avatar autor={yo.autor} tipo={yo.tipo} equipo={equipo} size={32} />

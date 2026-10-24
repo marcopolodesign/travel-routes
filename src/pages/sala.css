@@ -258,7 +258,7 @@
 .sala .btn.sec { background: var(--sunken); color: var(--ink); }
 
 /* Entrada */
-.sala .entry { min-height: 100dvh; display: grid; place-items: center; padding: 24px; }
+.sala .entry { min-height: 100dvh; display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; padding: 24px; }
 .sala .ecard { width: 440px; max-width: 100%; background: var(--card); border-radius: 24px; box-shadow: var(--lift); padding: 36px 40px 32px; }
 .sala .ecard .logo { color: var(--accent); }
 .sala .ecard .logo svg { height: 24px; width: auto; }
@@ -299,6 +299,7 @@
   .sala .dock { padding: 0 10px calc(10px + env(safe-area-inset-bottom)); }
   .sala .composer textarea { font-size: 16px; }
   .sala .composer .hint { display: none; }
+  .sala .entry { padding: 16px; }
   .sala .ecard { padding: 28px 22px 34px; }
   .sala .app.con-hilo { grid-template-columns: minmax(0, 1fr); }
   .sala .tpanel { position: fixed; inset: 0; z-index: 25; margin: 0; border-radius: 0; padding-top: env(safe-area-inset-top); }
@@ -312,3 +313,40 @@
   .sala .jump { bottom: 104px; }
   .sala .ecard h1 { font-size: 64px; }
 }
+
+/* Decisiones: un agente pide que alguien elija. La recomendada va llena; la elegida, con check. */
+.sala .decide { margin-top: 10px; max-width: 560px; padding: 14px; border-radius: var(--r-block); background: var(--sunken); }
+.sala .decide .dhead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.sala .decide:not(.done) .dhead .label { color: var(--accent-ink); }
+.sala .decide .dwait { font-size: 13px; color: var(--muted); }
+.sala .decide .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.sala .decide .opt { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 40px; padding: 9px 14px; border-radius: var(--r-ctl);
+  background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); text-align: left; font-size: 14px; line-height: 20px; transition: box-shadow .12s, opacity .12s; }
+.sala .decide .opt:not(:disabled):hover { box-shadow: inset 0 0 0 1px var(--ink); }
+.sala .decide .opt.rec { background: var(--btn); color: var(--btn-ink); box-shadow: none; }
+.sala .decide .opt .ot { display: flex; align-items: center; gap: 6px; font-weight: 600; }
+.sala .decide .opt .od { font-size: 13px; line-height: 18px; opacity: .75; }
+.sala .decide .opt .orec { font-family: var(--mono); font-size: 11px; line-height: 16px; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
+.sala .decide .opt .ok svg { width: 15px; height: 15px; }
+.sala .decide .opt.busy { opacity: .6; }
+.sala .decide .opt:disabled { cursor: default; }
+.sala .decide .opt.chosen { background: var(--btn); color: var(--btn-ink); box-shadow: none; }
+.sala .decide .opt.dim { opacity: .55; background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.sala .decide .dfoot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; font-size: 13px; color: var(--muted); }
+.sala .decide .dtaken { color: var(--ink-2); }
+.sala .lnk { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; font-size: 13px; }
+
+/* Selector de dos opciones (entrada: persona/agente; admin: quién decide) */
+.sala .flabel { display: block; font-size: 14px; line-height: 20px; font-weight: 600; margin-bottom: 8px; }
+.sala .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: var(--r-ctl); background: var(--sunken); }
+.sala .seg button { min-height: 40px; padding: 6px 10px; border-radius: 9px; font-size: 14px; line-height: 18px; color: var(--ink-2); }
+.sala .seg button.on { background: var(--card); color: var(--ink); font-weight: 600; box-shadow: 0 1px 3px rgba(25,20,16,.1); }
+.sala .seg.sm button { min-height: 34px; font-size: 13px; }
+.sala .fld-hint { margin: 8px 0 0; font-size: 13px; line-height: 18px; color: var(--accent-ink); }
+.sala .fld-hint .lnk { color: inherit; }
+.sala .cfg { margin: 14px 0 4px; }
+.sala .cfg .label { margin-bottom: 6px; }
+/* Quien no decide: nada lleno (lleno = "tocame" o "ya se eligió"); la recomendada queda con borde */
+.sala .decide.wait:not(.done) .opt { opacity: .6; }
+.sala .decide.wait .opt.rec:not(.chosen) { background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink-2); }
+@media (max-width: 480px) { .sala .decide .opts { flex-direction: column; align-items: stretch; } }
