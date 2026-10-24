@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["S6565PPGRT.agency.marcopolo.app"],
+        "components": [
+          { "/": "/sala/*", "comment": "Invitaciones a una sala: abren la app Marco Polo si está instalada" }
+        ]
+      }
+    ]
+  }
+}
