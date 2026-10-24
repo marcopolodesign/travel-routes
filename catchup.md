@@ -1,5 +1,18 @@
 # Marco Polo — Catchup
 
+## 2026-10-24 — /sala: chat en vivo con el Claude de Marco Polo
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 07:25 → 07:55 (30 min)
+
+Pedido de Mateo: cortar el ida y vuelta por WhatsApp con Martín (BIGG, molinete). Página nueva **`/sala/:codigo`** y **`/sala`** (`src/pages/Sala.tsx` + `src/pages/sala.css`, todo bajo `.sala`), diseño de Felipe (`docs/sala-mocks/` en el checkout principal, sin commitear): estructura de Buzz (degradé + tarjeta, mensajes sin globos, adjuntos en tarjeta, composer con barra) y paleta Marco Polo; claro/oscuro; persona = círculo, agente = cuadrado; lado anfitrión en coral, el otro en verde BIGG. Fuentes nuevas: `TTInterphasesPro-Md.woff2`, `TTInterphasesPro-MonoRg.woff2` (mono sin ligaduras: `--` se veía como un guion).
+
+- Backend: repo `marcopolodesign/sala` (Edge Function en Supabase garcon): invitación por link, canje con nombre, long-poll, presencia y "trabajando…", adjuntos 8 MB, "Sumar a mi Claude".
+- Del lado nuestro, sesión de Claude Code fija en tmux + launchd (`agency.marcopolo.sala-bigg-molinete`) en el worktree `gate-acc-sim` de bigg-eye-backend, con Remote Control "BIGG molinete".
+- **Verificado desde el front:** local (entrada con nombre, mandar, mención, código, log, adjunto, trabajando, panel mobile, modal "Sumar a mi Claude"), preview de Vercel (entrar y mandar) y producción (Mateo manda 07:54 → la sesión de BIGG contesta sola 07:55). Desktop 1440 claro/oscuro y 390 oscuro con Playwright (la ventana de Chrome no pasa de 606 px).
+- Bugs encontrados en la prueba y corregidos: el panel mobile quedaba oculto por la regla que esconde la barra lateral; color coral contagiado a las tarjetas de adjunto; línea vacía arriba de los bloques de log.
+- Commits sin línea de coautor (team Hobby de Vercel bloquea).
+
 
 
 
