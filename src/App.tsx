@@ -29,6 +29,7 @@ import HealthierSemana from './pages/HealthierSemana'
 import HealthierFase1 from './pages/HealthierFase1'
 import PacerAvances from './pages/PacerAvances'
 import HealthierAvancesOctubre from './pages/HealthierAvancesOctubre'
+import Sala from './pages/Sala'
 
 export default function App() {
   return (
@@ -290,6 +291,8 @@ export default function App() {
         {/* deck a pantalla completa: sin BudgetTemplate, la presentación es la página */}
         <Route path="/deck/picnic" element={<PicnicDeck />} />
         <Route path="/agent" element={<Agent />} />
+        <Route path="/sala" element={<Sala />} />
+        <Route path="/sala/:codigo" element={<Sala />} />
         <Route path="/monotributo" element={<Monotributo />} />
       </Routes>
     </div>

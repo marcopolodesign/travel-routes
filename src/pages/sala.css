@@ -1,0 +1,212 @@
+/* Sala — chat en vivo. Estructura de Buzz (block/buzz) con la paleta de Marco Polo.
+   Diseño: Felipe, 2026-10-24 (docs/sala-mocks). Todo queda bajo .sala para no tocar el resto de travels. */
+@font-face { font-family: 'TT Interphases Pro'; src: url('/fonts/TTInterphasesPro-Md.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'TT Interphases Pro Mono'; src: url('/fonts/TTInterphasesPro-MonoRg.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+
+.sala {
+  --grad-top: #F6EEE4; --grad-bot: #EFC4BD;
+  --card: #FFFFFF; --sunken: #F7F2EC;
+  --ink: #191410; --ink-2: #4A4139; --muted: #776E65; --line: #ECE4DB;
+  --accent: #E66065; --accent-ink: #B8383D; --accent-wash: #FCEBEA;
+  --bigg: #9CC4B5; --bigg-ink: #2F5E4F; --bigg-wash: #E5F0EB;
+  --chrome: rgba(25,20,16,.55); --hover: rgba(25,20,16,.05); --row-active: rgba(255,255,255,.7);
+  --btn: #191410; --btn-ink: #FFFFFF;
+  --lift: 0 0 0 1px rgba(25,20,16,.05), 0 1px 3px rgba(25,20,16,.06), 0 12px 40px rgba(120,40,30,.08);
+  --r-card: 16px; --r-block: 14px; --r-ctl: 12px; --r-chip: 6px;
+  --sans: 'TT Interphases Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'TT Interphases Pro Mono', ui-monospace, Menlo, monospace;
+  --display: 'Thunder Bold', Impact, sans-serif;
+
+  font-family: var(--sans); color: var(--ink);
+  background: linear-gradient(to bottom, var(--grad-top), var(--grad-bot));
+  min-height: 100dvh; height: 100dvh;
+  -webkit-font-smoothing: antialiased; font-size: 15px; line-height: 1.47;
+}
+.sala[data-theme='dark'] {
+  --grad-top: #3B1917; --grad-bot: #0E0B0A;
+  --card: #1A1614; --sunken: #231E1B;
+  --ink: #F1ECE5; --ink-2: #C7BFB5; --muted: #988E83; --line: #2F2925;
+  --accent: #F07479; --accent-ink: #FF9EA1; --accent-wash: #3A1E1E;
+  --bigg-ink: #AED5C6; --bigg-wash: #1B2925;
+  --chrome: rgba(255,255,255,.55); --hover: rgba(255,255,255,.05); --row-active: rgba(255,255,255,.12);
+  --btn: #F1ECE5; --btn-ink: #191410;
+  --lift: 0 0 0 1px rgba(255,255,255,.04), 0 12px 40px rgba(0,0,0,.35);
+}
+.sala *, .sala *::before, .sala *::after { box-sizing: border-box; }
+.sala button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+.sala button:disabled { cursor: default; }
+.sala svg { display: block; }
+.sala .label { font-family: var(--mono); font-size: 11px; line-height: 16px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+/* Avatares: forma = persona/agente, color = lado */
+.sala .av { flex: none; display: grid; place-items: center; font-weight: 600; color: #fff; }
+.sala .av.h { border-radius: 50%; }
+.sala .av.a { border-radius: 28%; }
+.sala .av.mp { background: var(--accent); color: #fff; }
+.sala .av.bg { background: var(--bigg); color: #16302A; }
+.sala .av svg { width: 56%; height: 56%; }
+.sala .av-36 { width: 36px; height: 36px; font-size: 15px; }
+.sala .av-32 { width: 32px; height: 32px; font-size: 14px; }
+.sala .av-24 { width: 24px; height: 24px; font-size: 11px; }
+.sala .stack { display: flex; }
+.sala .stack .av { box-shadow: 0 0 0 2px var(--card); }
+.sala .stack .av + .av { margin-left: -6px; }
+
+/* Shell */
+.sala .app { height: 100dvh; display: grid; grid-template-columns: 272px minmax(0, 1fr); }
+.sala .side { display: flex; flex-direction: column; padding: 18px 14px 14px 18px; min-height: 0; overflow-y: auto; }
+.sala .side .logo { color: var(--accent); margin: 4px 0 26px 2px; }
+.sala .side .logo svg { height: 22px; width: auto; }
+.sala .room-id { padding: 0 8px 22px; }
+.sala .room-id .t { font-size: 15px; line-height: 20px; font-weight: 600; margin-top: 6px; }
+.sala .room-id .s { font-size: 14px; line-height: 20px; color: var(--chrome); }
+.sala .sec { padding: 0 8px; margin: 6px 0; }
+.sala .row { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 0 8px; border-radius: 10px; font-size: 14px; line-height: 20px; color: var(--ink); text-decoration: none; }
+.sala a.row:hover { background: var(--hover); }
+.sala .row .n { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sala .row .sz { font-size: 13px; color: var(--chrome); }
+.sala .dot { width: 7px; height: 7px; border-radius: 50%; background: #3F9A6E; flex: none; }
+.sala .dot.off { background: transparent; box-shadow: inset 0 0 0 1.5px var(--chrome); }
+.sala .ftile { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; font-family: var(--mono); font-size: 10px; background: var(--row-active); color: var(--ink-2); flex: none; }
+.sala .side .me { margin-top: auto; padding: 14px 8px 2px; }
+.sala .me-row { display: flex; align-items: center; gap: 10px; }
+.sala .me .t { font-size: 14px; line-height: 20px; font-weight: 600; }
+.sala .me .s { font-size: 13px; line-height: 18px; color: var(--chrome); }
+.sala .spacer { height: 18px; }
+.sala .ghost { margin-top: 12px; width: 100%; height: 36px; border-radius: 10px; border: 1px solid var(--line); background: var(--row-active); font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--ink); }
+.sala .ghost:hover { background: var(--card); }
+.sala .ghost svg { width: 16px; height: 16px; }
+
+.sala .card { background: var(--card); box-shadow: var(--lift); display: flex; flex-direction: column; min-height: 0; overflow: hidden; margin: 10px 10px 10px 0; border-radius: var(--r-card); }
+.sala .head { display: flex; align-items: center; gap: 12px; height: 60px; padding: 0 20px 0 24px; border-bottom: 1px solid var(--line); flex: none; }
+.sala .head .t { font-size: 15px; line-height: 20px; font-weight: 600; }
+.sala .head .s { font-size: 14px; color: var(--muted); }
+.sala .head .grow { flex: 1; }
+.sala .iconbtn { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: var(--ink-2); }
+.sala .iconbtn:hover { background: var(--hover); }
+.sala .iconbtn svg { width: 18px; height: 18px; }
+
+/* Conversación */
+.sala .stream { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; padding: 8px 0 10px; }
+.sala .stream > .inner { margin-top: auto; }
+.sala .empty { margin: auto; text-align: center; color: var(--muted); font-size: 14px; padding: 40px 24px; }
+.sala .day { display: flex; align-items: center; gap: 12px; margin: 10px 24px 8px; }
+.sala .day::before, .sala .day::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.sala .msg { display: grid; grid-template-columns: 36px minmax(0, 1fr); column-gap: 12px; padding: 8px 24px 4px; }
+.sala .msg.cont { padding-top: 0; }
+.sala .msg .meta { display: flex; align-items: baseline; gap: 8px; min-height: 20px; }
+.sala .msg .who { font-size: 15px; line-height: 20px; font-weight: 600; }
+.sala .msg .tag { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.sala .msg .tag.work { color: var(--accent-ink); }
+.sala .msg .time { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.sala .msg.pend { opacity: .55; }
+.sala .body { max-width: 640px; }
+.sala .body p { font-size: 15px; line-height: 22px; margin: 2px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.sala .body p + p { margin-top: 6px; }
+.sala .body a { color: var(--accent-ink); }
+.sala .body a.file, .sala .body a.shot { color: inherit; }
+.sala .at { display: inline-block; padding: 0 5px; border-radius: var(--r-chip); font-weight: 500; line-height: 20px; }
+.sala .at.mp { background: var(--accent-wash); color: var(--accent-ink); }
+.sala .at.bg { background: var(--bigg-wash); color: var(--bigg-ink); }
+.sala code { font-variant-ligatures: none; font-feature-settings: 'liga' 0, 'calt' 0; font-family: var(--mono); font-size: .9em; background: var(--sunken); border-radius: 5px; padding: 1px 5px; }
+
+.sala .file { display: flex; align-items: center; gap: 12px; margin-top: 10px; max-width: 380px; padding: 10px 8px 10px 10px; border: 1px solid var(--line); border-radius: var(--r-block); background: var(--card); color: inherit; text-decoration: none; }
+.sala .file .ico { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-family: var(--mono); font-size: 11px; letter-spacing: .04em; background: var(--accent-wash); color: var(--accent-ink); flex: none; }
+.sala .file .ico.bg { background: var(--bigg-wash); color: var(--bigg-ink); }
+.sala .file .nm { font-size: 15px; line-height: 20px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sala .file .mt { font-size: 13px; line-height: 18px; color: var(--muted); }
+.sala .file .grow { flex: 1; min-width: 0; }
+.sala .dl { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: var(--ink-2); }
+.sala .file:hover .dl { background: var(--hover); }
+.sala .dl svg { width: 18px; height: 18px; }
+.sala .shot { display: block; margin-top: 10px; width: 300px; max-width: 100%; border-radius: var(--r-block); overflow: hidden; border: 1px solid var(--line); }
+.sala .shot img { display: block; width: 100%; height: auto; }
+
+.sala .log { margin-top: 10px; max-width: 640px; background: var(--sunken); border-radius: var(--r-block); overflow: hidden; }
+.sala .log pre { font-variant-ligatures: none; font-feature-settings: 'liga' 0, 'calt' 0; font-family: var(--mono); font-size: 13px; line-height: 20px; padding: 12px 14px; margin: 0; overflow-x: auto; color: var(--ink-2); white-space: pre; }
+
+.sala .spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--accent-wash); border-top-color: var(--accent); animation: sala-sp 1s linear infinite; flex: none; }
+@keyframes sala-sp { to { transform: rotate(360deg); } }
+.sala .working { display: flex; align-items: center; gap: 10px; color: var(--ink-2); margin-top: 4px; }
+
+/* Composer */
+.sala .dock { flex: none; padding: 0 20px 6px 24px; }
+.sala .composer { border: 1px solid var(--line); border-radius: var(--r-card); background: var(--card); box-shadow: 0 1px 2px rgba(25,20,16,.04); }
+.sala .composer:focus-within { border-color: var(--muted); }
+.sala .composer textarea { display: block; width: 100%; resize: none; border: 0; outline: 0; background: transparent; color: var(--ink); padding: 14px 16px 6px; font: inherit; font-size: 15px; line-height: 22px; min-height: 44px; max-height: 200px; }
+.sala .composer textarea::placeholder { color: var(--muted); }
+.sala .composer .bar { display: flex; align-items: center; gap: 2px; padding: 4px 8px 8px; }
+.sala .composer .bar .grow { flex: 1; }
+.sala .composer .hint { font-size: 13px; color: var(--muted); margin-right: 10px; }
+.sala .send { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--line); color: var(--muted); }
+.sala .send.on { background: var(--btn); color: var(--btn-ink); }
+.sala .send svg { width: 18px; height: 18px; }
+.sala .staged { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 12px 0; }
+.sala .chip-file { display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 10px; border-radius: 12px; background: var(--sunken); }
+.sala .chip-file .nm { font-size: 14px; line-height: 18px; font-weight: 600; }
+.sala .chip-file .mt { font-size: 13px; line-height: 18px; color: var(--muted); }
+.sala .chip-file .x { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); }
+.sala .chip-file .x svg { width: 14px; height: 14px; }
+.sala .rail { min-height: 30px; display: flex; align-items: center; gap: 8px; padding: 0 4px; font-size: 13px; color: var(--muted); }
+.sala .rail.err { color: var(--accent-ink); }
+
+/* Panel lateral en mobile */
+.sala .mtop { display: none; }
+.sala .sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 20; }
+.sala .sheet { position: fixed; top: 0; bottom: 0; left: 0; width: min(320px, 86vw); z-index: 21; background: linear-gradient(to bottom, var(--grad-top), var(--grad-bot)); display: flex; flex-direction: column; }
+
+/* Modal */
+.sala .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 30; display: grid; place-items: center; padding: 16px; }
+.sala .modal { width: 520px; max-width: 100%; background: var(--card); border-radius: 20px; box-shadow: var(--lift); padding: 24px; }
+.sala .modal h2 { font-size: 18px; line-height: 24px; font-weight: 600; margin: 0 0 6px; }
+.sala .modal p { font-size: 14px; line-height: 21px; color: var(--ink-2); margin: 0 0 12px; }
+.sala .modal pre { font-variant-ligatures: none; font-feature-settings: 'liga' 0, 'calt' 0; font-family: var(--mono); font-size: 12px; line-height: 18px; background: var(--sunken); border-radius: 12px; padding: 12px 14px; margin: 0 0 12px; white-space: pre-wrap; word-break: break-all; }
+.sala .modal .acts { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+.sala .btn { height: 40px; padding: 0 16px; border-radius: var(--r-ctl); background: var(--btn); color: var(--btn-ink); font-weight: 600; font-size: 14px; }
+.sala .btn.sec { background: var(--sunken); color: var(--ink); }
+
+/* Entrada */
+.sala .entry { min-height: 100dvh; display: grid; place-items: center; padding: 24px; }
+.sala .ecard { width: 440px; max-width: 100%; background: var(--card); border-radius: 24px; box-shadow: var(--lift); padding: 36px 40px 32px; }
+.sala .ecard .logo { color: var(--accent); }
+.sala .ecard .logo svg { height: 24px; width: auto; }
+.sala .ecard .label { margin-top: 36px; }
+.sala .ecard h1 { font-family: var(--display); font-weight: 700; font-size: 72px; line-height: .88; color: var(--accent); text-transform: uppercase; margin: 10px 0 0 -2px; }
+.sala .ecard .lede { font-size: 16px; line-height: 24px; color: var(--ink-2); margin: 18px 0 0; max-width: 34ch; }
+.sala .who-in { display: flex; align-items: center; gap: 12px; margin-top: 22px; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.sala .who-in .tx { font-size: 14px; line-height: 20px; color: var(--ink-2); }
+.sala .fld { margin-top: 24px; }
+.sala .fld label { display: block; font-size: 14px; line-height: 20px; font-weight: 600; margin-bottom: 8px; }
+.sala .inp { width: 100%; height: 48px; border: 1px solid var(--line); border-radius: var(--r-ctl); padding: 0 14px; font: inherit; font-size: 16px; background: var(--card); color: var(--ink); outline: 0; }
+.sala .inp:focus { border-color: var(--ink); box-shadow: 0 0 0 3px var(--hover); }
+.sala .cta { margin-top: 12px; width: 100%; height: 48px; border-radius: var(--r-ctl); background: var(--btn); color: var(--btn-ink); font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.sala .cta:disabled { opacity: .5; }
+.sala .cta svg { width: 18px; height: 18px; }
+.sala .fine { margin: 16px 0 0; font-size: 13px; line-height: 18px; color: var(--muted); }
+.sala .fine.err { color: var(--accent-ink); }
+
+@media (max-width: 760px) {
+  .sala .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .sala .app > .side:not(.sheet) { display: none; }
+  .sala .mtop { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 10px 0 18px; }
+  .sala .mtop .logo { color: var(--accent); }
+  .sala .mtop .logo svg { height: 18px; width: auto; }
+  .sala .mtop .grow { flex: 1; }
+  .sala .mtop .iconbtn { background: var(--row-active); border-radius: 50%; color: var(--ink); }
+  .sala .card { margin: 0; border-radius: 20px 20px 0 0; }
+  .sala .head { height: 64px; padding: 0 12px 0 16px; }
+  .sala .head .t { font-size: 16px; line-height: 22px; }
+  .sala .head .s { font-size: 13px; line-height: 18px; }
+  .sala .head .hide-m { display: none; }
+  .sala .msg { grid-template-columns: 32px minmax(0, 1fr); column-gap: 10px; padding: 8px 16px 4px; }
+  .sala .msg .av-36 { width: 32px; height: 32px; font-size: 14px; }
+  .sala .body p { font-size: 16px; line-height: 24px; }
+  .sala .day { margin: 10px 16px 6px; }
+  .sala .file { max-width: none; }
+  .sala .shot { width: 240px; }
+  .sala .dock { padding: 0 10px calc(10px + env(safe-area-inset-bottom)); }
+  .sala .composer textarea { font-size: 16px; }
+  .sala .composer .hint { display: none; }
+  .sala .ecard { padding: 28px 22px 34px; }
+  .sala .ecard h1 { font-size: 64px; }
+}
