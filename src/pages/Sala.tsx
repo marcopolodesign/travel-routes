@@ -947,8 +947,9 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   // restaura un ancla (el primer mensaje visible) tras cada cambio de tamaño, p. ej. cuando el panel del hilo cambia el ancho del chat.
   // Los scrolls que hace el propio código (bajar, restaurar el ancla) se reconocen por su posición: su "eco" (el evento scroll llega un
   // cuadro después, cuando un tercero ya pudo haber agrandado el contenido) no cuenta como "el usuario subió a leer".
-  const posPropia = useRef(-1)
-  const bajar = () => { const el = streamRef.current; if (el) { el.scrollTop = el.scrollHeight; posPropia.current = el.scrollTop } }
+  const posPropia = useRef<number | null>(null)
+  const ultimoTop = useRef(0)            // última posición vista (evento scroll o scroll propio)
+  const bajar = () => { const el = streamRef.current; if (el) { el.scrollTop = el.scrollHeight; posPropia.current = ultimoTop.current = el.scrollTop } }
   const anclaCanal = useRef<{ id: number; off: number } | null>(null)
   const marcarAncla = () => {
     const el = streamRef.current
@@ -964,9 +965,19 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     const el = streamRef.current, a = anclaCanal.current
     if (!el || !a) return
     const n = el.querySelector<HTMLElement>(`[data-mid="${a.id}"]`)
-    if (n) { el.scrollTop += n.getBoundingClientRect().top - el.getBoundingClientRect().top - a.off; posPropia.current = el.scrollTop }
+    if (n) { el.scrollTop += n.getBoundingClientRect().top - el.getBoundingClientRect().top - a.off; posPropia.current = ultimoTop.current = el.scrollTop }
+  }
+  // Un scroll del usuario cuyo evento todavía no llegó (el efecto de un mensaje nuevo o de la presencia corre antes): la posición ya
+  // subió respecto de la última vista y estamos lejos del fondo → el usuario subió a leer; no se lo baja.
+  const despegarSiSubio = () => {
+    const el = streamRef.current
+    if (!el || !pegado.current) return
+    if (el.scrollHeight - el.scrollTop - el.clientHeight >= 40 && el.scrollTop < ultimoTop.current - 2) {
+      pegado.current = false; setAbajo(false); ultimoTop.current = el.scrollTop; marcarAncla()
+    }
   }
   useEffect(() => {
+    despegarSiSubio()
     if (!pegado.current) return
     if (tocando.current) { scrollPendiente.current = true; return }
     bajar()
@@ -976,6 +987,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     const el = streamRef.current
     if (!el || typeof ResizeObserver === 'undefined') return
     const reajustar = () => {
+      despegarSiSubio()
       if (pegado.current) { if (tocando.current) scrollPendiente.current = true; else bajar() }
       else restaurarAncla()
     }
@@ -1003,7 +1015,8 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     const el = streamRef.current
     if (!el) return
     const distancia = el.scrollHeight - el.scrollTop - el.clientHeight
-    if (Math.abs(el.scrollTop - posPropia.current) < 1.5) { posPropia.current = -1; if (distancia >= 40) return }   // eco de un scroll nuestro: no despega ni re-ancla
+    ultimoTop.current = el.scrollTop
+    if (posPropia.current != null && Math.abs(el.scrollTop - posPropia.current) < 1.5) { posPropia.current = null; if (distancia >= 40) return }   // eco de un scroll nuestro: no despega ni re-ancla
     pegado.current = distancia < 40
     setAbajo(pegado.current)
     if (!pegado.current) marcarAncla()
