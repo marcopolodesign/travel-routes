@@ -18,7 +18,7 @@ type Reaccion = { emoji: string; autores: string[] }
 type Mensaje = {
   id: number; autor: string; texto: string; creado: string
   archivo_nombre?: string | null; archivo_url?: string | null
-  pendiente?: boolean; is_ai?: boolean; cliente_id?: string | null
+  pendiente?: boolean; is_ai?: boolean; cliente_id?: string | null; sistema?: boolean
   respuesta_a?: number | null; tambien_canal?: boolean
   reacciones?: Reaccion[]; menciones?: string[]
   respuestas?: number; ultima_respuesta?: string; ultima_respuesta_id?: number; respondieron?: string[]
@@ -433,7 +433,21 @@ function Pregunta({ m, ctx }: { m: Mensaje; ctx: Ctx }) {
   )
 }
 
-function Fila({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolean; ctx: Ctx; enHilo?: boolean; nuevo?: boolean }) {
+// Línea de sistema ("Mateo renombró la sala …"): centrada, sin avatar ni acciones. **x** va en negrita.
+function LineaSistema({ m }: { m: Mensaje }) {
+  const partes = m.texto.split(/\*\*(.+?)\*\*/g)
+  return (
+    <div style={{ textAlign: 'center', fontSize: 13, opacity: 0.6, padding: '6px 16px' }}>
+      {partes.map((p, i) => (i % 2 ? <strong key={i}>{p}</strong> : p))}
+    </div>
+  )
+}
+
+function Fila(props: { m: Mensaje; cont: boolean; ctx: Ctx; enHilo?: boolean; nuevo?: boolean }) {
+  return props.m.sistema ? <LineaSistema m={props.m} /> : <FilaMensaje {...props} />
+}
+
+function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolean; ctx: Ctx; enHilo?: boolean; nuevo?: boolean }) {
   const { yo, equipo, nombres, tipoDe } = ctx
   const [editando, setEditando] = useState(false)
   const [borrando, setBorrando] = useState(false)
