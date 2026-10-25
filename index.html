@@ -8,6 +8,18 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // /sala/*: indicador liviano que se ve antes de que baje el JS (React lo reemplaza al montar). Sin librerías.
+      (function () {
+        if (!/^\/sala(\/|$)/.test(location.pathname)) return;
+        var es = /^es/i.test(navigator.language || '');
+        var r = document.getElementById('root');
+        r.innerHTML = '<div id="sala-pre" role="status" aria-live="polite" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font:15px/22px system-ui,-apple-system,Segoe UI,sans-serif;color:#776E65;background:linear-gradient(to bottom,#F6EEE4,#EFC4BD)">' +
+          '<span style="width:22px;height:22px;border-radius:50%;border:2px solid #FCEBEA;border-top-color:#E66065;animation:salapre 1s linear infinite"></span>' +
+          '<span>' + (es ? 'Cargando la sala…' : 'Loading the room…') + '</span></div>' +
+          '<style>@keyframes salapre{to{transform:rotate(360deg)}}@media (prefers-color-scheme:dark){#sala-pre{background:linear-gradient(to bottom,#3B1917,#0E0B0A)!important;color:#988E83!important}}</style>';
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

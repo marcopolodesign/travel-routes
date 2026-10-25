@@ -306,8 +306,19 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
     if (nombre.trim().length < 2 || enviando || pareceBot) return
     if (/[<>]/.test(nombre)) { setError(t.errNombreInvalido); return }
     setEnviando(true); setError(null)
+    const canjear = (cuerpo: Record<string, unknown>) => api<{ clave: string }>('/canjear', null, { method: 'POST', body: JSON.stringify(cuerpo) })
     try {
-      const r = await api<{ clave: string }>('/canjear', null, { method: 'POST', body: JSON.stringify({ codigo, autor: nombre.trim(), tipo }) })
+      let r: { clave: string }
+      try { r = await canjear({ codigo, autor: nombre.trim(), tipo }) } catch (e) {
+        if (!bloqueado(e)) throw e
+        // El firewall cortó el nombre (comillas, "--", etc.): se reintenta con el nombre en base64.
+        try { r = await canjear({ codigo, autor_b64: b64Texto(nombre.trim()), tipo }) } catch (e2) {
+          if (!bloqueado(e2)) throw e2
+          // Sigue cortado: si la sala responde, la conexión está bien y el problema es el nombre.
+          const hayRed = await api(`/invitacion?codigo=${encodeURIComponent(codigo)}`, null).then(() => true, () => false)
+          throw hayRed ? new Error(t.errNombreRechazado) : e2
+        }
+      }
       onEntrar(r.clave)
     } catch (e) { setError((e as Error).message); setEnviando(false) }
   }
@@ -337,15 +348,15 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
           <div className="fld">
             <span className="flabel">{t.quienEntra}</span>
             <div className="seg" role="radiogroup" aria-label={t.quienEntra}>
-              <button type="button" role="radio" aria-checked={tipo === 'persona'} className={tipo === 'persona' ? 'on' : ''} onClick={() => setTipo('persona')}>{t.soyPersona}</button>
-              <button type="button" role="radio" aria-checked={tipo === 'agente'} className={tipo === 'agente' ? 'on' : ''} onClick={() => setTipo('agente')}>{t.esBot}</button>
+              <button type="button" role="radio" aria-checked={tipo === 'persona'} className={tipo === 'persona' ? 'on' : ''} onClick={() => { setTipo('persona'); setError(null) }}>{t.soyPersona}</button>
+              <button type="button" role="radio" aria-checked={tipo === 'agente'} className={tipo === 'agente' ? 'on' : ''} onClick={() => { setTipo('agente'); setError(null) }}>{t.esBot}</button>
             </div>
           </div>
           <div className="fld">
             <label htmlFor="sala-nombre">{tipo === 'agente' ? t.nombreAgente : t.tuNombre}</label>
-            <input id="sala-nombre" className="inp" value={nombre} onChange={(e) => setNombre(e.target.value)} autoFocus autoComplete={tipo === 'persona' ? 'given-name' : 'off'} maxLength={40}
+            <input id="sala-nombre" className="inp" value={nombre} onChange={(e) => { setNombre(e.target.value); setError(null) }} autoFocus autoComplete={tipo === 'persona' ? 'given-name' : 'off'} maxLength={40}
               placeholder={tipo === 'agente' ? t.phAgente : undefined} />
-            {pareceBot && (
+            {pareceBot && !error && (
               <p className="fld-hint">{t.pareceBot} <button type="button" className="lnk" onClick={() => setTipo('agente')}>{t.entrarComoAgente}</button></p>
             )}
           </div>
@@ -519,7 +530,7 @@ function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso, menciones }
         {abierta ? <span className="hint">{t.hintMencion}</span>
           : !hilo && <span className="hint">{t.hintEnviar}</span>}
         {/* onMouseDown: que el toque no le saque el foco al textarea (en mobile el teclado se baja, el layout se mueve y el clic caía afuera). */}
-        <button type="button" className={`send ${texto.trim() || archivo ? 'on' : ''}`} onMouseDown={(e) => e.preventDefault()} onClick={mandar} disabled={!texto.trim() && !archivo}
+        <button type="button" className={`send ${texto.trim() || archivo ? 'on' : ''}`} onMouseDown={(e) => e.preventDefault()} onClick={() => { if (!texto.trim() && !archivo) taRef.current?.focus(); else mandar() }} aria-disabled={!texto.trim() && !archivo}
           title={hilo ? t.mandarHilo : t.mandar} aria-label={hilo ? t.mandarHilo : t.mandar}>{I.up}</button>
       </div>
     </div>
@@ -719,6 +730,9 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
             <span className="go">{t.verRespuestas}</span>
           </button>
         )}
+        {agente && !enHilo && !m.sistema && !m.pendiente && !m.borrado && !editando && (
+          <button type="button" className="reply-txt" onClick={() => ctx.abrirHilo(m.respuesta_a ?? m.id)}>{I.hilo}{t.responder}</button>
+        )}
         {!m.pendiente && !m.borrado && !editando && (
           <div className="tools" onClick={(e) => e.stopPropagation()}>
             {emojis
@@ -772,6 +786,10 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   const streamRef = useRef<HTMLDivElement>(null)
   const hiloRef = useRef<HTMLDivElement>(null)
   const pegado = useRef(true)
+  const pegadoHilo = useRef(true)
+  const tocando = useRef(false)          // dedo/mouse apoyado en el chat: no se mueve el scroll bajo el toque
+  const scrollPendiente = useRef(false)
+  const [cargaHilo, setCargaHilo] = useState<{ id: number; estado: 'cargando' | 'error' } | null>(null)
   const version = useRef(0)
   const arranque = useRef(Date.now())
   const avisados = useRef(new Set<number>())
@@ -913,23 +931,69 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   const pedirPermiso = () => { Notification.requestPermission().then(setPermiso).catch(() => {}) }
 
   // Scroll: queda abajo mientras el usuario no haya subido a leer.
+  // Si el usuario subió a leer, el chat NO se mueve (aparece "mensajes nuevos ↓"); y mientras tiene el dedo apoyado
+  // tampoco, para que un mensaje que llega justo al tocar no corra la lista y el toque caiga en otra fila.
+  const bajar = () => { const el = streamRef.current; if (el) el.scrollTop = el.scrollHeight }
   useEffect(() => {
-    const el = streamRef.current
-    if (el && pegado.current) el.scrollTop = el.scrollHeight
+    if (!pegado.current) return
+    if (tocando.current) { scrollPendiente.current = true; return }
+    bajar()
   }, [canal, miembros])
-  useEffect(() => { const el = hiloRef.current; if (el) el.scrollTop = el.scrollHeight }, [hilo.length, hiloId])
+  useEffect(() => {
+    const el = hiloRef.current
+    if (el && (pegadoHilo.current || hiloId !== ultimoHiloAbierto.current)) { el.scrollTop = el.scrollHeight; pegadoHilo.current = true }
+    ultimoHiloAbierto.current = hiloId
+  }, [hilo.length, hiloId])
+  const ultimoHiloAbierto = useRef<number | null>(null)
   const alScrollear = () => {
     const el = streamRef.current
     if (!el) return
-    pegado.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80
+    pegado.current = el.scrollHeight - el.scrollTop - el.clientHeight < 40
     setAbajo(pegado.current)
   }
+  const alScrollearHilo = () => {
+    const el = hiloRef.current
+    if (el) pegadoHilo.current = el.scrollHeight - el.scrollTop - el.clientHeight < 40
+  }
+  const apoyar = () => { tocando.current = true }
+  const soltar = () => {
+    setTimeout(() => {
+      tocando.current = false
+      if (scrollPendiente.current && pegado.current) bajar()
+      scrollPendiente.current = false
+    }, 400)
+  }
 
-  const abrirHilo = useCallback((id: number) => {
-    setHiloId(id); setPanel(false)
+  const cargarHilo = useCallback((id: number) => {
+    setCargaHilo({ id, estado: 'cargando' })
     api<{ raiz: Mensaje; respuestas: Mensaje[] }>(`/hilo?id=${id}`, clave)
-      .then((r) => sumar([r.raiz, ...r.respuestas])).catch(manejar)
+      .then((r) => { sumar([r.raiz, ...r.respuestas]); setCargaHilo((c) => c?.id === id ? null : c) })
+      .catch((e) => { manejar(e); setCargaHilo((c) => c?.id === id ? { id, estado: 'error' } : c) })
   }, [clave, sumar, manejar])
+
+  // Mobile: abrir un hilo suma un estado al historial, así "atrás" cierra el hilo en vez de salir de la sala.
+  const abrirHilo = useCallback((id: number) => {
+    setHiloId(id); setPanel(false); pegadoHilo.current = true
+    try {
+      const estado = { ...(window.history.state ?? {}), salaHilo: id }
+      if (window.matchMedia?.('(max-width: 760px)').matches && window.history.state?.salaHilo == null) window.history.pushState(estado, '')
+      else if (window.history.state?.salaHilo != null) window.history.replaceState(estado, '')
+    } catch { /* historial no disponible */ }
+    cargarHilo(id)
+  }, [cargarHilo])
+  const cerrarHilo = useCallback(() => {
+    if (window.history.state?.salaHilo != null) window.history.back()   // el popstate cierra
+    else setHiloId(null)
+  }, [])
+  useEffect(() => {
+    const f = () => {
+      const id = window.history.state?.salaHilo
+      if (id == null) setHiloId(null)
+      else { setHiloId(id); cargarHilo(id) }
+    }
+    window.addEventListener('popstate', f)
+    return () => window.removeEventListener('popstate', f)
+  }, [cargarHilo])
 
   // Mandar: optimista, con cliente_id (reintentar no duplica) y adjuntos grandes por URL firmada.
   const mandar = useCallback(async (texto: string, archivo: File | null, extra: Envio) => {
@@ -1046,10 +1110,24 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   // ¿En qué hilo está contestando quien "trabaja"? En el del último mensaje que lo nombra (o, si nadie lo nombró, el último ajeno).
   // null = en el canal principal. El servidor no guarda el hilo del estado, así que se deduce de los mensajes.
   const hiloDe = (autor: string): number | null => {
+    // Si el agente ya puso 👀 en un mensaje (y todavía no ✓), está trabajando en el hilo de ese mensaje.
+    const leyendo = todos.filter((m) => !m.pendiente && !m.sistema && !m.borrado && m.autor !== autor
+      && m.reacciones?.some((r) => r.emoji === '👀' && r.autores.includes(autor)) && !m.reacciones?.some((r) => r.emoji === '✓' && r.autores.includes(autor)))
+      .sort((a, b) => b.id - a.id)[0]
+    if (leyendo) return leyendo.respuesta_a ?? null
     const propios = todos.filter((m) => !m.pendiente && !m.sistema && !m.borrado && m.autor !== autor)
     const ult = propios.filter((m) => (m.menciones ?? []).includes(autor)).sort((a, b) => b.id - a.id)[0] ?? propios.sort((a, b) => b.id - a.id)[0]
     return ult?.respuesta_a ?? null
   }
+  // Dentro del hilo: "<agente> lo está leyendo…" cuando ya puso 👀 en el último mensaje mío y todavía no contestó (✓ y "escribiendo" ya salen aparte).
+  const leyendoHilo = yo && hiloId != null ? (() => {
+    const mios = hilo.filter((m) => m.autor === yo.autor && !m.pendiente && !m.borrado)
+    const ult = mios[mios.length - 1] ?? (raizHilo && raizHilo.autor === yo.autor ? raizHilo : null)
+    if (!ult) return null
+    const quienes = (ult.reacciones ?? []).filter((r) => r.emoji === '👀').flatMap((r) => r.autores).filter((a) => esAgente(a, tipoDe[a]) && !trabajando.some((w) => w.autor === a)
+      && !(ult.reacciones ?? []).some((r) => r.emoji === '✓' && r.autores.includes(a)))
+    return quienes.length ? quienes : null
+  })() : null
   const archivos = canal.filter((m) => m.archivo_nombre && m.archivo_url && !m.borrado)
   const conectado = (m: Miembro) => m.visto && Date.now() - new Date(m.visto).getTime() < 90_000
   const miClaude = yo ? miembros.find((m) => m.autor === `Claude de ${yo.autor}`) : undefined
@@ -1125,7 +1203,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
           <div className="stack">{miembros.slice(0, 5).map((m) => <Avatar key={m.autor} autor={m.autor} tipo={m.tipo} equipo={equipo} size={24} />)}</div>
           <button className="iconbtn hide-m" onClick={alternarTema} title={tema === 'dark' ? t.modoClaro : t.modoOscuro}>{I.moon}</button>
         </div>
-        <div className="stream" ref={streamRef} onScroll={alScrollear}>
+        <div className="stream" ref={streamRef} onScroll={alScrollear} onPointerDown={apoyar} onPointerUp={soltar} onPointerCancel={soltar}>
           <div className="inner">
             {canal.length ? <Lista mensajes={canal} ctx={ctx} nuevosDesde={nuevosDesde} /> : <div className="empty">{t.vacio}</div>}
             {trabajando.filter((m) => hiloDe(m.autor) == null).map((m) => <Escribiendo key={'w' + m.autor} m={m} equipo={equipo} />)}
@@ -1143,17 +1221,22 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       {hiloId != null && (
         <section className="card tpanel">
           <div className="head">
-            <button className="iconbtn only-m" onClick={() => setHiloId(null)} title={t.volver}>{I.back}</button>
+            <button className="iconbtn only-m" onClick={cerrarHilo} title={t.volver}>{I.back}</button>
             <div><div className="t">{t.hilo} <span className="s inl">· {t.hiloAyuda}</span></div><div className="s">{raizHilo ? `${raizHilo.autor} · ${yo.titulo}` : yo.titulo}</div></div>
             <div className="grow" />
-            <button className="iconbtn hide-m" onClick={() => setHiloId(null)} title={t.cerrar}>{I.x}</button>
+            <button className="iconbtn hide-m" onClick={cerrarHilo} title={t.cerrar}>{I.x}</button>
           </div>
-          <div className="stream" ref={hiloRef}>
+          <div className="stream" ref={hiloRef} onScroll={alScrollearHilo}>
             <div className="inner">
               {raizHilo ? <Fila m={raizHilo} cont={false} ctx={ctx} enHilo /> : <div className="empty"><span className="spin" /></div>}
-              <div className="tsep"><span>{hilo.length ? `${hilo.length} ${hilo.length === 1 ? t.respuesta : t.respuestas}` : t.sinRespuestas}</span></div>
+              <div className="tsep">{cargaHilo?.id === hiloId && cargaHilo.estado === 'error'
+                ? <span>{t.errHilo} <button type="button" className="lnk" onClick={() => cargarHilo(hiloId)}>{t.reintentar}</button></span>
+                : hilo.length ? <span>{hilo.length} {hilo.length === 1 ? t.respuesta : t.respuestas}</span>
+                : cargaHilo?.id === hiloId || (raizHilo?.respuestas ?? 0) > 0 ? <span><span className="spin" /> {t.cargandoRespuestas}</span>
+                : <span>{t.sinRespuestas}</span>}</div>
               <Lista mensajes={hilo} ctx={ctx} enHilo nuevosDesde={null} />
               {trabajando.filter((m) => hiloDe(m.autor) === hiloId).map((m) => <Escribiendo key={'w' + m.autor} m={m} equipo={equipo} />)}
+              {leyendoHilo && <div className="working hilo-estado" role="status"><span className="spin" /><span>{t.leyendoPor(listar(leyendoHilo))}</span></div>}
             </div>
           </div>
           <div className="dock">

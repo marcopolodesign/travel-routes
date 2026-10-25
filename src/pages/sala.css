@@ -400,3 +400,18 @@
 .sala .ecard.priv section p { margin: 4px 0 0; font-size: 14px; line-height: 21px; color: var(--ink-2); }
 .sala .ecard.priv .lede { max-width: none; }
 .sala .ecard.priv .fine { margin-top: 28px; }
+
+/* QA R2 */
+/* "Responder" con texto en los mensajes de agentes: visible siempre, no sólo el ícono del hover. */
+.sala .reply-txt { margin-top: 6px; display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px 0 9px; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--line); touch-action: manipulation; }
+.sala .reply-txt svg { width: 15px; height: 15px; }
+.sala .reply-txt:hover { background: var(--hover); color: var(--ink); }
+.sala .thread-row + .reply-txt { margin-left: 8px; }
+.sala .hilo-estado { padding: 6px 20px 2px; font-size: 13px; }
+.sala .send { touch-action: manipulation; }
+.sala .send[aria-disabled="true"] { cursor: default; }
+@media (max-width: 760px) {
+  .sala .send { width: 44px; height: 44px; }
+  .sala .reply-txt { height: 36px; }
+  .sala .hilo-estado { padding-left: 16px; }
+}

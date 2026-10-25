@@ -1,40 +1,55 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import BudgetTemplate from './components/BudgetTemplate'
-import HealthMvp from './pages/HealthMvp'
-import TecnoFit from './pages/TecnoFit'
-import TecnoFitTVs from './pages/TecnoFitTVs'
-import TecnoFitSprint1 from './pages/TecnoFitSprint1'
-import TecnoFitSprint1Mcp from './pages/TecnoFitSprint1Mcp'
-import TecnoFitSprint1Cierre from './pages/TecnoFitSprint1Cierre'
-import TecnoFitSprint2 from './pages/TecnoFitSprint2'
-import TecnoFitMotorRutinas from './pages/TecnoFitMotorRutinas'
-import Ronzio from './pages/Ronzio'
-import GinLane from './pages/GinLane'
-import SendaArqAds from './pages/SendaArqAds'
-import SendaAdsMes1 from './pages/SendaAdsMes1'
-import SendaAdsPreviews from './pages/SendaAdsPreviews'
-import TagMetaAgosto from './pages/TagMetaAgosto'
-import TagAgostoCierre from './pages/TagAgostoCierre'
-import Home from './pages/Home'
-import Agent from './pages/Agent'
-import Monotributo from './pages/Monotributo'
-import HectorBarea from './pages/HectorBarea'
-import PicnicJob from './pages/PicnicJob'
-import PicnicPlataforma from './pages/PicnicPlataforma'
-import PicnicDeck from './pages/PicnicDeck'
-import AszArquitectos from './pages/AszArquitectos'
-import MariaSioli from './pages/MariaSioli'
-import HealthierCierre from './pages/HealthierCierre'
-import HealthierSemana from './pages/HealthierSemana'
-import HealthierFase1 from './pages/HealthierFase1'
-import PacerAvances from './pages/PacerAvances'
-import HealthierAvancesOctubre from './pages/HealthierAvancesOctubre'
-import Sala from './pages/Sala'
-import SalaPrivacidad from './pages/SalaPrivacidad'
+const HealthMvp = lazy(() => import('./pages/HealthMvp'))
+const TecnoFit = lazy(() => import('./pages/TecnoFit'))
+const TecnoFitTVs = lazy(() => import('./pages/TecnoFitTVs'))
+const TecnoFitSprint1 = lazy(() => import('./pages/TecnoFitSprint1'))
+const TecnoFitSprint1Mcp = lazy(() => import('./pages/TecnoFitSprint1Mcp'))
+const TecnoFitSprint1Cierre = lazy(() => import('./pages/TecnoFitSprint1Cierre'))
+const TecnoFitSprint2 = lazy(() => import('./pages/TecnoFitSprint2'))
+const TecnoFitMotorRutinas = lazy(() => import('./pages/TecnoFitMotorRutinas'))
+const Ronzio = lazy(() => import('./pages/Ronzio'))
+const GinLane = lazy(() => import('./pages/GinLane'))
+const SendaArqAds = lazy(() => import('./pages/SendaArqAds'))
+const SendaAdsMes1 = lazy(() => import('./pages/SendaAdsMes1'))
+const SendaAdsPreviews = lazy(() => import('./pages/SendaAdsPreviews'))
+const TagMetaAgosto = lazy(() => import('./pages/TagMetaAgosto'))
+const TagAgostoCierre = lazy(() => import('./pages/TagAgostoCierre'))
+const Home = lazy(() => import('./pages/Home'))
+const Agent = lazy(() => import('./pages/Agent'))
+const Monotributo = lazy(() => import('./pages/Monotributo'))
+const HectorBarea = lazy(() => import('./pages/HectorBarea'))
+const PicnicJob = lazy(() => import('./pages/PicnicJob'))
+const PicnicPlataforma = lazy(() => import('./pages/PicnicPlataforma'))
+const PicnicDeck = lazy(() => import('./pages/PicnicDeck'))
+const AszArquitectos = lazy(() => import('./pages/AszArquitectos'))
+const MariaSioli = lazy(() => import('./pages/MariaSioli'))
+const HealthierCierre = lazy(() => import('./pages/HealthierCierre'))
+const HealthierSemana = lazy(() => import('./pages/HealthierSemana'))
+const HealthierFase1 = lazy(() => import('./pages/HealthierFase1'))
+const PacerAvances = lazy(() => import('./pages/PacerAvances'))
+const HealthierAvancesOctubre = lazy(() => import('./pages/HealthierAvancesOctubre'))
+const Sala = lazy(() => import('./pages/Sala'))
+const SalaPrivacidad = lazy(() => import('./pages/SalaPrivacidad'))
+
+// Mientras baja el código de la página (cada ruta es un chunk aparte): en /sala/* el mismo indicador que ya puso index.html.
+function PreCarga() {
+  if (typeof location === 'undefined' || !/^\/sala(\/|$)/.test(location.pathname)) return null
+  const es = /^es/i.test(navigator.language || '')
+  return (
+    <div role="status" aria-live="polite" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, font: '15px/22px system-ui,-apple-system,Segoe UI,sans-serif', color: '#776E65', background: 'linear-gradient(to bottom,#F6EEE4,#EFC4BD)' }}>
+      <span style={{ width: 22, height: 22, borderRadius: '50%', border: '2px solid #FCEBEA', borderTopColor: '#E66065', animation: 'salapre 1s linear infinite' }} />
+      <span>{es ? 'Cargando la sala…' : 'Loading the room…'}</span>
+      <style>{'@keyframes salapre{to{transform:rotate(360deg)}}'}</style>
+    </div>
+  )
+}
 
 export default function App() {
   return (
     <div className="min-h-screen bg-white">
+      <Suspense fallback={<PreCarga />}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/budget/health-mvp" element={
@@ -297,6 +312,7 @@ export default function App() {
         <Route path="/sala/:codigo" element={<Sala />} />
         <Route path="/monotributo" element={<Monotributo />} />
       </Routes>
+      </Suspense>
     </div>
   )
 }
