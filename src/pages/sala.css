@@ -360,3 +360,27 @@
 .sala .decide.wait:not(.done) .opt { opacity: .6; }
 .sala .decide.wait .opt.rec:not(.chosen) { background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink-2); }
 @media (max-width: 480px) { .sala .decide .opts { flex-direction: column; align-items: stretch; } }
+
+/* QA Sala R1 */
+.sala .tag.guest { color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 6px; font-size: 10px; line-height: 16px; }
+.sala .side .row .tag.guest { margin-left: 6px; font-family: var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.sala .ecard.loading .lede { display: flex; align-items: center; gap: 10px; margin-top: 24px; }
+.sala .skel { margin-top: 24px; display: grid; gap: 10px; }
+.sala .skel i { display: block; height: 14px; border-radius: 7px; background: var(--sunken); animation: salaPulso 1.2s ease-in-out infinite; }
+.sala .skel i:nth-child(2) { width: 80%; }
+.sala .skel i:nth-child(3) { width: 55%; }
+@keyframes salaPulso { 50% { opacity: .45; } }
+.sala .fine .spin { vertical-align: -2px; margin-right: 6px; }
+@media (max-width: 760px) {
+  /* Entrada compacta: nombre + botón entran sin scroll en 375 × 667 */
+  .sala .entry { padding: 12px; place-items: start center; }
+  .sala .ecard { padding: 18px 20px 16px; }
+  .sala .ecard .label { margin-top: 14px; }
+  .sala .ecard h1 { font-size: 44px; margin-top: 6px; }
+  .sala .ecard .lede { font-size: 14px; line-height: 20px; margin-top: 8px; max-width: none; }
+  .sala .who-in { margin-top: 12px; padding: 8px 0; }
+  .sala .fld { margin-top: 12px; }
+  .sala .fld label { margin-bottom: 6px; }
+  .sala .fine { margin-top: 10px; }
+  .sala .ecard.loading .lede { margin-top: 16px; }
+}

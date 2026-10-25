@@ -38,14 +38,35 @@ const guardar = (k: string, v: string | null) => {
 }
 
 async function api<T>(ruta: string, clave: string | null, init: RequestInit = {}): Promise<T> {
-  const r = await fetch(API + ruta, {
-    ...init,
-    headers: { 'content-type': 'application/json', ...(clave ? { authorization: 'Bearer ' + clave } : {}) },
-  })
+  let r: Response
+  try {
+    r = await fetch(API + ruta, {
+      ...init,
+      headers: { 'content-type': 'application/json', ...(clave ? { authorization: 'Bearer ' + clave } : {}) },
+    })
+  } catch {
+    // "Failed to fetch": sin red, o una respuesta sin CORS (p. ej. el firewall de Cloudflare cortando el cuerpo).
+    throw Object.assign(new Error('No hay conexión con la sala. Revisá tu internet y probá de nuevo.'), { red: true })
+  }
   const cuerpo = await r.json().catch(() => ({}))
-  if (!r.ok) throw Object.assign(new Error(cuerpo.error || `Error ${r.status}`), { status: r.status, decision: cuerpo.decision })
+  if (!r.ok) {
+    // 403 sin JSON de la sala = lo cortó el firewall, no el servidor.
+    const waf = r.status === 403 && !cuerpo.error
+    throw Object.assign(new Error(cuerpo.error || (waf ? 'El mensaje no pasó el filtro de seguridad.' : `Error ${r.status}`)), { status: r.status, decision: cuerpo.decision, waf })
+  }
   return cuerpo as T
 }
+
+// El firewall que está delante del servidor corta cuerpos que parecen un ataque (SQL, claves, rutas, HTML)
+// con un 403 sin CORS. El texto en base64 pasa; el servidor lo decodifica (`texto_b64`).
+const b64Texto = (t: string) => {
+  const bytes = new TextEncoder().encode(t)
+  let bin = ''
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
+  return btoa(bin)
+}
+const bloqueado = (e: unknown) => !!(e as { red?: boolean }).red || !!(e as { waf?: boolean }).waf
+const MAX_TEXTO = 20000   // mismo tope que el servidor
 
 const I = {
   clip: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.6-8.6a3.7 3.7 0 0 1 5.2 5.2l-8.6 8.6a1.8 1.8 0 0 1-2.6-2.6l7.9-7.9" /></svg>,
@@ -220,6 +241,21 @@ export default function Sala() {
   )
 }
 
+// Entre "Entrando…" y el chat: no una pantalla en blanco sino el esqueleto de la sala con un texto.
+function Cargando() {
+  useEffect(() => { document.title = 'Sala · Marco Polo' }, [])
+  return (
+    <div className="entry" role="status" aria-live="polite">
+      <div className="ecard loading">
+        <div className="logo"><MarcopoloLogo /></div>
+        <div className="label">Sala</div>
+        <p className="lede"><span className="spin" /> Entrando a la sala…</p>
+        <div className="skel" aria-hidden="true"><i /><i /><i /></div>
+      </div>
+    </div>
+  )
+}
+
 function SinAcceso() {
   useEffect(() => { document.title = 'Sala · Marco Polo' }, [])
   return (
@@ -249,6 +285,7 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
   const entrar = async (ev: React.FormEvent) => {
     ev.preventDefault()
     if (nombre.trim().length < 2 || enviando || pareceBot) return
+    if (/[<>]/.test(nombre)) { setError('El nombre no puede tener < ni >. Poné sólo tu nombre.'); return }
     setEnviando(true); setError(null)
     try {
       const r = await api<{ clave: string }>('/canjear', null, { method: 'POST', body: JSON.stringify({ codigo, autor: nombre.trim(), tipo }) })
@@ -270,6 +307,7 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
             <div className="tx">{listar(adentro.map((m) => m.autor))} {adentro.length === 1 ? 'ya está' : 'ya están'} adentro.</div>
           </div>
         )}
+        {!inv && !error && <p className="fine" role="status"><span className="spin" /> Cargando la invitación…</p>}
         {inv && <>
           <div className="fld">
             <span className="flabel">Quién entra</span>
@@ -286,9 +324,9 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
               <p className="fld-hint">Ese nombre parece de un bot o una IA. <button type="button" className="lnk" onClick={() => setTipo('agente')}>Entrar como agente</button></p>
             )}
           </div>
-          <button className="cta" type="submit" disabled={nombre.trim().length < 2 || enviando || pareceBot}>{enviando ? 'Entrando…' : <>{tipo === 'agente' ? 'Sumar al agente' : 'Entrar a la sala'} {I.arrow}</>}</button>
+          <button className="cta" type="submit" disabled={nombre.trim().length < 2 || enviando || pareceBot || !inv}>{enviando ? 'Entrando…' : <>{tipo === 'agente' ? 'Sumar al agente' : 'Entrar a la sala'} {I.arrow}</>}</button>
         </>}
-        <p className={`fine ${error ? 'err' : ''}`}>{error ?? (tipo === 'agente'
+        <p className={`fine ${error ? 'err' : ''}`} role={error ? 'alert' : undefined}>{error ?? (tipo === 'agente'
           ? 'Va a aparecer con la marca Agente y sus mensajes cuentan como de una IA. El link es el acceso: no lo reenvíes.'
           : 'El link es tu acceso: no lo reenvíes. Tu nombre queda guardado en este dispositivo.')}</p>
       </form>
@@ -423,7 +461,7 @@ function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso, menciones }
               onMouseDown={(e) => { e.preventDefault(); mencionar(m) }} onMouseEnter={() => setActiva(i)}>
               <Avatar autor={m.autor} tipo={m.tipo} equipo={menciones.equipo} size={24} />
               <span className="n">{m.autor}</span>
-              {m.estado ? <span className="st work"><span className="spin" />Trabajando</span> : esAgente(m.autor, m.tipo) && <span className="st">Agente</span>}
+              {m.estado ? <span className="st work"><span className="spin" />Escribiendo</span> : esAgente(m.autor, m.tipo) && <span className="st">Agente</span>}
             </div>
           ))}
         </div>
@@ -435,7 +473,8 @@ function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso, menciones }
         </div></div>
       )}
       <textarea
-        ref={taRef} rows={1} value={texto} placeholder={placeholder} autoFocus={autoFocus}
+        ref={taRef} rows={1} value={texto} placeholder={placeholder} autoFocus={autoFocus} maxLength={MAX_TEXTO}
+        aria-label={hilo ? 'Responder en el hilo' : 'Escribile a la sala'}
         onChange={(e) => { setTexto(e.target.value); setCursor(e.target.selectionEnd); ajustar() }}
         onSelect={leerCursor}
         onBlur={() => setCerrada(clave)}
@@ -454,7 +493,9 @@ function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso, menciones }
         <span className="grow" />
         {abierta ? <span className="hint">↑↓ · Enter elige · Esc cierra</span>
           : !hilo && <span className="hint">Enter para mandar · Shift + Enter, nueva línea</span>}
-        <button className={`send ${texto.trim() || archivo ? 'on' : ''}`} onClick={mandar} disabled={!texto.trim() && !archivo} title="Mandar">{I.up}</button>
+        {/* onMouseDown: que el toque no le saque el foco al textarea (en mobile el teclado se baja, el layout se mueve y el clic caía afuera). */}
+        <button type="button" className={`send ${texto.trim() || archivo ? 'on' : ''}`} onMouseDown={(e) => e.preventDefault()} onClick={mandar} disabled={!texto.trim() && !archivo}
+          title={hilo ? 'Mandar en el hilo' : 'Mandar'} aria-label={hilo ? 'Mandar en el hilo' : 'Mandar'}>{I.up}</button>
       </div>
     </div>
   )
@@ -535,6 +576,31 @@ function LineaSistema({ m }: { m: Mensaje }) {
   )
 }
 
+// ≤ 760 px: el hilo ocupa toda la pantalla y el chat de atrás tiene que quedar inerte (sin foco, sin toques, fuera del árbol de accesibilidad).
+function useMovil() {
+  const q = '(max-width: 760px)'
+  const [m, setM] = useState(() => typeof window !== 'undefined' && !!window.matchMedia?.(q).matches)
+  useEffect(() => {
+    const mq = window.matchMedia?.(q)
+    if (!mq) return
+    const f = () => setM(mq.matches)
+    mq.addEventListener('change', f)
+    return () => mq.removeEventListener('change', f)
+  }, [])
+  return m
+}
+
+function Escribiendo({ m, equipo }: { m: Miembro; equipo: string[] }) {
+  return (
+    <div className="msg">
+      <Avatar autor={m.autor} tipo={m.tipo} equipo={equipo} size={36} />
+      <div>
+        <div className="working" role="status"><span className="spin" /><span>{m.autor} está escribiendo…</span></div>
+      </div>
+    </div>
+  )
+}
+
 function Fila(props: { m: Mensaje; cont: boolean; ctx: Ctx; enHilo?: boolean; nuevo?: boolean }) {
   return props.m.sistema ? <LineaSistema m={props.m} /> : <FilaMensaje {...props} />
 }
@@ -566,7 +632,7 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
       <div className="main">
         {!cont && (
           <div className="meta">
-            <span className="who">{m.autor}</span>{agente && <span className="tag">Agente</span>}
+            <span className="who">{m.autor}</span>{agente ? <span className="tag">Agente</span> : !equipo.includes(m.autor) && <span className="tag guest">Invitado</span>}
             <span className="time">{hora(m.creado)}</span>{m.editado && !m.borrado && <span className="edited">(editado)</span>}
           </div>
         )}
@@ -668,6 +734,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   const [yo, setYo] = useState<Yo | null>(null)
   const [porId, setPorId] = useState<Record<number, Mensaje>>({})
   const [miembros, setMiembros] = useState<Miembro[]>([])
+  const [presenciaLista, setPresenciaLista] = useState(false)   // hasta la primera respuesta no hay contador: "0 en la sala" sería mentira
   const [aviso, setAviso] = useState<string | null>(null)
   const [panel, setPanel] = useState(false)
   const [comandoClaude, setComandoClaude] = useState<string | null>(null)
@@ -676,6 +743,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   const [nuevosDesde, setNuevosDesde] = useState<number | null>(null)
   const [visible, setVisible] = useState(() => typeof document === 'undefined' || document.visibilityState === 'visible')
   const [permiso, setPermiso] = useState<string>(() => typeof Notification === 'undefined' ? 'no' : Notification.permission)
+  const movil = useMovil()
   const streamRef = useRef<HTMLDivElement>(null)
   const hiloRef = useRef<HTMLDivElement>(null)
   const pegado = useRef(true)
@@ -750,7 +818,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   // Presencia y "trabajando…": cada 4 s.
   useEffect(() => {
     if (!yo) return
-    const traer = () => api<{ miembros: Miembro[] }>('/presencia', clave).then((r) => setMiembros(r.miembros)).catch(manejar)
+    const traer = () => api<{ miembros: Miembro[] }>('/presencia', clave).then((r) => { setMiembros(r.miembros); setPresenciaLista(true) }).catch(manejar)
     traer()
     const t = setInterval(traer, 4000)
     return () => clearInterval(t)
@@ -860,10 +928,17 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
         cuerpo.archivo = { nombre: archivo.name, base64: await base64De(archivo) }
       }
       let error: unknown
+      let cifrado = false   // true: el texto viaja en base64 (ver b64Texto)
       for (let i = 0; i < 3; i++) {
-        try { await api('/enviar', clave, { method: 'POST', body: JSON.stringify(cuerpo) }); return true } catch (e) {
+        try {
+          const { texto: t, ...resto } = cuerpo
+          await api('/enviar', clave, { method: 'POST', body: JSON.stringify(cifrado ? { ...resto, texto_b64: b64Texto(String(t)) } : cuerpo) })
+          return true
+        } catch (e) {
           error = e
-          if ((e as { status?: number }).status && (e as { status: number }).status < 500) break
+          if (bloqueado(e) && !cifrado) { cifrado = true; continue }   // reintento inmediato, sin esperar
+          const st = (e as { status?: number }).status
+          if (st && st < 500 && !(e as { waf?: boolean }).waf) break
           await new Promise((r) => setTimeout(r, 800 * 2 ** i))
         }
       }
@@ -871,7 +946,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     } catch (e) {
       manejar(e)
       setPorId((prev) => { const n = { ...prev }; delete n[tempId]; return n })
-      setAviso('No se pudo mandar: ' + (e as Error).message)
+      setAviso('No se pudo mandar. ' + (e as Error).message + ' Tu mensaje sigue en el cuadro de texto.')
       return false
     }
   }, [yo, clave, manejar])
@@ -895,7 +970,10 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
 
   const editar = useCallback(async (m: Mensaje, texto: string) => {
     try {
-      await api('/editar', clave, { method: 'POST', body: JSON.stringify({ id: m.id, texto }) })
+      try { await api('/editar', clave, { method: 'POST', body: JSON.stringify({ id: m.id, texto }) }) } catch (e) {
+        if (!bloqueado(e)) throw e
+        await api('/editar', clave, { method: 'POST', body: JSON.stringify({ id: m.id, texto_b64: b64Texto(texto) }) })
+      }
       setPorId((prev) => ({ ...prev, [m.id]: { ...prev[m.id], texto, editado: new Date().toISOString() } }))
       return true
     } catch (e) { manejar(e); setAviso('No se pudo editar: ' + (e as Error).message); return false }
@@ -940,6 +1018,13 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   const tipoDe = useMemo(() => Object.fromEntries(miembros.map((m) => [m.autor, m.tipo])), [miembros])
   const nombres = useMemo(() => miembros.map((m) => m.autor), [miembros])
   const trabajando = miembros.filter((m) => m.estado === 'trabajando')
+  // ¿En qué hilo está contestando quien "trabaja"? En el del último mensaje que lo nombra (o, si nadie lo nombró, el último ajeno).
+  // null = en el canal principal. El servidor no guarda el hilo del estado, así que se deduce de los mensajes.
+  const hiloDe = (autor: string): number | null => {
+    const propios = todos.filter((m) => !m.pendiente && !m.sistema && !m.borrado && m.autor !== autor)
+    const ult = propios.filter((m) => (m.menciones ?? []).includes(autor)).sort((a, b) => b.id - a.id)[0] ?? propios.sort((a, b) => b.id - a.id)[0]
+    return ult?.respuesta_a ?? null
+  }
   const archivos = canal.filter((m) => m.archivo_nombre && m.archivo_url && !m.borrado)
   const conectado = (m: Miembro) => m.visto && Date.now() - new Date(m.visto).getTime() < 90_000
   const miClaude = yo ? miembros.find((m) => m.autor === `Claude de ${yo.autor}`) : undefined
@@ -959,7 +1044,8 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
         <div className="row" key={m.autor}>
           <Avatar autor={m.autor} tipo={m.tipo} equipo={equipo} size={24} />
           <span className="n">{m.autor}{m.autor === yo.autor ? ' (vos)' : ''}</span>
-          {m.estado === 'trabajando' ? <span className="spin" title="Trabajando" /> : <span className={`dot ${conectado(m) ? '' : 'off'}`} title={conectado(m) ? 'Conectado' : 'Sin conexión'} />}
+          {m.tipo !== 'agente' && !equipo.includes(m.autor) && <span className="tag guest">Invitado</span>}
+          {m.estado === 'trabajando' ? <span className="spin" title="Escribiendo" /> : <span className={`dot ${conectado(m) ? '' : 'off'}`} title={conectado(m) ? 'Conectado' : 'Sin conexión'} />}
         </div>
       ))}
       <div className="spacer" />
@@ -993,21 +1079,22 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     </>
   )
 
-  if (!yo || !ctx) return <div className="entry"><span className="spin" /></div>
+  if (!yo || !ctx) return <Cargando />
+  const fondoInerte = hiloId != null && movil ? ({ inert: '', 'aria-hidden': true } as Record<string, unknown>) : {}
 
   return (
     <div className={`app ${hiloId != null ? 'con-hilo' : ''}`}>
-      <aside className="side">{lateral}</aside>
-      <div className="mtop">
+      <aside className="side" {...fondoInerte}>{lateral}</aside>
+      <div className="mtop" {...fondoInerte}>
         <div className="logo"><MarcopoloLogo /></div><span className="grow" />
         <button className="iconbtn" onClick={alternarTema} title="Tema">{I.moon}</button>
         <button className="iconbtn" onClick={() => setPanel(true)} title="Sala y archivos">{I.menu}</button>
       </div>
-      <main className="card">
+      <main className="card" {...fondoInerte}>
         <div className="head">
           <div>
             <div className="t">{yo.titulo}</div>
-            <div className="s">{miembros.length} en la sala{trabajando.length ? ` · ${trabajando.length} trabajando` : ''}</div>
+            <div className="s">{presenciaLista ? <>{miembros.length} en la sala{trabajando.length ? ` · ${trabajando.length} escribiendo` : ''}</> : 'Conectando…'}</div>
           </div>
           <div className="grow" />
           <div className="stack">{miembros.slice(0, 5).map((m) => <Avatar key={m.autor} autor={m.autor} tipo={m.tipo} equipo={equipo} size={24} />)}</div>
@@ -1016,15 +1103,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
         <div className="stream" ref={streamRef} onScroll={alScrollear}>
           <div className="inner">
             {canal.length ? <Lista mensajes={canal} ctx={ctx} nuevosDesde={nuevosDesde} /> : <div className="empty">Todavía no hay mensajes. Escribí el primero.</div>}
-            {trabajando.map((m) => (
-              <div className="msg" key={'w' + m.autor}>
-                <Avatar autor={m.autor} tipo={m.tipo} equipo={equipo} size={36} />
-                <div>
-                  <div className="meta"><span className="who">{m.autor}</span><span className="tag work">Trabajando</span></div>
-                  <div className="working"><span className="spin" /><span>Leyendo y haciendo los cambios…</span></div>
-                </div>
-              </div>
-            ))}
+            {trabajando.filter((m) => hiloDe(m.autor) == null).map((m) => <Escribiendo key={'w' + m.autor} m={m} equipo={equipo} />)}
           </div>
         </div>
         {!abajo && noLeidos > 0 && (
@@ -1049,6 +1128,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
               {raizHilo ? <Fila m={raizHilo} cont={false} ctx={ctx} enHilo /> : <div className="empty"><span className="spin" /></div>}
               <div className="tsep"><span>{hilo.length ? `${hilo.length} ${hilo.length === 1 ? 'respuesta' : 'respuestas'}` : 'Todavía sin respuestas'}</span></div>
               <Lista mensajes={hilo} ctx={ctx} enHilo nuevosDesde={null} />
+              {trabajando.filter((m) => hiloDe(m.autor) === hiloId).map((m) => <Escribiendo key={'w' + m.autor} m={m} equipo={equipo} />)}
             </div>
           </div>
           <div className="dock">
