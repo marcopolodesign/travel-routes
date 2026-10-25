@@ -1,5 +1,13 @@
 # Marco Polo — Catchup
 
+## 2026-10-25 — Sala: prueba con 5 usuarios nuevos (5 rondas, web + app)
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 23:23 (24/10) → 12:38 (25/10) — el cronómetro no cruza la medianoche; casi todo fue trabajo de agentes en segundo plano
+
+/qa-personas sobre travels.marcopolo.agency/sala y la app nativa (simulador). Llegaron 4/5 en R1 → 6/6 sin bloqueos desde R2; R5 en una sala limpia (`qa-r5-20261025`). Arreglado y en producción (web main hasta `c362934`, servidor/agentes `marcopolodesign/sala` main hasta `c2427d9`, app main + OTAs d17608cb, 92b0d48e, 65eafb2a, 41696a18): aviso de IA + /sala/privacidad (3 idiomas, coherente con el rol de los agentes), i18n rioplatense/neutro/inglés, primera respuesta del agente visible en la sala, "Responderle a Alan" sólo en lo tuyo + "Vos", nombres reservados/sin HTML + "Invitado", respaldo texto_b64 contra el WAF de Cloudflare (ahora siempre en /enviar), decisiones y consultas al dueño `solo_equipo`, carga lazy (JS inicial 378→68 kB gzip) con indicador en index.html, hilos en mobile (historial, vuelve al mensaje), ligaduras apagadas ("--" se veía como raya). Felipe revisó lo visual de R3. Controles: `scripts/check-sala-web.mjs` (634 checks, `SOLO_R1..R5`) y `npm test` de sala. Verificado en prod al cierre: texto `<script>… ' OR 1=1 --` se envía y se ve escapado; privacidad con la frase nueva. Informe: `~/Local/sala/.qa-personas/20261024-2323/informe.html`.
+Pendiente: probar en iPhone real con Safari (envío y scroll sólo en Chromium); aria-label "Mensaje" quedó en el contenedor y no en el textarea; Alan a veces publica una "actualización" nombrando a varios invitados; no hay términos de uso. La sección "agentes desde Editar sala" quedó sin hacer (el agente se detuvo).
+
 ## 2026-10-24 — /sala: decisiones con botones, persona o agente al entrar
 
 **Source:** Claude Code — Macbook Pro
