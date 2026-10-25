@@ -27,6 +27,7 @@ type Mensaje = {
   respuestas?: number; ultima_respuesta?: string; ultima_respuesta_id?: number; respondieron?: string[]
   editado?: string | null; borrado?: string | null
   opciones?: Opcion[] | null; pregunta_para?: string[] | null; decision?: Decision | null
+  solo_equipo?: boolean   // un agente le habla al dueño: los invitados no lo reciben (el servidor lo filtra)
 }
 type Opcion = { id: string; etiqueta?: string; texto: string; recomendada?: boolean }
 // En la pregunta: {opcion, texto, autor, cuando, respuesta_id}. En el "Elegí: …": {pregunta, opcion, …}.
@@ -652,6 +653,10 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
   const agente = m.is_ai ?? esAgente(m.autor, tipoDe[m.autor])
   const reacciones = (m.reacciones ?? []).filter((r) => r.autores.length)
   const raiz = !enHilo && m.respuesta_a ? ctx.porId[m.respuesta_a] : null
+  // Un agente (u otra persona) que contesta en el canal a un mensaje MÍO: el botón abre ese hilo, el de mi mensaje.
+  const paraMi = !!raiz && !mio && raiz.autor === yo.autor && !raiz.borrado
+  const nuevoParaMi = paraMi && ctx.hiloConNovedad(raiz!)
+  const ariaResponder = t.ariaResponderA(m.autor, recortar(m.texto || m.archivo_nombre || '', 40))
   const guardar = async () => {
     if (borrador.trim() === m.texto.trim()) { setEditando(false); return }
     if (await ctx.editar(m, borrador)) setEditando(false)
@@ -663,20 +668,22 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
     setActivo((a) => !a)
   }
   return (
-    <div className={`msg ${cont ? 'cont' : ''} ${m.pendiente ? 'pend' : ''} ${activo || emojis ? 'act' : ''} ${nuevo ? 'nuevo' : ''}`} onClick={tocar} onMouseLeave={() => setEmojis(false)}>
+    <div data-mid={m.id} className={`msg ${cont ? 'cont' : ''} ${m.pendiente ? 'pend' : ''} ${activo || emojis ? 'act' : ''} ${nuevo ? 'nuevo' : ''} ${mio ? 'mine' : ''}`} onClick={tocar} onMouseLeave={() => setEmojis(false)}>
       {cont ? <div className="gutter"><span className="time-h">{hora(m.creado)}</span></div> : <Avatar autor={m.autor} tipo={m.is_ai === undefined ? tipoDe[m.autor] : m.is_ai ? 'agente' : 'persona'} equipo={equipo} size={36} />}
       <div className="main">
         {!cont && (
           <div className="meta">
-            <span className="who">{m.autor}</span>{agente ? <span className="tag">{t.agente}</span> : !equipo.includes(m.autor) && <span className="tag guest">{t.invitado}</span>}
+            <span className="who">{m.autor}</span>{mio && <span className="tag me">{t.vosTag}</span>}{agente ? <span className="tag">{t.agente}</span> : !equipo.includes(m.autor) && <span className="tag guest">{t.invitado}</span>}
             <span className="time">{hora(m.creado)}</span>{m.editado && !m.borrado && <span className="edited">{t.editado}</span>}
           </div>
         )}
+        {m.solo_equipo && !m.borrado && <div className="tag solo">{t.soloEquipo}</div>}
         {raiz && (
           <button className="in-thread" onClick={() => ctx.abrirHilo(raiz.id)}>
             {I.hilo}<span>{t.enRespuestaA}: <b>{raiz.borrado ? t.mensajeBorrado : recortar(raiz.texto || raiz.archivo_nombre || '', 70)}</b></span>
           </button>
         )}
+        {nuevoParaMi && <span className="newtag">{t.nuevoParaVos}</span>}
         <div className="body">
           {m.borrado ? <p className="gone">{t.msgBorrado}</p>
             : editando ? (
@@ -722,16 +729,17 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
           </div>
         )}
         {!enHilo && !m.respuesta_a && (m.respuestas ?? 0) > 0 && (
-          <button className="thread-row" onClick={() => ctx.abrirHilo(m.id)}>
+          <button className="thread-row" onClick={() => ctx.abrirHilo(m.id)} aria-label={t.ariaRespuestasA(m.respuestas ?? 0, m.autor, recortar(m.texto || m.archivo_nombre || '', 40))}>
             <span className="stack">{(m.respondieron ?? []).slice(0, 3).map((a) => <Avatar key={a} autor={a} tipo={tipoDe[a]} equipo={equipo} size={24} />)}</span>
             <span className="cnt">{m.respuestas} {m.respuestas === 1 ? t.respuesta : t.respuestas}</span>
             {m.ultima_respuesta && <span className="last">{t.ultima} {hora(m.ultima_respuesta)}</span>}
-            {ctx.hiloConNovedad(m) && <span className="news" title={t.hayNuevas} />}
+            {ctx.hiloConNovedad(m) && <span className="newtag" title={t.hayNuevas}>{t.nuevoParaVos}</span>}
             <span className="go">{t.verRespuestas}</span>
           </button>
         )}
         {agente && !enHilo && !m.sistema && !m.pendiente && !m.borrado && !editando && (
-          <button type="button" className="reply-txt" onClick={() => ctx.abrirHilo(m.respuesta_a ?? m.id)}>{I.hilo}{t.responder}</button>
+          <button type="button" className={`reply-txt ${paraMi ? 'dir' : ''}`} onClick={() => ctx.abrirHilo(m.respuesta_a ?? m.id)}
+            aria-label={paraMi ? t.ariaResponderleA(m.autor, recortar(raiz!.texto || raiz!.archivo_nombre || '', 40)) : ariaResponder}>{I.hilo}{paraMi ? t.responderleA(m.autor) : t.responder}</button>
         )}
         {!m.pendiente && !m.borrado && !editando && (
           <div className="tools" onClick={(e) => e.stopPropagation()}>
@@ -739,7 +747,8 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
               ? REACCIONES.map((e) => <button key={e} className="em" onClick={() => { ctx.reaccionar(m, e); setEmojis(false); setActivo(false) }} title={e}>{e}</button>)
               : <>
                 <button onClick={() => setEmojis(true)} title={t.reaccionar}>{I.smile}</button>
-                {!enHilo && <button onClick={() => { setActivo(false); ctx.abrirHilo(m.respuesta_a ?? m.id) }} title={t.responderHiloAyuda} aria-label={t.responderHilo}>{I.hilo}</button>}
+                {/* En mensajes de agentes ya está el botón "Responder" con texto: una sola acción. */}
+                {!enHilo && !agente && <button onClick={() => { setActivo(false); ctx.abrirHilo(m.respuesta_a ?? m.id) }} title={t.responderHiloAyuda} aria-label={ariaResponder}>{I.hilo}</button>}
                 {mio && <button onClick={() => { setBorrador(m.texto); setEditando(true); setActivo(false) }} title={t.editar}>{I.edit}</button>}
                 {mio && <button onClick={() => { setBorrando(true); setActivo(false) }} title={t.borrar}>{I.trash}</button>}
               </>}
@@ -930,32 +939,93 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   }, [todos, yo, permiso])
   const pedirPermiso = () => { Notification.requestPermission().then(setPermiso).catch(() => {}) }
 
-  // Scroll: queda abajo mientras el usuario no haya subido a leer.
-  // Si el usuario subió a leer, el chat NO se mueve (aparece "mensajes nuevos ↓"); y mientras tiene el dedo apoyado
-  // tampoco, para que un mensaje que llega justo al tocar no corra la lista y el toque caiga en otra fila.
-  const bajar = () => { const el = streamRef.current; if (el) el.scrollTop = el.scrollHeight }
+  // Scroll. Reglas (R2 + R3):
+  //  - al cargar, la sala aterriza ABAJO (lo último) y se queda abajo mientras el contenido crece solo (fotos, tipografías);
+  //  - si el usuario subió a leer, el chat NO se mueve (aparece "mensajes nuevos ↓"), ni con un mensaje nuevo ni al abrir/cerrar un hilo;
+  //  - mientras tiene el dedo apoyado tampoco, para que un mensaje que llega justo al tocar no corra la lista.
+  // Un ResizeObserver mantiene el fondo cuando el contenido crece solo (fotos, tipografías) y, si el usuario está leyendo más arriba,
+  // restaura un ancla (el primer mensaje visible) tras cada cambio de tamaño, p. ej. cuando el panel del hilo cambia el ancho del chat.
+  // Los scrolls que hace el propio código (bajar, restaurar el ancla) se reconocen por su posición: su "eco" (el evento scroll llega un
+  // cuadro después, cuando un tercero ya pudo haber agrandado el contenido) no cuenta como "el usuario subió a leer".
+  const posPropia = useRef(-1)
+  const bajar = () => { const el = streamRef.current; if (el) { el.scrollTop = el.scrollHeight; posPropia.current = el.scrollTop } }
+  const anclaCanal = useRef<{ id: number; off: number } | null>(null)
+  const marcarAncla = () => {
+    const el = streamRef.current
+    if (!el) return
+    const top = el.getBoundingClientRect().top
+    for (const n of Array.from(el.querySelectorAll<HTMLElement>('[data-mid]'))) {
+      const r = n.getBoundingClientRect()
+      if (r.bottom > top + 1) { anclaCanal.current = { id: Number(n.dataset.mid), off: r.top - top }; return }
+    }
+    anclaCanal.current = null
+  }
+  const restaurarAncla = () => {
+    const el = streamRef.current, a = anclaCanal.current
+    if (!el || !a) return
+    const n = el.querySelector<HTMLElement>(`[data-mid="${a.id}"]`)
+    if (n) { el.scrollTop += n.getBoundingClientRect().top - el.getBoundingClientRect().top - a.off; posPropia.current = el.scrollTop }
+  }
   useEffect(() => {
     if (!pegado.current) return
     if (tocando.current) { scrollPendiente.current = true; return }
     bajar()
   }, [canal, miembros])
+  // Aterrizaje y crecimiento: cada vez que el contenido o el ancho del chat cambian, o se queda abajo o se conserva la posición.
+  useEffect(() => {
+    const el = streamRef.current
+    if (!el || typeof ResizeObserver === 'undefined') return
+    const reajustar = () => {
+      if (pegado.current) { if (tocando.current) scrollPendiente.current = true; else bajar() }
+      else restaurarAncla()
+    }
+    const ro = new ResizeObserver(reajustar)
+    ro.observe(el)
+    const inner = el.firstElementChild
+    if (inner) ro.observe(inner)
+    return () => ro.disconnect()
+  }, [yo])
   useEffect(() => {
     const el = hiloRef.current
     if (el && (pegadoHilo.current || hiloId !== ultimoHiloAbierto.current)) { el.scrollTop = el.scrollHeight; pegadoHilo.current = true }
     ultimoHiloAbierto.current = hiloId
   }, [hilo.length, hiloId])
   const ultimoHiloAbierto = useRef<number | null>(null)
+  useEffect(() => {
+    const el = hiloRef.current
+    if (!el || hiloId == null || typeof ResizeObserver === 'undefined') return
+    const ro = new ResizeObserver(() => { if (pegadoHilo.current) el.scrollTop = el.scrollHeight })
+    ro.observe(el)
+    if (el.firstElementChild) ro.observe(el.firstElementChild)
+    return () => ro.disconnect()
+  }, [hiloId, yo])
   const alScrollear = () => {
     const el = streamRef.current
     if (!el) return
-    pegado.current = el.scrollHeight - el.scrollTop - el.clientHeight < 40
+    const distancia = el.scrollHeight - el.scrollTop - el.clientHeight
+    if (Math.abs(el.scrollTop - posPropia.current) < 1.5) { posPropia.current = -1; if (distancia >= 40) return }   // eco de un scroll nuestro: no despega ni re-ancla
+    pegado.current = distancia < 40
     setAbajo(pegado.current)
+    if (!pegado.current) marcarAncla()
   }
   const alScrollearHilo = () => {
     const el = hiloRef.current
     if (el) pegadoHilo.current = el.scrollHeight - el.scrollTop - el.clientHeight < 40
   }
-  const apoyar = () => { tocando.current = true }
+  // Soltar el mouse/dedo fuera del chat (p. ej. arrastrando la barra de scroll) no dispara pointerup en el stream: se escucha en la ventana.
+  useEffect(() => {
+    const f = () => { if (tocando.current) soltarRef.current() }
+    window.addEventListener('pointerup', f); window.addEventListener('pointercancel', f)
+    return () => { window.removeEventListener('pointerup', f); window.removeEventListener('pointercancel', f) }
+  }, [])
+  const apoyar = (e: React.PointerEvent) => {
+    tocando.current = true
+    // Lo que se toca es lo que no se mueve: si el toque abre un hilo (y el chat cambia de ancho), se conserva ESE mensaje en su lugar.
+    const msg = (e.target as HTMLElement).closest?.('[data-mid]') as HTMLElement | null
+    const el = streamRef.current
+    if (msg && el && !pegado.current) anclaCanal.current = { id: Number(msg.dataset.mid), off: msg.getBoundingClientRect().top - el.getBoundingClientRect().top }
+  }
+  const soltarRef = useRef<() => void>(() => {})
   const soltar = () => {
     setTimeout(() => {
       tocando.current = false
@@ -963,6 +1033,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       scrollPendiente.current = false
     }, 400)
   }
+  soltarRef.current = soltar
 
   const cargarHilo = useCallback((id: number) => {
     setCargaHilo({ id, estado: 'cargando' })
@@ -1209,10 +1280,11 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
             {trabajando.filter((m) => hiloDe(m.autor) == null).map((m) => <Escribiendo key={'w' + m.autor} m={m} equipo={equipo} />)}
           </div>
         </div>
-        {!abajo && noLeidos > 0 && (
-          <button className="jump" onClick={() => { const el = streamRef.current; if (el) el.scrollTop = el.scrollHeight }}>{noLeidos} {noLeidos === 1 ? t.mensajeNuevo : t.mensajesNuevos} ↓</button>
-        )}
         <div className="dock">
+          {/* Dentro del dock: flota SIEMPRE por encima del campo de escribir, crezca lo que crezca (varias líneas, adjunto). */}
+          {!abajo && noLeidos > 0 && (
+            <button className="jump" onClick={() => { const el = streamRef.current; if (el) { pegado.current = true; el.scrollTop = el.scrollHeight } }}>{noLeidos} {noLeidos === 1 ? t.mensajeNuevo : t.mensajesNuevos} ↓</button>
+          )}
           <Composer placeholder={t.phCanal} onAviso={setAviso} menciones={mencionesCanal} onMandar={(t, a) => mandar(t, a, {})} />
           <div className={`rail ${aviso ? 'err' : ''}`}>{aviso}</div>
         </div>

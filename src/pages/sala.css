@@ -13,6 +13,7 @@
   --bigg: #9CC4B5; --bigg-ink: #2F5E4F; --bigg-wash: #E5F0EB;
   --chrome: rgba(25,20,16,.55); --hover: rgba(25,20,16,.05); --hover-msg: rgba(25,20,16,.025); --row-active: rgba(255,255,255,.7);
   --btn: #191410; --btn-ink: #FFFFFF;
+  --mine-wash: rgba(230,96,101,.07); --mine-wash-hover: rgba(230,96,101,.10);
   --lift: 0 0 0 1px rgba(25,20,16,.05), 0 1px 3px rgba(25,20,16,.06), 0 12px 40px rgba(120,40,30,.08);
   --r-card: 16px; --r-block: 14px; --r-ctl: 12px; --r-chip: 6px;
   --sans: 'TT Interphases Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -20,6 +21,8 @@
   --display: 'Thunder Bold', Impact, sans-serif;
 
   font-family: var(--sans); color: var(--ink);
+  /* La tipografía convierte "--" en una raya (–) con ligaduras contextuales: el texto tiene que verse tal cual lo escribió quien lo mandó. */
+  font-variant-ligatures: none; font-feature-settings: 'liga' 0, 'clig' 0, 'calt' 0;
   background: linear-gradient(to bottom, var(--grad-top), var(--grad-bot));
   min-height: 100dvh; height: 100dvh;
   -webkit-font-smoothing: antialiased; font-size: 15px; line-height: 1.47;
@@ -32,6 +35,7 @@
   --bigg-ink: #AED5C6; --bigg-wash: #1B2925;
   --chrome: rgba(255,255,255,.55); --hover: rgba(255,255,255,.05); --hover-msg: rgba(255,255,255,.025); --row-active: rgba(255,255,255,.12);
   --btn: #F1ECE5; --btn-ink: #191410;
+  --mine-wash: rgba(240,116,121,.10); --mine-wash-hover: rgba(240,116,121,.14);
   --lift: 0 0 0 1px rgba(255,255,255,.04), 0 12px 40px rgba(0,0,0,.35);
 }
 .sala *, .sala *::before, .sala *::after { box-sizing: border-box; }
@@ -89,7 +93,7 @@
 .sala .iconbtn svg { width: 18px; height: 18px; }
 
 /* Conversación */
-.sala .stream { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; padding: 8px 0 10px; }
+.sala .stream { overflow-anchor: none; flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; padding: 8px 0 10px; }
 .sala .stream > .inner { margin-top: auto; }
 .sala .empty { margin: auto; text-align: center; color: var(--muted); font-size: 14px; padding: 40px 24px; }
 .sala .day { display: flex; align-items: center; gap: 12px; margin: 10px 24px 8px; }
@@ -193,7 +197,7 @@
 .sala .nuevos { display: flex; align-items: center; gap: 10px; margin: 10px 24px 4px; }
 .sala .nuevos::before { content: ''; flex: 1; height: 1px; background: var(--accent); opacity: .6; }
 .sala .nuevos span { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-ink); }
-.sala .jump { position: absolute; left: 50%; transform: translateX(-50%); bottom: 118px; height: 34px; padding: 0 14px; border-radius: 999px; background: var(--btn); color: var(--btn-ink); font-size: 13px; font-weight: 600; box-shadow: var(--lift); z-index: 3; }
+.sala .jump { position: absolute; left: 50%; transform: translateX(-50%); bottom: 100%; margin-bottom: 12px; height: 34px; padding: 0 14px; border-radius: 999px; background: var(--btn); color: var(--btn-ink); font-size: 13px; font-weight: 600; box-shadow: var(--lift); z-index: 3; }
 .sala .card { position: relative; }
 .sala .app.con-hilo { grid-template-columns: 272px minmax(0, 1fr) 400px; }
 .sala .tpanel .head .t { font-size: 15px; }
@@ -222,7 +226,7 @@
 .sala .side .ghost + .ghost { margin-top: 8px; }
 
 /* Composer */
-.sala .dock { flex: none; padding: 0 20px 6px 24px; }
+.sala .dock { flex: none; padding: 0 20px 6px 24px; position: relative; }
 .sala .composer { border: 1px solid var(--line); border-radius: var(--r-card); background: var(--card); box-shadow: 0 1px 2px rgba(25,20,16,.04); }
 .sala .composer:focus-within { border-color: var(--muted); }
 .sala .composer textarea { display: block; width: 100%; resize: none; border: 0; outline: 0; background: transparent; color: var(--ink); padding: 14px 16px 6px; font: inherit; font-size: 15px; line-height: 22px; min-height: 44px; max-height: 200px; }
@@ -320,7 +324,6 @@
   .sala .tools { right: 12px; }
   .sala .media .pdf { height: 300px; }
   .sala .tsep, .sala .nuevos { margin-left: 16px; margin-right: 16px; }
-  .sala .jump { bottom: 104px; }
   .sala .ecard h1 { font-size: 64px; }
 }
 
@@ -415,3 +418,15 @@
   .sala .reply-txt { height: 36px; }
   .sala .hilo-estado { padding-left: 16px; }
 }
+
+/* QA R3 */
+/* Lo propio se distingue de lo ajeno: etiqueta "Vos"/"You" junto al nombre y un fondo apenas teñido. */
+.sala .msg.mine { background: var(--mine-wash); }
+.sala .msg.mine:hover, .sala .msg.mine.act { background: var(--mine-wash-hover); }
+.sala .msg .tag.me { color: var(--accent-ink); border: 1px solid var(--accent-ink); border-radius: 999px; padding: 0 6px; font-size: 10px; line-height: 16px; }
+/* Una respuesta dirigida a mí en el canal: el botón dice a quién y abre MI hilo; "Nuevo para vos" mientras no lo abrí. */
+.sala .reply-txt.dir { color: var(--accent-ink); box-shadow: inset 0 0 0 1px var(--accent-ink); }
+.sala .reply-txt.dir:hover { background: var(--accent-wash); color: var(--accent-ink); }
+.sala .newtag { display: inline-block; margin: 4px 8px 0 0; padding: 0 8px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 11px; line-height: 18px; font-weight: 600; letter-spacing: .02em; vertical-align: middle; }
+.sala .thread-row .newtag { margin: 0; }
+.sala .msg .tag.solo { display: inline-block; margin-top: 2px; color: var(--accent-ink); }
