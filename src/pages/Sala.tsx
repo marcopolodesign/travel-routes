@@ -283,7 +283,7 @@ function SinAcceso() {
       <div className="label">{t.sala}</div>
       <h1>{t.sinAcceso}</h1>
       <p className="lede">{t.sinAccesoLede}</p>
-      <p className="fine"><Link className="lnk" to="/sala/privacidad">{t.privacidad}</Link></p>
+      <p className="fine"><Link className="lnk" to="/sala/privacidad" state={{ desdeSala: true }}>{t.privacidad}</Link></p>
     </div></div>
   )
 }
@@ -337,7 +337,7 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
         <div className="label">{t.sala}{inv?.subtitulo ? ` · ${inv.subtitulo}` : ''}</div>
         <h1>{inv?.titulo ?? t.sala}</h1>
         <p className="lede">{t.descSala(equipoPersonas, personasExtra, agentesDe)}. {t.ledeResto}</p>
-        <p className="ia-note">{t.avisoIA} <Link className="lnk" to="/sala/privacidad">{t.privacidad}</Link></p>
+        <p className="ia-note">{t.avisoIA} <Link className="lnk" to="/sala/privacidad" state={{ desdeSala: true }}>{t.privacidad}</Link></p>
         {adentro.length > 0 && inv && (
           <div className="who-in">
             <div className="stack">{adentro.slice(0, 4).map((m) => <Avatar key={m.autor} autor={m.autor} tipo={m.tipo} equipo={inv.equipo} size={32} />)}</div>
@@ -546,6 +546,7 @@ type Ctx = {
   borrar: (m: Mensaje) => void
   hiloConNovedad: (m: Mensaje) => boolean
   porId: Record<number, Mensaje>
+  ultimaDeAgenteA: Record<number, number>   // raíz → id de la última respuesta de un agente que se ve en el canal
   decidir: (m: Mensaje, opcion: string) => Promise<void>
 }
 
@@ -653,8 +654,10 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
   const agente = m.is_ai ?? esAgente(m.autor, tipoDe[m.autor])
   const reacciones = (m.reacciones ?? []).filter((r) => r.autores.length)
   const raiz = !enHilo && m.respuesta_a ? ctx.porId[m.respuesta_a] : null
-  // Un agente (u otra persona) que contesta en el canal a un mensaje MÍO: el botón abre ese hilo, el de mi mensaje.
-  const paraMi = !!raiz && !mio && raiz.autor === yo.autor && !raiz.borrado
+  // "Responderle a <agente>" SÓLO en la última respuesta de un agente a un mensaje MÍO (escrito por mí, no una línea de sistema):
+  // abre ese hilo, el de mi mensaje. Cualquier otra respuesta del agente (saludo, respuestas a otros, respuestas anteriores a la misma
+  // pregunta) lleva el "Responder" normal. Así el nombre accesible también es único.
+  const paraMi = !!raiz && !raiz.sistema && !raiz.borrado && !mio && raiz.autor === yo.autor && ctx.ultimaDeAgenteA[raiz.id] === m.id
   const nuevoParaMi = paraMi && ctx.hiloConNovedad(raiz!)
   const ariaResponder = t.ariaResponderA(m.autor, recortar(m.texto || m.archivo_nombre || '', 40))
   const guardar = async () => {
@@ -978,12 +981,13 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       pegado.current = false; setAbajo(false); ultimoTop.current = el.scrollTop; marcarAncla()
     }
   }
-  useEffect(() => {
+  // useLayoutEffect: la lista no se pinta ni un cuadro en scrollTop 0 (mensajes de ayer) antes de bajar al final.
+  useLayoutEffect(() => {
     despegarSiSubio()
     if (!pegado.current) return
     if (tocando.current) { scrollPendiente.current = true; return }
     bajar()
-  }, [canal, miembros])
+  }, [canal, miembros, yo])
   // Aterrizaje y crecimiento. Dos cosas mueven el layout sin que el usuario haga nada:
   //  - lo que carga tarde (fotos, videos, tipografías): al terminar de cargar, si seguía al fondo, vuelve al fondo;
   //  - el ancho del chat (el panel del hilo se abre o se cierra): se conserva el ancla (o el fondo).
@@ -1070,8 +1074,27 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       .catch((e) => { manejar(e); setCargaHilo((c) => c?.id === id ? { id, estado: 'error' } : c) })
   }, [clave, sumar, manejar])
 
+  // Mobile: el chat de atrás queda inerte mientras el hilo está abierto, así que al cerrarlo tiene que estar exactamente donde estaba.
+  // (En desktop el panel cambia el ancho y lo resuelve el ancla.) Red de seguridad: si por lo que sea la posición se movió, se restaura.
+  const posAntesHilo = useRef<{ top: number; pegado: boolean } | null>(null)
+  const hiloAbierto = useRef<number | null>(null)
+  const enMovil = () => !!window.matchMedia?.('(max-width: 760px)').matches
+  useLayoutEffect(() => {
+    const antes = hiloAbierto.current
+    hiloAbierto.current = hiloId
+    if (hiloId != null || antes == null) return
+    const el = streamRef.current, g = posAntesHilo.current
+    posAntesHilo.current = null
+    if (!el || !g || !enMovil()) return
+    const maximo = el.scrollHeight - el.clientHeight
+    const objetivo = g.pegado ? maximo : Math.min(g.top, maximo)
+    if (Math.abs(el.scrollTop - objetivo) > 2) { el.scrollTop = objetivo; posPropia.current = ultimoTop.current = el.scrollTop }
+  }, [hiloId])
+
   // Mobile: abrir un hilo suma un estado al historial, así "atrás" cierra el hilo en vez de salir de la sala.
   const abrirHilo = useCallback((id: number) => {
+    const stream = streamRef.current
+    if (hiloAbierto.current == null && stream) posAntesHilo.current = { top: stream.scrollTop, pegado: pegado.current }
     setHiloId(id); setPanel(false); pegadoHilo.current = true
     try {
       const estado = { ...(window.history.state ?? {}), salaHilo: id }
@@ -1235,7 +1258,17 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   const participanHilo = useMemo(() => [...new Set([...(raizHilo ? [raizHilo.autor] : []), ...hilo.map((m) => m.autor)])], [hilo, raizHilo])
   const mencionesCanal = useMemo(() => yo ? { miembros, yo: yo.autor, equipo, participan: participanCanal } : undefined, [miembros, yo, equipo, participanCanal])
   const mencionesHilo = useMemo(() => yo ? { miembros, yo: yo.autor, equipo, participan: participanHilo } : undefined, [miembros, yo, equipo, participanHilo])
-  const ctx: Ctx | null = yo ? { yo, equipo, nombres, tipoDe, reaccionar, abrirHilo, editar, borrar, hiloConNovedad, porId, decidir } : null
+  const ultimaDeAgenteA = useMemo(() => {
+    const r: Record<number, number> = {}
+    for (const m of canal) if (m.respuesta_a && !m.pendiente && !m.borrado && !m.sistema && (m.is_ai ?? esAgente(m.autor, tipoDe[m.autor]))) r[m.respuesta_a] = Math.max(r[m.respuesta_a] ?? 0, m.id)
+    return r
+  }, [canal, tipoDe])
+  // Onboarding: si hay agentes en la sala, el campo y una línea sobre él dicen que se les puede preguntar directo.
+  const agentes = useMemo(() => miembros.filter((m) => m.tipo === 'agente' && m.autor !== yo?.autor).map((m) => m.autor), [miembros, yo])
+  const yaEscribi = !!yo && todos.some((m) => m.autor === yo.autor && !m.sistema)
+  const phCanal = agentes.length === 1 ? t.phCanalAgente(agentes[0]) : agentes.length > 1 ? t.phCanalAgentes : t.phCanal
+  const pista = yo?.tipo === 'persona' && !yaEscribi && agentes.length > 0 ? (agentes.length === 1 ? t.pistaAgente(agentes[0]) : t.pistaAgentes) : null
+  const ctx: Ctx | null = yo ? { yo, equipo, nombres, tipoDe, reaccionar, abrirHilo, editar, borrar, hiloConNovedad, porId, ultimaDeAgenteA, decidir } : null
 
   const lateral = yo && (
     <>
@@ -1313,7 +1346,8 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
           {!abajo && noLeidos > 0 && (
             <button className="jump" onClick={() => { const el = streamRef.current; if (el) { pegado.current = true; el.scrollTop = el.scrollHeight } }}>{noLeidos} {noLeidos === 1 ? t.mensajeNuevo : t.mensajesNuevos} ↓</button>
           )}
-          <Composer placeholder={t.phCanal} onAviso={setAviso} menciones={mencionesCanal} onMandar={(t, a) => mandar(t, a, {})} />
+          {pista && <p className="agent-hint" id="sala-pista">{pista}</p>}
+          <Composer placeholder={phCanal} onAviso={setAviso} menciones={mencionesCanal} onMandar={(t, a) => mandar(t, a, {})} />
           <div className={`rail ${aviso ? 'err' : ''}`}>{aviso}</div>
         </div>
       </main>

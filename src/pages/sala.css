@@ -253,6 +253,7 @@
 .sala .chip-file .mt { font-size: 13px; line-height: 18px; color: var(--muted); }
 .sala .chip-file .x { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); }
 .sala .chip-file .x svg { width: 14px; height: 14px; }
+.sala .agent-hint { margin: 0 4px 6px; font-size: 13px; line-height: 18px; color: var(--muted); }
 .sala .rail { min-height: 30px; display: flex; align-items: center; gap: 8px; padding: 0 4px; font-size: 13px; color: var(--muted); }
 .sala .rail.err { color: var(--accent-ink); }
 

@@ -1,6 +1,6 @@
 // /sala/privacidad — qué pasa con lo que se escribe en la Sala. Sin login, mismo estilo que la sala.
 import { useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import MarcopoloLogo from '../components/MarcopoloLogo'
 import { T } from './sala-i18n'
 import './sala.css'
@@ -9,6 +9,8 @@ const t = T()
 
 export default function SalaPrivacidad() {
   const navigate = useNavigate()
+  // "Volver" vuelve a la URL de la que se vino (la sala o la invitación con su código). Sin eso (abierta directo, p. ej. desde la app), a /sala.
+  const vinoDeLaSala = !!(useLocation().state as { desdeSala?: boolean } | null)?.desdeSala
   const tema = (() => {
     try {
       const g = localStorage.getItem('sala.tema')
@@ -32,7 +34,7 @@ export default function SalaPrivacidad() {
           </section>
         ))}
         <p className="fine">
-          <Link className="lnk" to="/sala" onClick={(e) => { if (window.history.length > 1) { e.preventDefault(); navigate(-1) } }}>{p.volver}</Link>
+          <Link className="lnk" to="/sala" onClick={(e) => { if (vinoDeLaSala) { e.preventDefault(); navigate(-1) } }}>{p.volver}</Link>
         </p>
       </article></div>
     </div>

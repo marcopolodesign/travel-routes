@@ -70,6 +70,8 @@ const ar = {
   finePersona: 'Quien entra ve el historial. El link es tu acceso: no lo reenvíes.',
   // composer
   phCanal: 'Escribile a la sala…', phHilo: 'Responder en el hilo…',
+  phCanalAgente: (a: string) => `Escribile a ${a} o a la sala…`, phCanalAgentes: 'Escribile a la sala o a un agente con @…',
+  pistaAgente: (a: string) => `Preguntale lo que necesites a ${a}`, pistaAgentes: 'Preguntale lo que necesites a un agente: escribí @ y elegilo',
   ariaHilo: 'Responder en el hilo', ariaCanal: 'Mensaje',
   adjuntar: 'Adjuntar un archivo (hasta 50 MB)', seMandaCon: 'se manda con el mensaje', sacar: 'Sacar',
   tambien: 'También mandar a la sala', tambienAyuda: 'se ve también en el chat principal',
@@ -92,7 +94,7 @@ const ar = {
   soloEquipo: 'Sólo lo ve el equipo',
   ariaResponderA: (a: string, x: string) => `Responder a ${a}: ${x}`,
   ariaRespuestasA: (n: number, a: string, x: string) => `${n} ${n === 1 ? 'respuesta' : 'respuestas'} a ${a}: ${x}`,
-  ariaResponderleA: (a: string, x: string) => `Responderle a ${a}, en tu mensaje: ${x}`,
+  ariaResponderleA: (a: string, x: string) => `Responderle a ${a}: ${x}`,
   vistoPor: (x: string) => `Visto · ${x}`, leyendoPor: (x: string) => `${x} lo está leyendo…`,
   reaccionar: 'Reaccionar', responderHilo: 'Responder en hilo',
   responderHiloAyuda: 'Responder en un hilo: una conversación aparte, debajo de este mensaje, para no llenar el chat principal',
@@ -120,8 +122,8 @@ const ar = {
     titulo: 'Privacidad', volver: 'Volver a la sala',
     intro: 'La sala es un chat grupal donde también participan agentes de IA de Marco Polo. Esto es lo que tenés que saber.',
     secciones: [
-      { h: 'Quién ve los mensajes', p: 'Los miembros de la sala, el equipo de Marco Polo y sus agentes de IA, que leen y responden los mensajes. Quien entra a la sala ve el historial completo de mensajes, también los anteriores a su llegada.' },
-      { h: 'Qué se guarda y dónde', p: 'Tu nombre, tus mensajes y los archivos que subas. Todo se guarda en servidores de Supabase. Los archivos adjuntos quedan guardados en Supabase y el equipo de Marco Polo y sus agentes pueden descargarlos para trabajar con ellos. En tu navegador queda guardada la clave de acceso para que no tengas que entrar de nuevo.' },
+      { h: 'Quién ve los mensajes', p: 'Los miembros de la sala, el equipo de Marco Polo y sus agentes de IA, que leen y responden los mensajes. Quien entra a la sala ve el historial completo de mensajes, también los anteriores a su llegada. Los hilos también son visibles para todos los miembros de la sala.' },
+      { h: 'Qué se guarda y dónde', p: 'Tu nombre, tus mensajes y los archivos que subas. Todo se guarda en servidores de Supabase. Los archivos adjuntos quedan guardados en Supabase y el equipo de Marco Polo y sus agentes pueden descargarlos para trabajar con ellos. En tu dispositivo queda guardada la clave de acceso para que no tengas que entrar de nuevo.' },
       { h: 'Cuánto tiempo se guardan', p: 'Los mensajes y archivos se guardan mientras la sala esté activa, o hasta que pidas el borrado.' },
       { h: 'Los agentes de IA', p: 'Los agentes usan modelos de IA de Anthropic para responder: lo que se escribe en la sala les llega para que puedan contestar.' },
       { h: 'El link es el acceso', p: 'Quien tenga tu link puede entrar a la sala como vos. No lo reenvíes.' },
@@ -165,9 +167,11 @@ const es: Dict = {
   soloEquipo: 'Sólo lo ve el equipo',
   ariaResponderA: (a: string, x: string) => `Responder a ${a}: ${x}`,
   ariaRespuestasA: (n: number, a: string, x: string) => `${n} ${n === 1 ? 'respuesta' : 'respuestas'} a ${a}: ${x}`,
-  ariaResponderleA: (a: string, x: string) => `Responderle a ${a}, en tu mensaje: ${x}`,
+  ariaResponderleA: (a: string, x: string) => `Responderle a ${a}: ${x}`,
   vistoPor: (x: string) => `Visto · ${x}`, leyendoPor: (x: string) => `${x} lo está leyendo…`,
   phCanal: 'Escríbele a la sala…', phHilo: 'Responder en el hilo…', ariaCanal: 'Mensaje',
+  phCanalAgente: (a: string) => `Escríbele a ${a} o a la sala…`, phCanalAgentes: 'Escríbele a la sala o a un agente con @…',
+  pistaAgente: (a: string) => `Pregúntale lo que necesites a ${a}`, pistaAgentes: 'Pregúntale lo que necesites a un agente: escribe @ y elígelo',
   seMandaCon: 'se envía con el mensaje',
   tambien: 'También enviar a la sala', tambienAyuda: 'se ve también en el chat principal',
   tambienTitulo: 'Tu respuesta queda en el hilo y además aparece en el chat principal, para que todos la vean.',
@@ -193,8 +197,8 @@ const es: Dict = {
     titulo: 'Privacidad', volver: 'Volver a la sala',
     intro: 'La sala es un chat grupal en el que también participan agentes de IA de Marco Polo. Esto es lo que conviene que sepas.',
     secciones: [
-      { h: 'Quién ve los mensajes', p: 'Los miembros de la sala, el equipo de Marco Polo y sus agentes de IA, que leen y responden los mensajes. Quien entra en la sala ve el historial completo de mensajes, también los anteriores a su llegada.' },
-      { h: 'Qué se guarda y dónde', p: 'Tu nombre, tus mensajes y los archivos que subas. Todo se guarda en servidores de Supabase. Los archivos adjuntos quedan guardados en Supabase y el equipo de Marco Polo y sus agentes pueden descargarlos para trabajar con ellos. En tu navegador se guarda la clave de acceso para que no tengas que entrar de nuevo.' },
+      { h: 'Quién ve los mensajes', p: 'Los miembros de la sala, el equipo de Marco Polo y sus agentes de IA, que leen y responden los mensajes. Quien entra en la sala ve el historial completo de mensajes, también los anteriores a su llegada. Los hilos también son visibles para todos los miembros de la sala.' },
+      { h: 'Qué se guarda y dónde', p: 'Tu nombre, tus mensajes y los archivos que subas. Todo se guarda en servidores de Supabase. Los archivos adjuntos quedan guardados en Supabase y el equipo de Marco Polo y sus agentes pueden descargarlos para trabajar con ellos. En tu dispositivo se guarda la clave de acceso para que no tengas que entrar de nuevo.' },
       { h: 'Cuánto tiempo se guardan', p: 'Los mensajes y archivos se guardan mientras la sala esté activa, o hasta que pidas su borrado.' },
       { h: 'Los agentes de IA', p: 'Los agentes usan modelos de IA de Anthropic para responder: lo que se escribe en la sala les llega para que puedan contestar.' },
       { h: 'El enlace es el acceso', p: 'Quien tenga tu enlace puede entrar en la sala como tú. No lo reenvíes.' },
@@ -255,9 +259,11 @@ const en: Dict = {
   soloEquipo: 'Only the team sees this',
   ariaResponderA: (a: string, x: string) => `Reply to ${a}: ${x}`,
   ariaRespuestasA: (n: number, a: string, x: string) => `${n} ${n === 1 ? 'reply' : 'replies'} to ${a}: ${x}`,
-  ariaResponderleA: (a: string, x: string) => `Reply to ${a}, on your message: ${x}`,
+  ariaResponderleA: (a: string, x: string) => `Reply to ${a}: ${x}`,
   vistoPor: (x: string) => `Seen · ${x}`, leyendoPor: (x: string) => `${x} is reading…`,
   phCanal: 'Write to the room…', phHilo: 'Reply in the thread…',
+  phCanalAgente: (a: string) => `Write to ${a} or to the room…`, phCanalAgentes: 'Write to the room or to an agent with @…',
+  pistaAgente: (a: string) => `Ask ${a} anything you need`, pistaAgentes: 'Ask an agent anything you need: type @ and pick one',
   ariaHilo: 'Reply in the thread', ariaCanal: 'Message',
   adjuntar: 'Attach a file (up to 50 MB)', seMandaCon: 'sent with the message', sacar: 'Remove',
   tambien: 'Also send to the room', tambienAyuda: 'also shown in the main chat',
@@ -296,8 +302,8 @@ const en: Dict = {
     titulo: 'Privacy', volver: 'Back to the room',
     intro: 'The room is a group chat where Marco Polo AI agents also take part. Here is what you should know.',
     secciones: [
-      { h: 'Who sees the messages', p: 'The members of the room, the Marco Polo team and its AI agents, which read and answer the messages. Anyone who joins the room sees the full message history, including messages from before they arrived.' },
-      { h: 'What is stored and where', p: 'Your name, your messages and the files you upload. Everything is stored on Supabase servers. Attached files are stored in Supabase, and the Marco Polo team and its AI agents can download them to work with them. Your access key is kept in your browser so you don’t have to sign in again.' },
+      { h: 'Who sees the messages', p: 'The members of the room, the Marco Polo team and its AI agents, which read and answer the messages. Anyone who joins the room sees the full message history, including messages from before they arrived. Threads are also visible to every member of the room.' },
+      { h: 'What is stored and where', p: 'Your name, your messages and the files you upload. Everything is stored on Supabase servers. Attached files are stored in Supabase, and the Marco Polo team and its AI agents can download them to work with them. Your access key is kept on your device so you don’t have to sign in again.' },
       { h: 'How long it is kept', p: 'Messages and files are kept while the room is active, or until you ask for them to be deleted.' },
       { h: 'The AI agents', p: 'The agents use Anthropic AI models to reply: what is written in the room is sent to them so they can answer.' },
       { h: 'The link is the access', p: 'Anyone with your link can get into the room as you. Don’t forward it.' },
@@ -309,5 +315,16 @@ const en: Dict = {
 
 const TODOS: Record<Idioma, Dict> = { ar, es, en }
 let actual: Idioma | null = null
-export function idioma(): Idioma { return (actual ??= detectarIdioma()) }
+// ?lang=es|en fuerza el idioma (la app nativa abre la privacidad en el navegador y le pasa el suyo). Rige para toda la sesión.
+export function idiomaForzado(search?: string, langs?: readonly string[]): Idioma | null {
+  const q = search ?? (typeof window !== 'undefined' ? window.location.search : '')
+  const v = new URLSearchParams(q).get('lang')?.toLowerCase().trim()
+  if (v === 'en') return 'en'
+  if (v === 'es' || v?.startsWith('es-')) {
+    const d = detectarIdioma(langs)
+    return d === 'ar' || d === 'es' ? d : /^es-(ar|uy)\b/.test(v) ? 'ar' : 'es'   // en un navegador es-AR sigue el voseo
+  }
+  return null
+}
+export function idioma(): Idioma { return (actual ??= idiomaForzado() ?? detectarIdioma()) }
 export function T(): Dict { return TODOS[idioma()] }

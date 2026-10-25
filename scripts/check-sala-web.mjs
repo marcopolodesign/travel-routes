@@ -12,6 +12,8 @@
 //   en 375 px con touch, "atrás" cierra el hilo, indicador previo al JS en 3G, "Visto/leyendo/escribiendo" en el hilo, privacidad.
 //   Usa una sala de laboratorio propia (lab-r2-*) que borra al terminar. SOLO_R2=1 salta los controles de R1.
 //
+// QA R4 (al final, sala lab-r4-*): ver el bloque 'QA R4' más abajo. SOLO_R4=1 corre únicamente esto.
+//
 // QA R3 (al final, sala lab-r3-*): aterriza abajo (aun con fotos que cargan tarde), abrir/cerrar un hilo y tocar Responder no mueven el chat,
 //   lo propio se distingue ("Vos"/"You"), "Responderle a <agente>" abre MI hilo, aria-labels únicos, "N mensajes nuevos" no tapa el campo,
 //   el campo se llama "Mensaje"/"Message", "--" se ve como dos guiones. SOLO_R3=1 corre únicamente esto.
@@ -33,8 +35,9 @@ const API = process.env.SALA_API ?? 'https://keevroiskubxjmrtoaur.supabase.co/fu
 const claves = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.sala', 'claves.json'), 'utf8'))
 const DUENO = process.env.SALA_DUENO_KEY ?? claves['prueba/Mateo']
 const AGENTE = process.env.SALA_AGENTE_KEY ?? claves['prueba/Claude de Mateo']
-const SOLO_R2 = !!process.env.SOLO_R2 || !!process.env.SOLO_R3
-const SOLO_R3 = !!process.env.SOLO_R3
+const SOLO_R4 = !!process.env.SOLO_R4
+const SOLO_R2 = !!process.env.SOLO_R2 || !!process.env.SOLO_R3 || SOLO_R4
+const SOLO_R3 = !!process.env.SOLO_R3 || SOLO_R4
 let fallas = 0
 const ok = (c, msg) => { console.log((c ? '✓ ' : '✗ ') + msg); if (!c) fallas++ }
 const post = (ruta, cuerpo, clave) => fetch(API + ruta, { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + clave }, body: JSON.stringify(cuerpo) }).then((r) => r.json())
@@ -462,11 +465,11 @@ try {
   }
   const nuevoLink3 = async () => (await post('/invitar', { horas: 1, usos: 20 }, KS.Mateo)).codigo
   const L3 = {
-    'es-AR': { mandar: 'Mandar', vos: 'Vos', responderle: /^Responderle a Alan, en tu mensaje: /, responder: /^Responder a /, resp: /^\d+ respuestas? a /, textbox: 'Mensaje', nuevo: 'Nuevo para vos', irreplica: 'Responderle a Alan' },
-    'en-US': { mandar: 'Send', vos: 'You', responderle: /^Reply to Alan, on your message: /, responder: /^Reply to /, resp: /^\d+ repl(y|ies) to /, textbox: 'Message', nuevo: 'New for you', irreplica: 'Reply to Alan' },
+    'es-AR': { mandar: 'Mandar', vos: 'Vos', responderle: /^Responderle a Alan: /, responder: /^Responder a /, resp: /^\d+ respuestas? a /, textbox: 'Mensaje', nuevo: 'Nuevo para vos', irreplica: 'Responderle a Alan' },
+    'en-US': { mandar: 'Send', vos: 'You', responderle: /^Reply to Alan: /, responder: /^Reply to /, resp: /^\d+ repl(y|ies) to /, textbox: 'Message', nuevo: 'New for you', irreplica: 'Reply to Alan' },
   }
   let combo = 0
-  for (const [loc, X] of Object.entries(L3)) for (const [etiqueta, vp, movil] of [['desktop 1280', { width: 1280, height: 800 }, false], ['mobile 375 touch', { width: 375, height: 667 }, true]]) {
+  for (const [loc, X] of SOLO_R4 ? [] : Object.entries(L3)) for (const [etiqueta, vp, movil] of [['desktop 1280', { width: 1280, height: 800 }, false], ['mobile 375 touch', { width: 375, height: 667 }, true]]) {
     const tag = `${loc.slice(0, 2)}${movil ? 'm' : 'd'}${Date.now().toString().slice(-4)}`
     console.log(`\n── R3 ${loc} · ${etiqueta}`)
     const c = await browser.newContext({ viewport: vp, hasTouch: movil, isMobile: movil, locale: loc })
@@ -582,6 +585,186 @@ try {
   }
 } finally {
   limpiarLab3()
+}
+
+// ─── QA R4 ───────────────────────────────────────────────────────────────────────────────────
+// Sala lab-r4-*: dos invitados + un agente que contesta a cada uno (por API).
+//   1 · "Responderle a <agente>" SÓLO en la última respuesta del agente a un mensaje MÍO (nunca en el saludo ni en lo que le contesta a otro),
+//       con nombre accesible único "Responderle a Alan: <inicio de tu mensaje>"
+//   2 · scroll: la lista no se pinta en scrollTop 0 al entrar, y abrir/cerrar un hilo (atrás del navegador, ←, ✕) la deja donde estaba
+//   3 · onboarding: placeholder "Escribile a Alan o a la sala…" (o "…a un agente con @…" con varios) y una pista que se va con el primer mensaje
+//   4 · privacidad: "Volver" conserva el token de la invitación, ?lang= fuerza el idioma, sin "navegador", dice que los hilos los ven todos
+if (!process.env.SOLO_R3 || SOLO_R4) {
+const LAB4 = 'lab-r4-' + sufijo
+const limpiarLab4 = () => { try { sql(`delete from sala_mensajes where sala='${LAB4}'; delete from sala_lecturas where token_hash in (select token_hash from sala_miembros where sala='${LAB4}'); delete from sala_claves where token_hash in (select token_hash from sala_miembros where sala='${LAB4}'); delete from sala_miembros where sala='${LAB4}'; delete from sala_invitaciones where sala='${LAB4}'; delete from sala_salas where sala='${LAB4}'`) } catch (e) { console.log('(limpieza del laboratorio R4 falló: ' + String(e).slice(0, 120) + ')') } }
+sql(`insert into sala_salas (sala, titulo, subtitulo, anfitrion, equipo, creada_por) values ('${LAB4}', 'Lab R4', 'QA', 'Mateo', array['Mateo','Alan'], 'Mateo')`)
+try {
+  const K = { Mateo: JSON.parse(py('alta.py', LAB4, 'Mateo', '--persona')).clave, Alan: JSON.parse(py('alta.py', LAB4, 'Alan', '--dueno', 'Mateo')).clave }
+  const link4 = async () => (await post('/invitar', { horas: 1, usos: 20 }, K.Mateo)).codigo
+  const historial = async () => (await get('/historial?n=300', K.Mateo)).mensajes
+  const L4 = {
+    'es-AR': { responder: 'Responder', responderle: 'Responderle a Alan', phUno: 'Escribile a Alan o a la sala…', phVarios: 'Escribile a la sala o a un agente con @…', pista: 'Preguntale lo que necesites a Alan', mandar: 'Mandar', ariaRe: /^Responderle a Alan: / },
+    'en-US': { responder: 'Reply', responderle: 'Reply to Alan', phUno: 'Write to Alan or to the room…', phVarios: 'Write to the room or to an agent with @…', pista: 'Ask Alan anything you need', mandar: 'Send', ariaRe: /^Reply to Alan: / },
+  }
+  let n4 = 0
+  for (const [loc, X] of Object.entries(L4)) for (const [etiqueta, vp, movil] of [['desktop 1280', { width: 1280, height: 800 }, false], ['mobile 375 touch', { width: 375, height: 667 }, true]]) {
+    n4++
+    const tag = `${loc.slice(0, 2)}${movil ? 'm' : 'd'}${Date.now().toString().slice(-4)}`
+    console.log(`\n── R4 ${loc} · ${etiqueta}`)
+    if (n4 === 3) K.Felipe = JSON.parse(py('alta.py', LAB4, 'Felipe', '--dueno', 'Mateo')).clave   // desde acá hay DOS agentes en la sala
+    const entrar = async (nombre) => {
+      const c = await browser.newContext({ viewport: vp, hasTouch: movil, isMobile: movil, locale: loc })
+      const p = await c.newPage()
+      await p.goto(`${WEB}/sala/${await link4()}`); await p.waitForSelector('#sala-nombre')
+      await p.fill('#sala-nombre', nombre); await p.locator('button.cta').click()
+      await p.waitForSelector('main.card textarea', { timeout: 20000 })
+      return { c, p }
+    }
+    const A = await entrar(`Ana ${tag}`), B = await entrar(`Beto ${tag}`)
+    const tecla = async (u, texto) => {
+      await u.p.locator('main.card textarea').fill(texto)
+      await Promise.all([u.p.waitForResponse((r) => r.url().endsWith('/enviar')), u.p.locator('main.card').getByRole('button', { name: X.mandar, exact: true }).click()])
+      await u.p.waitForSelector(`main.card .body :text("${texto}")`)
+    }
+
+    // 3 · onboarding: placeholder + pista, hasta el primer mensaje
+    await dormir(5000)   // la presencia (cada 4 s) trae a los agentes
+    const ph = await A.p.locator('main.card textarea').getAttribute('placeholder')
+    const esperado = n4 >= 3 ? X.phVarios : X.phUno
+    ok(ph === esperado, `placeholder del campo: "${ph}"`)
+    const pistaTxt = await A.p.locator('main.card .agent-hint').innerText().catch(() => null)
+    ok(n4 >= 3 ? /@/.test(pistaTxt ?? '') : pistaTxt === X.pista, `pista sobre el campo antes de escribir: "${pistaTxt}"`)
+    ok(await A.p.getByRole('textbox', { name: loc === 'es-AR' ? 'Mensaje' : 'Message', exact: true }).count() === 1, 'el campo conserva su nombre accesible ("Mensaje"/"Message")')
+    await post('/enviar', { texto: `Hola, soy Alan ${tag}` }, K.Alan)   // saludo de bienvenida: sin respuesta_a
+    const MA = `pregunta de Ana ${tag}`, MB = `pregunta de Beto ${tag}`
+    await tecla(A, MA); await tecla(B, MB)
+    ok(await A.p.locator('main.card .agent-hint').count() === 0, 'tras el primer mensaje la pista desaparece')
+    await dormir(300)
+    // el agente contesta a cada uno (dos veces a Ana: sólo la última lleva "Responderle a")
+    const h = await historial()
+    const idA = h.find((m) => m.texto === MA).id, idB = h.find((m) => m.texto === MB).id
+    await post('/enviar', { texto: `Alan a Ana (1) ${tag}`, respuesta_a: idA, tambien_canal: true }, K.Alan)
+    await post('/enviar', { texto: `Alan a Beto ${tag}`, respuesta_a: idB, tambien_canal: true }, K.Alan)
+    await post('/enviar', { texto: `Alan a Ana (2) ${tag}`, respuesta_a: idA, tambien_canal: true }, K.Alan)
+    for (const u of [A, B]) await u.p.waitForSelector(`main.card .body :text("Alan a Ana (2) ${tag}")`, { timeout: 15000 })
+    const boton = (u, texto) => u.p.locator('main.card .msg', { hasText: texto }).first().locator('.reply-txt')
+    const txt = async (l) => (await l.innerText()).trim()
+    for (const [quien, u, mio1, mio2, otro] of [['Ana', A, 'Alan a Ana (2)', 'Alan a Ana (1)', 'Alan a Beto'], ['Beto', B, 'Alan a Beto', null, 'Alan a Ana (2)']]) {
+      ok(await txt(boton(u, `Hola, soy Alan ${tag}`)) === X.responder, `${quien}: el saludo de bienvenida lleva "${X.responder}", no "${X.responderle}"`)
+      ok(await txt(boton(u, `${mio1} ${tag}`)) === X.responderle, `${quien}: la última respuesta a SU mensaje lleva "${X.responderle}"`)
+      if (mio2) ok(await txt(boton(u, `${mio2} ${tag}`)) === X.responder, `${quien}: la respuesta anterior a lo mismo lleva "${X.responder}"`)
+      ok(await txt(boton(u, `${otro} ${tag}`)) === X.responder, `${quien}: la respuesta a OTRO invitado lleva "${X.responder}"`)
+      const todos = await u.p.locator('main.card .reply-txt').evaluateAll((bs) => bs.map((b) => ({ t: b.textContent.trim(), a: b.getAttribute('aria-label') })))
+      ok(todos.filter((b) => b.t === X.responderle).length === 1, `${quien}: exactamente UN botón "${X.responderle}" en todo el canal (${todos.filter((b) => b.t === X.responderle).length})`)
+      ok(new Set(todos.map((b) => b.a)).size === todos.length, `${quien}: los ${todos.length} botones de respuesta tienen nombre accesible distinto`)
+      const aria = await boton(u, `${mio1} ${tag}`).getAttribute('aria-label')
+      const suyo = quien === 'Ana' ? MA : MB
+      ok(X.ariaRe.test(aria ?? '') && (aria ?? '').endsWith(suyo.slice(0, 40)), `${quien}: nombre accesible "${aria}"`)
+    }
+    await A.c.close(); await B.c.close()
+  }
+
+  // 4 · privacidad
+  {
+    console.log('\n── R4 privacidad')
+    for (const [loc, vp, movil] of [['es-AR', { width: 1280, height: 800 }, false], ['en-US', { width: 375, height: 667 }, true]]) {
+      const c = await browser.newContext({ viewport: vp, hasTouch: movil, isMobile: movil, locale: loc })
+      const p = await c.newPage()
+      const cod = await link4()
+      await p.goto(`${WEB}/sala/${cod}`); await p.waitForSelector('#sala-nombre')
+      await p.locator('a', { hasText: loc === 'es-AR' ? 'Privacidad' : 'Privacy' }).first().click()
+      await p.waitForSelector('article.priv')
+      const cuerpo = await p.locator('body').innerText()
+      ok(/Los hilos también son visibles para todos los miembros de la sala\./.test(cuerpo) || /Threads are also visible to every member of the room\./.test(cuerpo), `${loc}: la privacidad dice que los hilos los ven todos los miembros`)
+      ok(!/navegador|browser/i.test(cuerpo), `${loc}: la privacidad no habla de "navegador" (vale también para la app)`)
+      ok(/dispositivo|device/i.test(cuerpo), `${loc}: la clave queda "en tu dispositivo"`)
+      await p.locator('a', { hasText: loc === 'es-AR' ? 'Volver a la sala' : 'Back to the room' }).click()
+      await p.waitForSelector('#sala-nombre')
+      ok(p.url().endsWith(`/sala/${cod}`), `${loc}: "Volver" regresa a la invitación con su código (${p.url().replace(cod, '<código>').replace(WEB, '')})`)
+      await c.close()
+    }
+    for (const [lang, loc, h1, frase, volver] of [['en', 'es-AR', 'Privacy', 'Threads are also visible to every member of the room.', 'Back to the room'], ['es', 'en-US', 'Privacidad', 'Los hilos también son visibles para todos los miembros de la sala.', 'Volver a la sala']]) {
+      const c = await browser.newContext({ viewport: { width: 375, height: 667 }, hasTouch: true, isMobile: true, locale: loc })
+      const p = await c.newPage()
+      await p.goto(`${WEB}/sala/privacidad?lang=${lang}`); await p.waitForSelector('article.priv')
+      ok((await p.locator('h1').innerText()).trim().toLowerCase() === h1.toLowerCase(), `?lang=${lang} en un navegador ${loc}: título "${await p.locator('h1').innerText()}"`)
+      ok((await p.locator('body').innerText()).includes(frase), `?lang=${lang}: "${frase}"`)
+      await p.locator('a', { hasText: volver }).click(); await p.waitForTimeout(500)
+      ok(new URL(p.url()).pathname === '/sala', `abierta directo (sin sala detrás), "Volver" va a /sala (${new URL(p.url()).pathname})`)
+      await c.close()
+    }
+  }
+
+  // 2 · scroll con una sala grande: aterriza abajo sin pintar el tope, y abrir/cerrar un hilo no mueve la lista
+  {
+    console.log('\n── R4 scroll')
+    const gente = ['Ana', 'Beto', 'Alan', 'Carla', 'Mateo']
+    const KS = { Mateo: K.Mateo, Alan: K.Alan }
+    for (const nme of ['Ana', 'Beto', 'Carla']) KS[nme] = JSON.parse(py('alta.py', LAB4, 'Gen ' + nme, '--persona')).clave
+    const quien = (a) => a === 'Ana' ? 'Gen Ana' : a === 'Beto' ? 'Gen Beto' : a === 'Carla' ? 'Gen Carla' : a
+    const raices = []
+    for (let i = 0; i < 70; i++) {
+      const a = gente[i % gente.length]
+      const r = await post('/enviar', { texto: `scroll ${i} de ${a}. ` + 'texto para ocupar alto en la pantalla. '.repeat(2 + (i % 3)) }, KS[quien(a)] ?? KS[a])
+      raices.push(r.id)
+      if (i % 3 === 0) { await post('/enviar', { texto: `resp ${i} a`, respuesta_a: r.id }, KS.Mateo); await post('/enviar', { texto: `resp ${i} b`, respuesta_a: r.id }, KS.Alan) }
+    }
+    for (const [etiqueta, vp, movil] of [['mobile 375 touch + red lenta', { width: 375, height: 667 }, true], ['desktop 1280', { width: 1280, height: 800 }, false]]) {
+      console.log(`  · ${etiqueta}`)
+      const c = await browser.newContext({ viewport: vp, hasTouch: movil, isMobile: movil, locale: 'es-AR' })
+      const p = await c.newPage()
+      await p.addInitScript(() => { window.__log = []; const f = () => { const s = document.querySelector('main.card .stream'); if (s && s.querySelector('.msg')) window.__log.push(Math.round(s.scrollTop)); requestAnimationFrame(f) }; requestAnimationFrame(f) })
+      await p.goto(`${WEB}/sala/${await link4()}`); await p.waitForSelector('#sala-nombre')
+      if (movil) { const cdp = await c.newCDPSession(p); await cdp.send('Network.enable'); await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 400, downloadThroughput: 400 * 1024 / 8, uploadThroughput: 400 * 1024 / 8 }) }
+      await p.fill('#sala-nombre', `Scroll ${Date.now().toString().slice(-5)}`); await p.locator('button.cta').click()
+      await p.waitForSelector('main.card .msg', { timeout: 60000 }); await dormir(1500)
+      const log = await p.evaluate(() => window.__log)
+      ok(log.length > 3 && log.every((t) => t > 100), `al entrar la lista no se pinta ni un cuadro en el tope (${log.filter((t) => t <= 100).length} cuadros en scrollTop ≤ 100 de ${log.length}; primer valor ${log[0]})`)
+      const stream = p.locator('main.card .stream')
+      const pos = () => stream.evaluate((e) => ({ top: Math.round(e.scrollTop), max: Math.round(e.scrollHeight - e.clientHeight) }))
+      let q = await pos()
+      ok(q.max > 2000 && q.max - q.top <= 40, `aterriza al fondo (${q.top}/${q.max})`)
+      const tocar = async (l) => movil ? l.tap() : l.click()
+      const rowAt = async (frac) => {
+        const filas = stream.locator('.thread-row'); const k = Math.floor((await filas.count()) * frac)
+        const f = filas.nth(k); await f.scrollIntoViewIfNeeded(); await dormir(500); return f
+      }
+      const offDe = (id) => stream.evaluate((e, id) => { const m = e.querySelector(`[data-mid="${id}"]`); return m ? Math.round(m.getBoundingClientRect().top - e.getBoundingClientRect().top) : null }, id)
+      const ciclo = async (nombre, frac, cerrar) => {
+        const f = await rowAt(frac)
+        const id = await f.evaluate((e) => e.closest('.msg').dataset.mid)
+        const top0 = (await pos()).top, off0 = await offDe(id)
+        await tocar(f); await p.waitForSelector('.tpanel textarea'); await dormir(1200)
+        if (frac > 0.5) await post('/enviar', { texto: `llega en vivo ${nombre}` }, K.Alan)   // un mensaje del agente con el hilo abierto
+        await dormir(1500)
+        await cerrar(); await dormir(1000)
+        const top1 = (await pos()).top, off1 = await offDe(id)
+        ok(await p.locator('.tpanel').count() === 0 && Math.abs(off1 - off0) <= 4, `${nombre}: el mensaje del hilo sigue en su lugar (${off0} → ${off1} px; scrollTop ${top0} → ${top1})`)
+        ok(top1 > 300, `${nombre}: la lista no vuelve arriba (scrollTop ${top1})`)
+      }
+      if (movil) {
+        await ciclo('atrás del navegador (mitad)', 0.4, async () => { await p.goBack() })
+        await ciclo('flecha ← (mitad)', 0.4, async () => { await p.locator('.tpanel .head button.only-m').tap() })
+        await ciclo('atrás con mensaje en vivo (arriba)', 0.8, async () => { await p.goBack() })
+      } else {
+        await ciclo('✕ (mitad)', 0.4, async () => { await p.locator('.tpanel .head button.hide-m').click() })
+        await ciclo('✕ con mensaje en vivo (arriba)', 0.8, async () => { await p.locator('.tpanel .head button.hide-m').click() })
+      }
+      // pegado al fondo: abrir y cerrar el último hilo deja el chat al fondo
+      await stream.evaluate((e) => { e.scrollTop = e.scrollHeight }); await dormir(600)
+      const ultima = stream.locator('.thread-row').last()
+      if (await ultima.isVisible()) {
+        await tocar(ultima); await p.waitForSelector('.tpanel textarea'); await dormir(800)
+        if (movil) await p.goBack(); else await p.locator('.tpanel .head button.hide-m').click()
+        await dormir(900); q = await pos()
+        ok(q.max - q.top <= 40, `abierto/cerrado un hilo estando al fondo, sigue al fondo (${q.top}/${q.max})`)
+      }
+      await c.close()
+    }
+  }
+} finally {
+  limpiarLab4()
+}
 }
 
 await browser.close()
