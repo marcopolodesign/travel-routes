@@ -123,7 +123,7 @@ const ar = {
     intro: 'La sala es un chat grupal donde también participan agentes de IA de Marco Polo. Esto es lo que tenés que saber.',
     secciones: [
       { h: 'Quién ve los mensajes', p: 'Los miembros de la sala, el equipo de Marco Polo y sus agentes de IA, que leen y responden los mensajes. Quien entra a la sala ve el historial completo de mensajes, también los anteriores a su llegada. Los hilos también son visibles para todos los miembros de la sala.' },
-      { h: 'Qué se guarda y dónde', p: 'Tu nombre, tus mensajes y los archivos que subas. Todo se guarda en servidores de Supabase. Los archivos adjuntos quedan guardados en Supabase y el equipo de Marco Polo y sus agentes pueden descargarlos para trabajar con ellos. En tu dispositivo queda guardada la clave de acceso para que no tengas que entrar de nuevo.' },
+      { h: 'Qué se guarda y dónde', p: 'Tu nombre, tus mensajes y los archivos que subas. Todo se guarda en servidores de Supabase. Los archivos adjuntos quedan guardados en Supabase. Los agentes de IA trabajan en computadoras del equipo de Marco Polo y pueden descargar ahí los archivos de la sala para trabajar con ellos. En tu dispositivo queda guardada la clave de acceso para que no tengas que entrar de nuevo.' },
       { h: 'Cuánto tiempo se guardan', p: 'Los mensajes y archivos se guardan mientras la sala esté activa, o hasta que pidas el borrado.' },
       { h: 'Los agentes de IA', p: 'Los agentes usan modelos de IA de Anthropic para responder: lo que se escribe en la sala les llega para que puedan contestar.' },
       { h: 'El link es el acceso', p: 'Quien tenga tu link puede entrar a la sala como vos. No lo reenvíes.' },
@@ -198,7 +198,7 @@ const es: Dict = {
     intro: 'La sala es un chat grupal en el que también participan agentes de IA de Marco Polo. Esto es lo que conviene que sepas.',
     secciones: [
       { h: 'Quién ve los mensajes', p: 'Los miembros de la sala, el equipo de Marco Polo y sus agentes de IA, que leen y responden los mensajes. Quien entra en la sala ve el historial completo de mensajes, también los anteriores a su llegada. Los hilos también son visibles para todos los miembros de la sala.' },
-      { h: 'Qué se guarda y dónde', p: 'Tu nombre, tus mensajes y los archivos que subas. Todo se guarda en servidores de Supabase. Los archivos adjuntos quedan guardados en Supabase y el equipo de Marco Polo y sus agentes pueden descargarlos para trabajar con ellos. En tu dispositivo se guarda la clave de acceso para que no tengas que entrar de nuevo.' },
+      { h: 'Qué se guarda y dónde', p: 'Tu nombre, tus mensajes y los archivos que subas. Todo se guarda en servidores de Supabase. Los archivos adjuntos quedan guardados en Supabase. Los agentes de IA trabajan en ordenadores del equipo de Marco Polo y pueden descargar ahí los archivos de la sala para trabajar con ellos. En tu dispositivo se guarda la clave de acceso para que no tengas que entrar de nuevo.' },
       { h: 'Cuánto tiempo se guardan', p: 'Los mensajes y archivos se guardan mientras la sala esté activa, o hasta que pidas su borrado.' },
       { h: 'Los agentes de IA', p: 'Los agentes usan modelos de IA de Anthropic para responder: lo que se escribe en la sala les llega para que puedan contestar.' },
       { h: 'El enlace es el acceso', p: 'Quien tenga tu enlace puede entrar en la sala como tú. No lo reenvíes.' },
@@ -303,7 +303,7 @@ const en: Dict = {
     intro: 'The room is a group chat where Marco Polo AI agents also take part. Here is what you should know.',
     secciones: [
       { h: 'Who sees the messages', p: 'The members of the room, the Marco Polo team and its AI agents, which read and answer the messages. Anyone who joins the room sees the full message history, including messages from before they arrived. Threads are also visible to every member of the room.' },
-      { h: 'What is stored and where', p: 'Your name, your messages and the files you upload. Everything is stored on Supabase servers. Attached files are stored in Supabase, and the Marco Polo team and its AI agents can download them to work with them. Your access key is kept on your device so you don’t have to sign in again.' },
+      { h: 'What is stored and where', p: 'Your name, your messages and the files you upload. Everything is stored on Supabase servers. Attached files are stored in Supabase. The AI agents work on computers belonging to the Marco Polo team and may download the room’s files there to work with them. Your access key is kept on your device so you don’t have to sign in again.' },
       { h: 'How long it is kept', p: 'Messages and files are kept while the room is active, or until you ask for them to be deleted.' },
       { h: 'The AI agents', p: 'The agents use Anthropic AI models to reply: what is written in the room is sent to them so they can answer.' },
       { h: 'The link is the access', p: 'Anyone with your link can get into the room as you. Don’t forward it.' },

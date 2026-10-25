@@ -1076,7 +1076,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
 
   // Mobile: el chat de atrás queda inerte mientras el hilo está abierto, así que al cerrarlo tiene que estar exactamente donde estaba.
   // (En desktop el panel cambia el ancho y lo resuelve el ancla.) Red de seguridad: si por lo que sea la posición se movió, se restaura.
-  const posAntesHilo = useRef<{ top: number; pegado: boolean } | null>(null)
+  const posAntesHilo = useRef<{ top: number; pegado: boolean; id: number; off: number | null } | null>(null)
   const hiloAbierto = useRef<number | null>(null)
   const enMovil = () => !!window.matchMedia?.('(max-width: 760px)').matches
   useLayoutEffect(() => {
@@ -1086,15 +1086,25 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     const el = streamRef.current, g = posAntesHilo.current
     posAntesHilo.current = null
     if (!el || !g || !enMovil()) return
+    // Se vuelve al MENSAJE desde el que se abrió el hilo, en la misma posición de pantalla (no a "donde estaba el scroll":
+    // si mientras tanto se respondió en el hilo o llegó algo, la altura cambia). Si estaba al fondo, al fondo.
+    pegado.current = g.pegado   // mandar() desde el hilo lo había puesto en true y el chat saltaba al final al volver
+    const n = el.querySelector<HTMLElement>(`[data-mid="${g.id}"]`)
     const maximo = el.scrollHeight - el.clientHeight
-    const objetivo = g.pegado ? maximo : Math.min(g.top, maximo)
-    if (Math.abs(el.scrollTop - objetivo) > 2) { el.scrollTop = objetivo; posPropia.current = ultimoTop.current = el.scrollTop }
+    let objetivo = g.pegado ? maximo : Math.min(g.top, maximo)
+    if (!g.pegado && n && g.off != null) objetivo = Math.max(0, Math.min(maximo, el.scrollTop + n.getBoundingClientRect().top - el.getBoundingClientRect().top - g.off))
+    if (Math.abs(el.scrollTop - objetivo) > 2) el.scrollTop = objetivo
+    posPropia.current = ultimoTop.current = el.scrollTop
+    if (!g.pegado) marcarAncla()
   }, [hiloId])
 
   // Mobile: abrir un hilo suma un estado al historial, así "atrás" cierra el hilo en vez de salir de la sala.
   const abrirHilo = useCallback((id: number) => {
     const stream = streamRef.current
-    if (hiloAbierto.current == null && stream) posAntesHilo.current = { top: stream.scrollTop, pegado: pegado.current }
+    if (hiloAbierto.current == null && stream) {
+      const n = stream.querySelector<HTMLElement>(`[data-mid="${id}"]`)
+      posAntesHilo.current = { top: stream.scrollTop, pegado: pegado.current, id, off: n ? n.getBoundingClientRect().top - stream.getBoundingClientRect().top : null }
+    }
     setHiloId(id); setPanel(false); pegadoHilo.current = true
     try {
       const estado = { ...(window.history.state ?? {}), salaHilo: id }
@@ -1127,7 +1137,8 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       pendiente: true, cliente_id, respuesta_a: extra.respuesta_a ?? null, tambien_canal: extra.tambien_canal,
       is_ai: yo.tipo === 'agente',
     }
-    setPorId((prev) => ({ ...prev, [tempId]: temporal })); pegado.current = true
+    setPorId((prev) => ({ ...prev, [tempId]: temporal }))
+    if (extra.respuesta_a == null) pegado.current = true   // una respuesta en un hilo no mueve el chat de atrás
     try {
       const cuerpo: Record<string, unknown> = { texto, cliente_id, ...extra }
       if (archivo && archivo.size > MAX_BASE64) {
@@ -1138,19 +1149,24 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       } else if (archivo) {
         cuerpo.archivo = { nombre: archivo.name, base64: await base64De(archivo) }
       }
+      // El texto viaja SIEMPRE en base64 (`texto_b64`): el firewall de Cloudflare corta, sin CORS, cuerpos que
+      // parecen un ataque (<script>, SQL, ${jndi}) y el invitado veía que "no pasa nada". Si el firewall corta
+      // también esa forma, se prueba la otra (texto plano) antes de rendirse.
       let error: unknown
-      let cifrado = false   // true: el texto viaja en base64 (ver b64Texto)
-      for (let i = 0; i < 3; i++) {
-        try {
-          const { texto: t, ...resto } = cuerpo
-          await api('/enviar', clave, { method: 'POST', body: JSON.stringify(cifrado ? { ...resto, texto_b64: b64Texto(String(t)) } : cuerpo) })
-          return true
-        } catch (e) {
-          error = e
-          if (bloqueado(e) && !cifrado) { cifrado = true; continue }   // reintento inmediato, sin esperar
-          const st = (e as { status?: number }).status
-          if (st && st < 500 && !(e as { waf?: boolean }).waf) break
-          await new Promise((r) => setTimeout(r, 800 * 2 ** i))
+      const { texto: tx, ...resto } = cuerpo
+      const formas = [{ ...resto, texto_b64: b64Texto(String(tx)) }, cuerpo]   // base64 primero, texto plano de respaldo
+      for (let f = 0; f < formas.length; f++) {
+        for (let i = 0; i < 3; i++) {
+          try {
+            await api('/enviar', clave, { method: 'POST', body: JSON.stringify(formas[f]) })
+            return true
+          } catch (e) {
+            error = e
+            if (bloqueado(e)) break   // el firewall la cortó: se prueba la otra forma enseguida
+            const st = (e as { status?: number }).status
+            if (st && st < 500) throw e
+            await new Promise((r) => setTimeout(r, 800 * 2 ** i))
+          }
         }
       }
       throw error
@@ -1348,7 +1364,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
           )}
           {pista && <p className="agent-hint" id="sala-pista">{pista}</p>}
           <Composer placeholder={phCanal} onAviso={setAviso} menciones={mencionesCanal} onMandar={(t, a) => mandar(t, a, {})} />
-          <div className={`rail ${aviso ? 'err' : ''}`}>{aviso}</div>
+          <div className={`rail ${aviso ? 'err' : ''}`} role={aviso ? 'alert' : undefined}>{aviso}</div>
         </div>
       </main>
 
@@ -1376,7 +1392,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
           <div className="dock">
             <Composer key={hiloId} hilo placeholder={t.phHilo} onAviso={setAviso} autoFocus menciones={mencionesHilo}
               onMandar={(t, a, tambien) => mandar(t, a, { respuesta_a: hiloId, tambien_canal: tambien })} />
-            <div className={`rail ${aviso ? 'err' : ''}`}>{aviso}</div>
+            <div className={`rail ${aviso ? 'err' : ''}`} role={aviso ? 'alert' : undefined}>{aviso}</div>
           </div>
         </section>
       )}

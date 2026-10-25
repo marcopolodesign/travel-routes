@@ -13,6 +13,8 @@
 //   Usa una sala de laboratorio propia (lab-r2-*) que borra al terminar. SOLO_R2=1 salta los controles de R1.
 //
 // QA R4 (al final, sala lab-r4-*): ver el bloque 'QA R4' más abajo. SOLO_R4=1 corre únicamente esto.
+// QA R5 (al final, sala lab-r5-*): envío de texto que el firewall corta (<script>, SQL, ${jndi}) contra el servidor real, privacidad (agentes en computadoras
+//   del equipo) y 'atrás' desde un hilo en mobile (vuelve al mensaje de origen, también tras responder en el hilo). SOLO_R5=1 corre únicamente esto.
 //
 // QA R3 (al final, sala lab-r3-*): aterriza abajo (aun con fotos que cargan tarde), abrir/cerrar un hilo y tocar Responder no mueven el chat,
 //   lo propio se distingue ("Vos"/"You"), "Responderle a <agente>" abre MI hilo, aria-labels únicos, "N mensajes nuevos" no tapa el campo,
@@ -36,8 +38,9 @@ const claves = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.sala', 'clav
 const DUENO = process.env.SALA_DUENO_KEY ?? claves['prueba/Mateo']
 const AGENTE = process.env.SALA_AGENTE_KEY ?? claves['prueba/Claude de Mateo']
 const SOLO_R4 = !!process.env.SOLO_R4
-const SOLO_R2 = !!process.env.SOLO_R2 || !!process.env.SOLO_R3 || SOLO_R4
-const SOLO_R3 = !!process.env.SOLO_R3 || SOLO_R4
+const SOLO_R5 = !!process.env.SOLO_R5
+const SOLO_R2 = !!process.env.SOLO_R2 || !!process.env.SOLO_R3 || SOLO_R4 || SOLO_R5
+const SOLO_R3 = !!process.env.SOLO_R3 || SOLO_R4 || SOLO_R5
 let fallas = 0
 const ok = (c, msg) => { console.log((c ? '✓ ' : '✗ ') + msg); if (!c) fallas++ }
 const post = (ruta, cuerpo, clave) => fetch(API + ruta, { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + clave }, body: JSON.stringify(cuerpo) }).then((r) => r.json())
@@ -254,9 +257,9 @@ const get = (ruta, clave) => fetch(API + ruta, { headers: { authorization: 'Bear
 const dormir = (ms) => new Promise((r) => setTimeout(r, ms))
 const L = {
   'es-AR': { responder: 'Responder', cargando: /Cargando respuestas/i, sinResp: /Todavía sin respuestas/, mandarHilo: /Mandar en el hilo/, decision: /Necesita una decisión|Esperando a/i, leyendo: /lo está leyendo/i,
-    escribiendo: /está escribiendo/i, visto: /Visto/i, hist: /historial completo/, ret: /mientras la sala esté activa/, arch: /descargarlos/, entradaHist: /ve el historial/, noRed: /conexión/i, pre: /Cargando la sala/ },
+    escribiendo: /está escribiendo/i, visto: /Visto/i, hist: /historial completo/, ret: /mientras la sala esté activa/, arch: /descargar ahí los archivos de la sala/, entradaHist: /ve el historial/, noRed: /conexión/i, pre: /Cargando la sala/ },
   'en-US': { responder: 'Reply', cargando: /Loading replies/i, sinResp: /No replies yet/, mandarHilo: /Send in the thread/, decision: /Needs a decision|Waiting for/i, leyendo: /is reading/i,
-    escribiendo: /is typing/i, visto: /Seen/i, hist: /full message history/, ret: /while the room is active/, arch: /can download them/, entradaHist: /see the history/, noRed: /connection/i, pre: /Loading the room/ },
+    escribiendo: /is typing/i, visto: /Seen/i, hist: /full message history/, ret: /while the room is active/, arch: /may download the room/, entradaHist: /see the history/, noRed: /connection/i, pre: /Loading the room/ },
 }
 const limpiarLab = () => { try { sql(`delete from sala_mensajes where sala='${LAB}'; delete from sala_lecturas where token_hash in (select token_hash from sala_miembros where sala='${LAB}'); delete from sala_claves where token_hash in (select token_hash from sala_miembros where sala='${LAB}'); delete from sala_miembros where sala='${LAB}'; delete from sala_invitaciones where sala='${LAB}'; delete from sala_salas where sala='${LAB}'`) } catch (e) { console.log('(limpieza del laboratorio falló: ' + String(e).slice(0, 120) + ')') } }
 sql(`insert into sala_salas (sala, titulo, subtitulo, anfitrion, equipo, creada_por) values ('${LAB}', 'Lab R2', 'QA', 'Mateo', array['Mateo','Alan'], 'Mateo')`)
@@ -469,7 +472,7 @@ try {
     'en-US': { mandar: 'Send', vos: 'You', responderle: /^Reply to Alan: /, responder: /^Reply to /, resp: /^\d+ repl(y|ies) to /, textbox: 'Message', nuevo: 'New for you', irreplica: 'Reply to Alan' },
   }
   let combo = 0
-  for (const [loc, X] of SOLO_R4 ? [] : Object.entries(L3)) for (const [etiqueta, vp, movil] of [['desktop 1280', { width: 1280, height: 800 }, false], ['mobile 375 touch', { width: 375, height: 667 }, true]]) {
+  for (const [loc, X] of SOLO_R4 || SOLO_R5 ? [] : Object.entries(L3)) for (const [etiqueta, vp, movil] of [['desktop 1280', { width: 1280, height: 800 }, false], ['mobile 375 touch', { width: 375, height: 667 }, true]]) {
     const tag = `${loc.slice(0, 2)}${movil ? 'm' : 'd'}${Date.now().toString().slice(-4)}`
     console.log(`\n── R3 ${loc} · ${etiqueta}`)
     const c = await browser.newContext({ viewport: vp, hasTouch: movil, isMobile: movil, locale: loc })
@@ -594,7 +597,7 @@ try {
 //   2 · scroll: la lista no se pinta en scrollTop 0 al entrar, y abrir/cerrar un hilo (atrás del navegador, ←, ✕) la deja donde estaba
 //   3 · onboarding: placeholder "Escribile a Alan o a la sala…" (o "…a un agente con @…" con varios) y una pista que se va con el primer mensaje
 //   4 · privacidad: "Volver" conserva el token de la invitación, ?lang= fuerza el idioma, sin "navegador", dice que los hilos los ven todos
-if (!process.env.SOLO_R3 || SOLO_R4) {
+if ((!process.env.SOLO_R3 || SOLO_R4) && !SOLO_R5) {
 const LAB4 = 'lab-r4-' + sufijo
 const limpiarLab4 = () => { try { sql(`delete from sala_mensajes where sala='${LAB4}'; delete from sala_lecturas where token_hash in (select token_hash from sala_miembros where sala='${LAB4}'); delete from sala_claves where token_hash in (select token_hash from sala_miembros where sala='${LAB4}'); delete from sala_miembros where sala='${LAB4}'; delete from sala_invitaciones where sala='${LAB4}'; delete from sala_salas where sala='${LAB4}'`) } catch (e) { console.log('(limpieza del laboratorio R4 falló: ' + String(e).slice(0, 120) + ')') } }
 sql(`insert into sala_salas (sala, titulo, subtitulo, anfitrion, equipo, creada_por) values ('${LAB4}', 'Lab R4', 'QA', 'Mateo', array['Mateo','Alan'], 'Mateo')`)
@@ -764,6 +767,134 @@ try {
   }
 } finally {
   limpiarLab4()
+}
+}
+
+// ─── QA R5 ───────────────────────────────────────────────────────────────────────────────────
+//   1 · un invitado escribe `<script>alert(1)</script> ' OR 1=1 --` (o `${jndi:ldap://x}`) y manda con clic, doble clic y Enter: el mensaje SALE (se ve
+//       escapado, nunca se ejecuta), el campo queda vacío y el texto plano nunca viaja (el cliente manda texto_b64). Si el firewall corta las dos formas,
+//       el error se ve enseguida, el texto sigue en el campo y el aviso queda a la vista.
+//   2 · privacidad: "Los agentes de IA trabajan en computadoras del equipo de Marco Polo…" en es-AR y en-US (sin nombres de personas ni máquinas).
+//   3 · atrás desde un hilo (mobile: atrás del navegador y ←; desktop: ✕), con y sin haber respondido en el hilo: se vuelve al mensaje de origen, en su lugar.
+if (SOLO_R5 || !(process.env.SOLO_R2 || process.env.SOLO_R3 || SOLO_R4)) {
+const LAB5 = 'lab-r5-' + sufijo
+const limpiarLab5 = () => { try { sql(`delete from sala_mensajes where sala='${LAB5}'; delete from sala_lecturas where token_hash in (select token_hash from sala_miembros where sala='${LAB5}'); delete from sala_claves where token_hash in (select token_hash from sala_miembros where sala='${LAB5}'); delete from sala_miembros where sala='${LAB5}'; delete from sala_invitaciones where sala='${LAB5}'; delete from sala_salas where sala='${LAB5}'`) } catch (e) { console.log('(limpieza del laboratorio R5 falló: ' + String(e).slice(0, 120) + ')') } }
+sql(`insert into sala_salas (sala, titulo, subtitulo, anfitrion, equipo, creada_por) values ('${LAB5}', 'Lab R5', 'QA', 'Mateo', array['Mateo','Alan'], 'Mateo')`)
+try {
+  const K = { Mateo: JSON.parse(py('alta.py', LAB5, 'Mateo', '--persona')).clave, Alan: JSON.parse(py('alta.py', LAB5, 'Alan', '--dueno', 'Mateo')).clave }
+  const link5 = async () => (await post('/invitar', { horas: 1, usos: 30 }, K.Mateo)).codigo
+  const historial5 = async () => (await get('/historial?n=300', K.Mateo)).mensajes
+  const entrar = async (X, vp, movil) => {
+    const c = await browser.newContext({ viewport: vp, hasTouch: movil, isMobile: movil, locale: X })
+    const p = await c.newPage()
+    await p.goto(`${WEB}/sala/${await link5()}`); await p.waitForSelector('#sala-nombre')
+    await p.fill('#sala-nombre', `R5 ${Date.now().toString().slice(-6)}`); await p.locator('button.cta').click()
+    await p.waitForSelector('main.card textarea', { timeout: 20000 })
+    return { c, p }
+  }
+  const VPS = [['desktop 1280', { width: 1280, height: 800 }, false], ['mobile 375 touch', { width: 375, height: 667 }, true]]
+
+  // 1 · envío
+  for (const [loc, [etiqueta, vp, movil]] of [['es-AR', VPS[0]], ['en-US', VPS[1]], ['es-AR', VPS[1]], ['en-US', VPS[0]]]) {
+    console.log(`\n── R5 envío ${loc} · ${etiqueta}`)
+    const { c, p } = await entrar(loc, vp, movil)
+    let dialogos = 0; p.on('dialog', (d) => { dialogos++; d.dismiss() })
+    const planos = [], cuerpos = []
+    p.on('request', (r) => { if (r.url().includes('/sala/enviar')) { cuerpos.push(r.postData() ?? ''); if (/<script|jndi|OR 1=1/.test(r.postData() ?? '')) planos.push(r.postData()) } })
+    const ta = p.locator('main.card textarea')
+    const casos = [
+      ['<script>alert(1)</script> \' OR 1=1 --', 'clic', (tag) => `<script>alert(1)</script> ' OR 1=1 -- ${tag}`],
+      ['<script>alert(1)</script> \' OR 1=1 --', 'doble clic / doble toque', (tag) => `<script>alert(1)</script> ' OR 1=1 -- ${tag}`],
+      ['<script>alert(1)</script> \' OR 1=1 --', 'Enter', (tag) => `<script>alert(1)</script> ' OR 1=1 -- ${tag}`],
+      ['${jndi:ldap://x}', 'clic', (tag) => `\${jndi:ldap://x} ${tag}`],
+      ['${jndi:ldap://x}', 'Enter', (tag) => `\${jndi:ldap://x} ${tag}`],
+    ]
+    let i = 0
+    for (const [base, como, armar] of casos) {
+      const tag = `r5${loc.slice(0, 2)}${movil ? 'm' : 'd'}${++i}${Date.now().toString().slice(-4)}`
+      const texto = armar(tag)
+      await ta.click(); await p.keyboard.type(texto)
+      const boton = p.locator('main.card button.send')
+      if (como === 'Enter') await p.keyboard.press('Enter')
+      else if (como === 'clic') { if (movil) await boton.tap(); else await boton.click() }
+      else { if (movil) { await boton.tap(); await boton.tap({ force: true, timeout: 1500 }).catch(() => {}) } else await boton.dblclick({ force: true }) }
+      await p.waitForSelector(`main.card .body :text("${tag}")`, { timeout: 10000 }).catch(() => {})
+      const cuerpoMsg = p.locator('main.card .msg', { hasText: tag })
+      const enChat = await cuerpoMsg.count()
+      const lo = enChat ? await cuerpoMsg.first().locator('.body').innerText() : ''
+      ok(enChat === 1 && lo.includes(base.split(' ')[0]), `"${base}" por ${como}: el mensaje sale y aparece UNA vez, escapado ("${lo.slice(0, 50)}")`)
+      ok(await ta.inputValue() === '', `  el campo queda vacío (${JSON.stringify((await ta.inputValue()).slice(0, 20))})`)
+      ok(await p.locator('main.card .rail').innerText() === '', '  sin error en pantalla')
+      ok(await cuerpoMsg.first().locator('script').count() === 0 && dialogos === 0, `  nada se ejecuta (script en el DOM: ${await cuerpoMsg.first().locator('script').count()}, alert(): ${dialogos})`)
+      let h = []
+      for (let k = 0; k < 20; k++) { h = await historial5(); if (h.some((m) => m.texto === texto)) break; await dormir(300) }
+      ok(h.filter((m) => m.texto === texto).length === 1, '  el servidor lo guardó, una sola vez, con el texto intacto')
+    }
+    ok(planos.length === 0 && cuerpos.length >= casos.length && cuerpos.every((b) => b.includes('texto_b64')), `el texto peligroso nunca viaja en plano (${cuerpos.length} envíos, ${planos.length} en plano)`)
+    // el firewall corta las dos formas: el error se ve enseguida y el texto no se pierde
+    await p.route('**/sala/enviar', (r) => r.fulfill({ status: 403, contentType: 'text/html', headers: { 'access-control-allow-origin': '*' }, body: '<html>blocked</html>' }))
+    const t0 = Date.now()
+    const perdido = `se corta ${Date.now().toString().slice(-5)} ' OR 1=1 --`
+    await ta.click(); await p.keyboard.type(perdido); await p.keyboard.press('Enter')
+    await p.waitForSelector('main.card .rail.err', { timeout: 6000 }).catch(() => {})
+    const rail = p.locator('main.card .rail')
+    const lapso = Date.now() - t0
+    ok(/security|seguridad/i.test(await rail.innerText()) && lapso < 3000, `si las dos formas se cortan, el error sale en ${lapso} ms: "${(await rail.innerText()).slice(0, 70)}"`)
+    ok(await ta.inputValue() === perdido, '  y el texto sigue en el campo')
+    ok(await rail.evaluate((e) => { const r = e.getBoundingClientRect(); return r.bottom <= innerHeight && r.top >= 0 }) && await rail.getAttribute('role') === 'alert', '  el aviso está a la vista y es role="alert"')
+    await c.close()
+  }
+
+  // 2 · privacidad
+  console.log('\n── R5 privacidad')
+  for (const [loc, vp, movil, frase] of [['es-AR', VPS[0][1], false, 'Los agentes de IA trabajan en computadoras del equipo de Marco Polo y pueden descargar ahí los archivos de la sala para trabajar con ellos.'], ['en-US', VPS[1][1], true, 'The AI agents work on computers belonging to the Marco Polo team and may download the room’s files there to work with them.']]) {
+    const c = await browser.newContext({ viewport: vp, hasTouch: movil, isMobile: movil, locale: loc })
+    const p = await c.newPage()
+    await p.goto(`${WEB}/sala/privacidad`); await p.waitForSelector('article.priv')
+    const cuerpo = await p.locator('article.priv').innerText()
+    ok(cuerpo.includes(frase), `${loc}: la privacidad dice que los agentes trabajan en computadoras del equipo`)
+    ok(!/\bMac\b|Mateo|MacBook|\/Users/.test(cuerpo), `${loc}: sin nombres de personas ni máquinas ni rutas`)
+    await c.close()
+  }
+
+  // 3 · atrás desde un hilo
+  {
+    console.log('\n── R5 atrás desde un hilo')
+    const gente = ['Mateo', 'Alan']
+    for (let i = 0; i < 40; i++) {
+      const r = await post('/enviar', { texto: `hilo-origen ${i}. ` + 'texto para ocupar alto en la pantalla. '.repeat(2 + (i % 3)) }, K[gente[i % 2]])
+      if (i % 2 === 0) { await post('/enviar', { texto: `resp ${i} a`, respuesta_a: r.id }, K.Mateo); await post('/enviar', { texto: `resp ${i} b`, respuesta_a: r.id }, K.Alan) }
+    }
+    for (const [etiqueta, vp, movil] of VPS) for (const loc of ['es-AR', 'en-US']) {
+      console.log(`  · ${etiqueta} · ${loc}`)
+      const { c, p } = await entrar(loc, vp, movil)
+      const stream = p.locator('main.card .stream')
+      const tocar = async (l) => movil ? l.tap() : l.click()
+      const pos = () => stream.evaluate((e) => ({ top: Math.round(e.scrollTop), max: Math.round(e.scrollHeight - e.clientHeight) }))
+      const offDe = (id) => stream.evaluate((e, id) => { const m = e.querySelector(`[data-mid="${id}"]`); return m ? Math.round(m.getBoundingClientRect().top - e.getBoundingClientRect().top) : null }, id)
+      await dormir(1200)
+      const cierres = movil
+        ? [['atrás del navegador', async () => { await p.goBack() }], ['flecha ←', async () => { await p.locator('.tpanel .head button.only-m').tap() }]]
+        : [['✕', async () => { await p.locator('.tpanel .head button.hide-m').click() }]]
+      let k = 0
+      for (const [nombre, cerrar] of cierres) for (const responder of [false, true]) {
+        const filas = stream.locator('.thread-row')
+        const f = filas.nth(Math.floor((await filas.count()) * (0.3 + 0.15 * k++)))
+        await f.scrollIntoViewIfNeeded(); await dormir(500)
+        const id = await f.evaluate((e) => e.closest('.msg').dataset.mid)
+        const top0 = (await pos()).top, off0 = await offDe(id)
+        await tocar(f); await p.waitForSelector('.tpanel textarea'); await dormir(1000)
+        if (responder) { await p.locator('.tpanel textarea').click(); await p.keyboard.type(`mi respuesta ${Date.now()}`); await p.keyboard.press('Enter'); await dormir(2500) }
+        await cerrar(); await dormir(1000)
+        const q = await pos(), off1 = await offDe(id)
+        ok(await p.locator('.tpanel').count() === 0 && off1 != null && Math.abs(off1 - off0) <= 4, `${nombre}${responder ? ' tras responder en el hilo' : ''}: vuelve al mensaje de origen en su lugar (${off0} → ${off1} px; scrollTop ${top0} → ${q.top}/${q.max})`)
+        ok(q.max - q.top > 300 && off1 != null && off1 >= -4 && off1 < vp.height, `  no salta al final del chat y el mensaje queda visible (${q.top}/${q.max})`)
+      }
+      await c.close()
+    }
+  }
+} finally {
+  limpiarLab5()
 }
 }
 
