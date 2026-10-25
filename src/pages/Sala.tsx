@@ -982,20 +982,30 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     if (tocando.current) { scrollPendiente.current = true; return }
     bajar()
   }, [canal, miembros])
-  // Aterrizaje y crecimiento: cada vez que el contenido o el ancho del chat cambian, o se queda abajo o se conserva la posición.
+  // Aterrizaje y crecimiento. Dos cosas mueven el layout sin que el usuario haga nada:
+  //  - lo que carga tarde (fotos, videos, tipografías): al terminar de cargar, si seguía al fondo, vuelve al fondo;
+  //  - el ancho del chat (el panel del hilo se abre o se cierra): se conserva el ancla (o el fondo).
+  // NO se observa la altura del contenido: un cambio de altura por hover (p. ej. "Ver respuestas" al pasar el mouse) movería lo que
+  // está bajo el puntero y haría oscilar el hover.
   useEffect(() => {
     const el = streamRef.current
-    if (!el || typeof ResizeObserver === 'undefined') return
-    const reajustar = () => {
+    if (!el) return
+    const alCargar = () => {
       despegarSiSubio()
       if (pegado.current) { if (tocando.current) scrollPendiente.current = true; else bajar() }
       else restaurarAncla()
     }
-    const ro = new ResizeObserver(reajustar)
-    ro.observe(el)
-    const inner = el.firstElementChild
-    if (inner) ro.observe(inner)
-    return () => ro.disconnect()
+    el.addEventListener('load', alCargar, true)
+    el.addEventListener('loadedmetadata', alCargar, true)
+    document.fonts?.ready.then(alCargar).catch(() => {})
+    let ancho = el.clientWidth
+    const ro = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => {
+      if (el.clientWidth === ancho) return
+      ancho = el.clientWidth
+      alCargar()
+    })
+    ro?.observe(el)
+    return () => { el.removeEventListener('load', alCargar, true); el.removeEventListener('loadedmetadata', alCargar, true); ro?.disconnect() }
   }, [yo])
   useEffect(() => {
     const el = hiloRef.current
@@ -1005,11 +1015,11 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   const ultimoHiloAbierto = useRef<number | null>(null)
   useEffect(() => {
     const el = hiloRef.current
-    if (!el || hiloId == null || typeof ResizeObserver === 'undefined') return
-    const ro = new ResizeObserver(() => { if (pegadoHilo.current) el.scrollTop = el.scrollHeight })
-    ro.observe(el)
-    if (el.firstElementChild) ro.observe(el.firstElementChild)
-    return () => ro.disconnect()
+    if (!el || hiloId == null) return
+    const alCargar = () => { if (pegadoHilo.current) el.scrollTop = el.scrollHeight }
+    el.addEventListener('load', alCargar, true)
+    el.addEventListener('loadedmetadata', alCargar, true)
+    return () => { el.removeEventListener('load', alCargar, true); el.removeEventListener('loadedmetadata', alCargar, true) }
   }, [hiloId, yo])
   const alScrollear = () => {
     const el = streamRef.current
