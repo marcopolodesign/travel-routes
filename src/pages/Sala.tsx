@@ -2,7 +2,7 @@
 // /sala/:codigo  entra con un link de invitación (pide el nombre una vez)
 // /sala          vuelve a la sala con la clave guardada en este dispositivo
 // /sala#k=<clave> entra con una clave directa (para Mateo)
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import MarcopoloLogo from '../components/MarcopoloLogo'
 import './sala.css'
@@ -320,10 +320,43 @@ async function base64De(archivo: File) {
   })
 }
 
-function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso }: {
+// ─── Menciones (@) ─── mismas reglas que la app (marcopolo-app/src/lib/logica.ts). El servidor
+// detecta "@Nombre Completo" contra los miembros activos: elegir de la lista deja el nombre exacto.
+const plano = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+
+// "@" al principio o después de un espacio; hasta el cursor, sin saltos (sí espacios: "@Claude de").
+function consultaMencion(texto: string, cursor: number): { inicio: number; q: string } | null {
+  const antes = texto.slice(0, cursor)
+  const at = antes.lastIndexOf('@')
+  if (at < 0 || (at > 0 && !/\s/.test(antes[at - 1]))) return null
+  const q = antes.slice(at + 1)
+  if (/\n/.test(q) || q.length > 40 || /^\s/.test(q)) return null
+  return { inicio: at, q }
+}
+
+// Por inicio de palabra, sin uno mismo. Primero quienes ya escribieron acá, después el resto;
+// dentro de cada grupo, los que empiezan con lo escrito y luego alfabético (Felipe).
+function filtrarMenciones(miembros: Miembro[], q: string, yo: string, participan: string[]) {
+  const b = plano(q).replace(/\s+/g, ' ')
+  const peso = (m: Miembro) => (participan.includes(m.autor) ? 0 : 2) + (plano(m.autor).startsWith(b) ? 0 : 1)
+  return miembros
+    .filter((m) => m.autor !== yo && (' ' + plano(m.autor)).includes(' ' + b))
+    .sort((x, y) => peso(x) - peso(y) || x.autor.localeCompare(y.autor, 'es'))
+}
+
+function insertarMencion(texto: string, inicio: number, cursor: number, nombre: string) {
+  const resto = texto.slice(cursor)
+  const puesto = `@${nombre}` + (resto.startsWith(' ') ? '' : ' ')
+  return { texto: texto.slice(0, inicio) + puesto + resto, cursor: inicio + puesto.length + (resto.startsWith(' ') ? 1 : 0) }
+}
+
+type DatosMenciones = { miembros: Miembro[]; yo: string; equipo: string[]; participan: string[] }
+
+function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso, menciones }: {
   placeholder: string; hilo?: boolean; autoFocus?: boolean
   onMandar: (texto: string, archivo: File | null, tambienCanal: boolean) => Promise<boolean>
   onAviso: (a: string | null) => void
+  menciones?: DatosMenciones
 }) {
   const [texto, setTexto] = useState('')
   const [archivo, setArchivo] = useState<File | null>(null)
@@ -331,18 +364,70 @@ function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso }: {
   const fileRef = useRef<HTMLInputElement>(null)
   const taRef = useRef<HTMLTextAreaElement>(null)
   const ajustar = () => { const t = taRef.current; if (t) { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px' } }
+  // Menciones: posición del cursor, fila activa y si se cerró con Esc (vuelve a abrirse al seguir tipeando).
+  const [cursor, setCursor] = useState(0)
+  const [activa, setActiva] = useState(0)
+  const [cerrada, setCerrada] = useState<string | null>(null)
+  const consulta = menciones ? consultaMencion(texto, cursor) : null
+  const candidatos = consulta && menciones ? filtrarMenciones(menciones.miembros, consulta.q, menciones.yo, menciones.participan) : []
+  const clave = consulta ? `${consulta.inicio}:${consulta.q}` : null
+  const abierta = candidatos.length > 0 && cerrada !== clave
+  const sel = Math.min(activa, Math.max(0, candidatos.length - 1))
+  const listaRef = useRef<HTMLDivElement>(null)
+  useEffect(() => { setActiva(0) }, [clave])
+  useEffect(() => { listaRef.current?.querySelector('.on')?.scrollIntoView({ block: 'nearest' }) }, [sel, abierta])
+  const leerCursor = () => setCursor(taRef.current?.selectionEnd ?? 0)
+  const mencionar = (m: Miembro) => {
+    if (!consulta) return
+    const r = insertarMencion(texto, consulta.inicio, cursor, m.autor)
+    setTexto(r.texto); setCursor(r.cursor)
+    ponerCursor.current = r.cursor
+  }
+  // El cursor se pone en el mismo commit que el texto nuevo (no en un frame después):
+  // si se tipea rápido tras Tab, un requestAnimationFrame lo devolvía atrás.
+  const ponerCursor = useRef<number | null>(null)
+  useLayoutEffect(() => {
+    const c = ponerCursor.current
+    if (c == null) return
+    ponerCursor.current = null
+    const t = taRef.current
+    if (t) { t.focus(); t.setSelectionRange(c, c) }
+    ajustar()
+  })
+  const teclaMencion = (e: React.KeyboardEvent) => {
+    if (!abierta || e.nativeEvent.isComposing) return false
+    if (e.key === 'ArrowDown') setActiva((sel + 1) % candidatos.length)
+    else if (e.key === 'ArrowUp') setActiva((sel - 1 + candidatos.length) % candidatos.length)
+    else if ((e.key === 'Enter' && !e.shiftKey) || e.key === 'Tab') mencionar(candidatos[sel])
+    else if (e.key === 'Escape') setCerrada(clave)
+    else return false
+    e.preventDefault()
+    return true
+  }
   const mandar = async () => {
     const t = texto.trim()
     if (!t && !archivo) return
     if (archivo && archivo.size > MAX_SUBIDA) { onAviso('El archivo pesa más de 50 MB'); return }
     const a = archivo
-    setTexto(''); setArchivo(null); onAviso(null)
+    setTexto(''); setCursor(0); setArchivo(null); onAviso(null)
     requestAnimationFrame(ajustar)
     const ok = await onMandar(t, a, tambien)
     if (!ok) { setTexto(t); setArchivo(a); requestAnimationFrame(ajustar) }
   }
   return (
     <div className="composer">
+      {abierta && menciones && (
+        <div className="mencion" role="listbox" aria-label="Mencionar a alguien" ref={listaRef}>
+          {candidatos.map((m, i) => (
+            <div key={m.autor} role="option" aria-selected={i === sel} className={`mrow ${i === sel ? 'on' : ''}`}
+              onMouseDown={(e) => { e.preventDefault(); mencionar(m) }} onMouseEnter={() => setActiva(i)}>
+              <Avatar autor={m.autor} tipo={m.tipo} equipo={menciones.equipo} size={24} />
+              <span className="n">{m.autor}</span>
+              {m.estado ? <span className="st work"><span className="spin" />Trabajando</span> : esAgente(m.autor, m.tipo) && <span className="st">Agente</span>}
+            </div>
+          ))}
+        </div>
+      )}
       {archivo && (
         <div className="staged"><div className="chip-file">
           <div><div className="nm">{archivo.name}</div><div className="mt">{peso(archivo.size)} · se manda con el mensaje</div></div>
@@ -351,8 +436,14 @@ function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso }: {
       )}
       <textarea
         ref={taRef} rows={1} value={texto} placeholder={placeholder} autoFocus={autoFocus}
-        onChange={(e) => { setTexto(e.target.value); ajustar() }}
-        onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); mandar() } }}
+        onChange={(e) => { setTexto(e.target.value); setCursor(e.target.selectionEnd); ajustar() }}
+        onSelect={leerCursor}
+        onBlur={() => setCerrada(clave)}
+        onFocus={() => setCerrada(null)}
+        onKeyDown={(e) => {
+          if (teclaMencion(e)) return
+          if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); mandar() }
+        }}
       />
       <div className="bar">
         <button className="iconbtn" onClick={() => fileRef.current?.click()} title="Adjuntar un archivo (hasta 50 MB)">{I.clip}</button>
@@ -361,7 +452,8 @@ function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso }: {
           <label className="also"><input type="checkbox" checked={tambien} onChange={(e) => setTambien(e.target.checked)} /><span>También mandar a la sala</span></label>
         )}
         <span className="grow" />
-        {!hilo && <span className="hint">Enter para mandar · Shift + Enter, nueva línea</span>}
+        {abierta ? <span className="hint">↑↓ · Enter elige · Esc cierra</span>
+          : !hilo && <span className="hint">Enter para mandar · Shift + Enter, nueva línea</span>}
         <button className={`send ${texto.trim() || archivo ? 'on' : ''}`} onClick={mandar} disabled={!texto.trim() && !archivo} title="Mandar">{I.up}</button>
       </div>
     </div>
@@ -851,6 +943,11 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   const archivos = canal.filter((m) => m.archivo_nombre && m.archivo_url && !m.borrado)
   const conectado = (m: Miembro) => m.visto && Date.now() - new Date(m.visto).getTime() < 90_000
   const miClaude = yo ? miembros.find((m) => m.autor === `Claude de ${yo.autor}`) : undefined
+  // "@": miembros activos; primero quienes ya escribieron en el canal o en el hilo abierto.
+  const participanCanal = useMemo(() => [...new Set(canal.filter((m) => !m.sistema).map((m) => m.autor))], [canal])
+  const participanHilo = useMemo(() => [...new Set([...(raizHilo ? [raizHilo.autor] : []), ...hilo.map((m) => m.autor)])], [hilo, raizHilo])
+  const mencionesCanal = useMemo(() => yo ? { miembros, yo: yo.autor, equipo, participan: participanCanal } : undefined, [miembros, yo, equipo, participanCanal])
+  const mencionesHilo = useMemo(() => yo ? { miembros, yo: yo.autor, equipo, participan: participanHilo } : undefined, [miembros, yo, equipo, participanHilo])
   const ctx: Ctx | null = yo ? { yo, equipo, nombres, tipoDe, reaccionar, abrirHilo, editar, borrar, hiloConNovedad, porId, decidir } : null
 
   const lateral = yo && (
@@ -934,7 +1031,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
           <button className="jump" onClick={() => { const el = streamRef.current; if (el) el.scrollTop = el.scrollHeight }}>{noLeidos} {noLeidos === 1 ? 'mensaje nuevo' : 'mensajes nuevos'} ↓</button>
         )}
         <div className="dock">
-          <Composer placeholder="Escribile a la sala…" onAviso={setAviso} onMandar={(t, a) => mandar(t, a, {})} />
+          <Composer placeholder="Escribile a la sala…" onAviso={setAviso} menciones={mencionesCanal} onMandar={(t, a) => mandar(t, a, {})} />
           <div className={`rail ${aviso ? 'err' : ''}`}>{aviso}</div>
         </div>
       </main>
@@ -955,7 +1052,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
             </div>
           </div>
           <div className="dock">
-            <Composer key={hiloId} hilo placeholder="Responder en el hilo…" onAviso={setAviso} autoFocus
+            <Composer key={hiloId} hilo placeholder="Responder en el hilo…" onAviso={setAviso} autoFocus menciones={mencionesHilo}
               onMandar={(t, a, tambien) => mandar(t, a, { respuesta_a: hiloId, tambien_canal: tambien })} />
             <div className={`rail ${aviso ? 'err' : ''}`}>{aviso}</div>
           </div>

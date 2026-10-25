@@ -230,6 +230,16 @@
 .sala .composer .bar { display: flex; align-items: center; gap: 2px; padding: 4px 8px 8px; }
 .sala .composer .bar .grow { flex: 1; }
 .sala .composer .hint { font-size: 13px; color: var(--muted); margin-right: 10px; }
+/* Menciones (@): lista arriba del composer, estilo menú de comandos (revisada por Felipe). */
+.sala .composer { position: relative; }
+.sala .mencion { position: absolute; left: 0; bottom: calc(100% + 8px); width: min(360px, 100%); max-height: calc(40px * 5.5 + 8px); overflow-y: auto; padding: 4px 0; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-card); box-shadow: var(--lift); z-index: 20; }
+.sala .mencion .mrow { height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; cursor: pointer; }
+.sala .mencion .mrow.on { background: var(--sunken); }
+.sala .mencion .n { flex: 1; min-width: 0; font-size: 15px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sala .mencion .st { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; line-height: 16px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); flex: none; }
+.sala .mencion .st.work { color: var(--accent-ink); }
+.sala .mencion .st .spin { width: 12px; height: 12px; }
+@media (max-width: 760px) { .sala .mencion { max-height: calc(44px * 5.5 + 8px); } .sala .mencion .mrow { height: 44px; } }
 .sala .send { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--line); color: var(--muted); }
 .sala .send.on { background: var(--btn); color: var(--btn-ink); }
 .sala .send svg { width: 18px; height: 18px; }
