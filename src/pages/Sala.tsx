@@ -1036,7 +1036,10 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     // Lo que se toca es lo que no se mueve: si el toque abre un hilo (y el chat cambia de ancho), se conserva ESE mensaje en su lugar.
     const msg = (e.target as HTMLElement).closest?.('[data-mid]') as HTMLElement | null
     const el = streamRef.current
-    if (msg && el && !pegado.current) anclaCanal.current = { id: Number(msg.dataset.mid), off: msg.getBoundingClientRect().top - el.getBoundingClientRect().top }
+    if (!el) return
+    // El toque manda: si el chat no está al fondo, el usuario está leyendo ahí aunque el evento de scroll todavía no haya llegado.
+    if (el.scrollHeight - el.scrollTop - el.clientHeight >= 40) { pegado.current = false; ultimoTop.current = el.scrollTop }
+    if (msg && !pegado.current) anclaCanal.current = { id: Number(msg.dataset.mid), off: msg.getBoundingClientRect().top - el.getBoundingClientRect().top }
   }
   const soltarRef = useRef<() => void>(() => {})
   const soltar = () => {
