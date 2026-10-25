@@ -384,3 +384,19 @@
   .sala .fine { margin-top: 10px; }
   .sala .ecard.loading .lede { margin-top: 16px; }
 }
+
+/* ── Privacidad, avisos de IA y ayudas (QA decisiones) ── */
+.sala .ia-note { margin: 10px 0 0; font-size: 13px; line-height: 18px; color: var(--ink-2); max-width: 38ch; }
+.sala .ia-note .lnk { font-size: inherit; white-space: nowrap; }
+.sala .also { align-items: flex-start; }
+.sala .also input { margin-top: 3px; }
+.sala .also small { display: block; font-size: 11px; line-height: 14px; color: var(--muted); }
+.sala .head .t .s.inl { display: inline; font-weight: 400; color: var(--muted); font-size: 12px; }
+.sala .priv-page { height: auto; min-height: 100dvh; overflow: auto; }
+.sala .ecard.priv { width: 560px; }
+.sala .ecard.priv h1 { font-size: 56px; }
+.sala .ecard.priv section { margin-top: 20px; }
+.sala .ecard.priv h2 { margin: 0; font-size: 15px; font-weight: 600; color: var(--ink); }
+.sala .ecard.priv section p { margin: 4px 0 0; font-size: 14px; line-height: 21px; color: var(--ink-2); }
+.sala .ecard.priv .lede { max-width: none; }
+.sala .ecard.priv .fine { margin-top: 28px; }

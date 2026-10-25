@@ -3,9 +3,12 @@
 // /sala          vuelve a la sala con la clave guardada en este dispositivo
 // /sala#k=<clave> entra con una clave directa (para Mateo)
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import MarcopoloLogo from '../components/MarcopoloLogo'
+import { T } from './sala-i18n'
 import './sala.css'
+
+const t = T()
 
 const API = 'https://keevroiskubxjmrtoaur.supabase.co/functions/v1/sala'
 const CLAVE_KEY = 'sala.clave'
@@ -37,6 +40,21 @@ const guardar = (k: string, v: string | null) => {
   try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v) } catch { /* modo privado */ }
 }
 
+// Los errores del servidor llegan en rioplatense. Los que se muestran tal cual y son simples se mapean acá por
+// estado / bandera; el resto (permisos de dueño, "esa opción no existe", etc.) se muestra como lo manda el servidor.
+function mensajeDeError(status: number, c: Record<string, unknown>): string | null {
+  if (c.limite_ia) return t.errLimiteIA
+  if (c.invalido) return t.errNombreInvalido
+  if (c.reservado) return status === 409 ? t.errNombreReservado : t.errNombreBot
+  if (status === 401) return t.errClave
+  if (status === 410) return t.errLinkVencido
+  if (status === 413) return t.errArchivoGrande
+  if (status === 500) return t.errServidor
+  if (status === 409 && typeof c.error === 'string' && /^Ya hay alguien como/.test(c.error)) return t.errNombreTomado
+  if (status === 400 && c.error === 'mensaje vacío') return t.errVacio
+  return null
+}
+
 async function api<T>(ruta: string, clave: string | null, init: RequestInit = {}): Promise<T> {
   let r: Response
   try {
@@ -46,13 +64,13 @@ async function api<T>(ruta: string, clave: string | null, init: RequestInit = {}
     })
   } catch {
     // "Failed to fetch": sin red, o una respuesta sin CORS (p. ej. el firewall de Cloudflare cortando el cuerpo).
-    throw Object.assign(new Error('No hay conexión con la sala. Revisá tu internet y probá de nuevo.'), { red: true })
+    throw Object.assign(new Error(t.errRed), { red: true })
   }
   const cuerpo = await r.json().catch(() => ({}))
   if (!r.ok) {
     // 403 sin JSON de la sala = lo cortó el firewall, no el servidor.
     const waf = r.status === 403 && !cuerpo.error
-    throw Object.assign(new Error(cuerpo.error || (waf ? 'El mensaje no pasó el filtro de seguridad.' : `Error ${r.status}`)), { status: r.status, decision: cuerpo.decision, waf })
+    throw Object.assign(new Error(mensajeDeError(r.status, cuerpo) ?? cuerpo.error ?? (waf ? t.errWaf : t.errHttp(r.status))), { status: r.status, decision: cuerpo.decision, waf })
   }
   return cuerpo as T
 }
@@ -103,13 +121,13 @@ function Avatar({ autor, tipo, equipo, size }: { autor: string; tipo?: string; e
   )
 }
 
-const hora = (iso: string) => new Date(iso).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })
+const hora = (iso: string) => new Date(iso).toLocaleTimeString(t.lang, { hour: '2-digit', minute: '2-digit', hour12: t.hora12 })
 const dia = (iso: string) => {
   const d = new Date(iso), hoy = new Date()
   const ayer = new Date(); ayer.setDate(hoy.getDate() - 1)
-  const base = d.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })
-  if (d.toDateString() === hoy.toDateString()) return `Hoy · ${base}`
-  if (d.toDateString() === ayer.toDateString()) return `Ayer · ${base}`
+  const base = d.toLocaleDateString(t.lang, { day: 'numeric', month: 'short' })
+  if (d.toDateString() === hoy.toDateString()) return `${t.hoy} · ${base}`
+  if (d.toDateString() === ayer.toDateString()) return `${t.ayer} · ${base}`
   return base
 }
 const extension = (nombre: string) => (nombre.split('.').pop() || 'arch').slice(0, 4).toUpperCase()
@@ -135,7 +153,7 @@ function Bloque({ codigo }: { codigo: string }) {
   }
   return (
     <div className="log">
-      <button className="copy" onClick={copiar} title="Copiar">{copiado ? <>{I.check} Copiado</> : <>{I.copy} Copiar</>}</button>
+      <button className="copy" onClick={copiar} title={t.copiar}>{copiado ? <>{I.check} {t.copiado}</> : <>{I.copy} {t.copiar}</>}</button>
       <pre>{codigo}</pre>
     </div>
   )
@@ -195,7 +213,7 @@ function Adjunto({ m, lado }: { m: Mensaje; lado: string }) {
   const ficha = (
     <a className="file" href={m.archivo_url || undefined} target="_blank" rel="noreferrer" download={m.archivo_nombre}>
       <div className={`ico ${lado === 'bg' ? 'bg' : ''}`}>{extension(m.archivo_nombre)}</div>
-      <div className="grow"><div className="nm">{m.archivo_nombre}</div><div className="mt">{m.pendiente ? 'Subiendo…' : esPdf(m.archivo_nombre) || esVideo(m.archivo_nombre) ? 'Abrir o bajar' : 'Tocá para bajarlo'}</div></div>
+      <div className="grow"><div className="nm">{m.archivo_nombre}</div><div className="mt">{m.pendiente ? t.subiendo : esPdf(m.archivo_nombre) || esVideo(m.archivo_nombre) ? t.abrirOBajar : t.tocarBajar}</div></div>
       <span className="dl">{I.dl}</span>
     </a>
   )
@@ -248,8 +266,8 @@ function Cargando() {
     <div className="entry" role="status" aria-live="polite">
       <div className="ecard loading">
         <div className="logo"><MarcopoloLogo /></div>
-        <div className="label">Sala</div>
-        <p className="lede"><span className="spin" /> Entrando a la sala…</p>
+        <div className="label">{t.sala}</div>
+        <p className="lede"><span className="spin" /> {t.entrando}</p>
         <div className="skel" aria-hidden="true"><i /><i /><i /></div>
       </div>
     </div>
@@ -261,9 +279,10 @@ function SinAcceso() {
   return (
     <div className="entry"><div className="ecard">
       <div className="logo"><MarcopoloLogo /></div>
-      <div className="label">Sala</div>
-      <h1>Sin acceso</h1>
-      <p className="lede">Para entrar hace falta el link de invitación. Pedíselo a Mateo.</p>
+      <div className="label">{t.sala}</div>
+      <h1>{t.sinAcceso}</h1>
+      <p className="lede">{t.sinAccesoLede}</p>
+      <p className="fine"><Link className="lnk" to="/sala/privacidad">{t.privacidad}</Link></p>
     </div></div>
   )
 }
@@ -285,7 +304,7 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
   const entrar = async (ev: React.FormEvent) => {
     ev.preventDefault()
     if (nombre.trim().length < 2 || enviando || pareceBot) return
-    if (/[<>]/.test(nombre)) { setError('El nombre no puede tener < ni >. Poné sólo tu nombre.'); return }
+    if (/[<>]/.test(nombre)) { setError(t.errNombreInvalido); return }
     setEnviando(true); setError(null)
     try {
       const r = await api<{ clave: string }>('/canjear', null, { method: 'POST', body: JSON.stringify({ codigo, autor: nombre.trim(), tipo }) })
@@ -294,41 +313,47 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
   }
 
   const adentro = inv?.miembros ?? []
+  // "Sala con Mateo, 2 personas y el agente Alan": el equipo (sólo personas), el resto de personas, y los agentes aparte.
+  const esIA = (a: string) => adentro.some((m) => m.autor === a && m.tipo === 'agente')
+  const equipoPersonas = (inv?.equipo ?? ['Mateo']).filter((a) => !esIA(a))
+  const personasExtra = adentro.filter((m) => m.tipo !== 'agente' && !(inv?.equipo ?? []).includes(m.autor)).length
+  const agentesDe = adentro.filter((m) => m.tipo === 'agente').map((m) => m.autor)
   return (
     <div className="entry">
       <form className="ecard" onSubmit={entrar}>
         <div className="logo"><MarcopoloLogo /></div>
-        <div className="label">Sala{inv?.subtitulo ? ` · ${inv.subtitulo}` : ''}</div>
-        <h1>{inv?.titulo ?? 'Sala'}</h1>
-        <p className="lede">Un chat directo con {listar(inv?.equipo ?? ['Mateo'])}. Mandá fotos, archivos o lo que necesites, y bajá lo que te manden.</p>
+        <div className="label">{t.sala}{inv?.subtitulo ? ` · ${inv.subtitulo}` : ''}</div>
+        <h1>{inv?.titulo ?? t.sala}</h1>
+        <p className="lede">{t.descSala(equipoPersonas, personasExtra, agentesDe)}. {t.ledeResto}</p>
+        <p className="ia-note">{t.avisoIA} <Link className="lnk" to="/sala/privacidad">{t.privacidad}</Link></p>
         {adentro.length > 0 && inv && (
           <div className="who-in">
             <div className="stack">{adentro.slice(0, 4).map((m) => <Avatar key={m.autor} autor={m.autor} tipo={m.tipo} equipo={inv.equipo} size={32} />)}</div>
-            <div className="tx">{listar(adentro.map((m) => m.autor))} {adentro.length === 1 ? 'ya está' : 'ya están'} adentro.</div>
+            <div className="tx">{t.listar(adentro.length > 3 ? [...adentro.slice(0, 2).map((m) => m.autor), t.masN(adentro.length - 2)] : adentro.map((m) => m.autor))} {adentro.length === 1 ? t.yaEsta : t.yaEstan}</div>
           </div>
         )}
-        {!inv && !error && <p className="fine" role="status"><span className="spin" /> Cargando la invitación…</p>}
+        {!inv && !error && <p className="fine" role="status"><span className="spin" /> {t.cargandoInv}</p>}
         {inv && <>
           <div className="fld">
-            <span className="flabel">Quién entra</span>
-            <div className="seg" role="radiogroup" aria-label="Quién entra">
-              <button type="button" role="radio" aria-checked={tipo === 'persona'} className={tipo === 'persona' ? 'on' : ''} onClick={() => setTipo('persona')}>Soy una persona</button>
-              <button type="button" role="radio" aria-checked={tipo === 'agente'} className={tipo === 'agente' ? 'on' : ''} onClick={() => setTipo('agente')}>Es un bot o IA</button>
+            <span className="flabel">{t.quienEntra}</span>
+            <div className="seg" role="radiogroup" aria-label={t.quienEntra}>
+              <button type="button" role="radio" aria-checked={tipo === 'persona'} className={tipo === 'persona' ? 'on' : ''} onClick={() => setTipo('persona')}>{t.soyPersona}</button>
+              <button type="button" role="radio" aria-checked={tipo === 'agente'} className={tipo === 'agente' ? 'on' : ''} onClick={() => setTipo('agente')}>{t.esBot}</button>
             </div>
           </div>
           <div className="fld">
-            <label htmlFor="sala-nombre">{tipo === 'agente' ? 'Nombre del agente' : 'Tu nombre'}</label>
+            <label htmlFor="sala-nombre">{tipo === 'agente' ? t.nombreAgente : t.tuNombre}</label>
             <input id="sala-nombre" className="inp" value={nombre} onChange={(e) => setNombre(e.target.value)} autoFocus autoComplete={tipo === 'persona' ? 'given-name' : 'off'} maxLength={40}
-              placeholder={tipo === 'agente' ? 'Ej: Grok de Martín' : undefined} />
+              placeholder={tipo === 'agente' ? t.phAgente : undefined} />
             {pareceBot && (
-              <p className="fld-hint">Ese nombre parece de un bot o una IA. <button type="button" className="lnk" onClick={() => setTipo('agente')}>Entrar como agente</button></p>
+              <p className="fld-hint">{t.pareceBot} <button type="button" className="lnk" onClick={() => setTipo('agente')}>{t.entrarComoAgente}</button></p>
             )}
           </div>
-          <button className="cta" type="submit" disabled={nombre.trim().length < 2 || enviando || pareceBot || !inv}>{enviando ? 'Entrando…' : <>{tipo === 'agente' ? 'Sumar al agente' : 'Entrar a la sala'} {I.arrow}</>}</button>
+          <button className="cta" type="submit" disabled={nombre.trim().length < 2 || enviando || pareceBot || !inv}>{enviando ? t.entrandoBtn : <>{tipo === 'agente' ? t.sumarAgente : t.entrarSala} {I.arrow}</>}</button>
         </>}
         <p className={`fine ${error ? 'err' : ''}`} role={error ? 'alert' : undefined}>{error ?? (tipo === 'agente'
-          ? 'Va a aparecer con la marca Agente y sus mensajes cuentan como de una IA. El link es el acceso: no lo reenvíes.'
-          : 'El link es tu acceso: no lo reenvíes. Tu nombre queda guardado en este dispositivo.')}</p>
+          ? t.fineAgente
+          : t.finePersona)}</p>
       </form>
     </div>
   )
@@ -337,7 +362,7 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
 // Mismo criterio que el servidor: "ia" y "bot" como palabra suelta; grok, gpt, gemini y claude en cualquier parte.
 const esNombreDeBot = (n: string) => /(^|[^\p{L}\p{N}])(ia|bot|bots)($|[^\p{L}\p{N}])|grok|gpt|gemini|claude/iu.test(n.trim())
 
-const listar = (xs: string[]) => xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} y ${xs[xs.length - 1]}`
+const listar = (xs: string[]) => t.listar(xs)
 
 // ─── Chat ───────────────────────────────────────────────────────────────────────────────
 // Los mensajes viven en un mapa por id: el canal muestra raíces (+ respuestas "también a la
@@ -443,38 +468,38 @@ function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso, menciones }
     return true
   }
   const mandar = async () => {
-    const t = texto.trim()
-    if (!t && !archivo) return
-    if (archivo && archivo.size > MAX_SUBIDA) { onAviso('El archivo pesa más de 50 MB'); return }
+    const tx = texto.trim()
+    if (!tx && !archivo) return
+    if (archivo && archivo.size > MAX_SUBIDA) { onAviso(t.archivoMas50); return }
     const a = archivo
     setTexto(''); setCursor(0); setArchivo(null); onAviso(null)
     requestAnimationFrame(ajustar)
-    const ok = await onMandar(t, a, tambien)
-    if (!ok) { setTexto(t); setArchivo(a); requestAnimationFrame(ajustar) }
+    const ok = await onMandar(tx, a, tambien)
+    if (!ok) { setTexto(tx); setArchivo(a); requestAnimationFrame(ajustar) }
   }
   return (
     <div className="composer">
       {abierta && menciones && (
-        <div className="mencion" role="listbox" aria-label="Mencionar a alguien" ref={listaRef}>
+        <div className="mencion" role="listbox" aria-label={t.mencionar} ref={listaRef}>
           {candidatos.map((m, i) => (
             <div key={m.autor} role="option" aria-selected={i === sel} className={`mrow ${i === sel ? 'on' : ''}`}
               onMouseDown={(e) => { e.preventDefault(); mencionar(m) }} onMouseEnter={() => setActiva(i)}>
               <Avatar autor={m.autor} tipo={m.tipo} equipo={menciones.equipo} size={24} />
               <span className="n">{m.autor}</span>
-              {m.estado ? <span className="st work"><span className="spin" />Escribiendo</span> : esAgente(m.autor, m.tipo) && <span className="st">Agente</span>}
+              {m.estado ? <span className="st work"><span className="spin" />{t.escribiendo}</span> : esAgente(m.autor, m.tipo) && <span className="st">{t.agente}</span>}
             </div>
           ))}
         </div>
       )}
       {archivo && (
         <div className="staged"><div className="chip-file">
-          <div><div className="nm">{archivo.name}</div><div className="mt">{peso(archivo.size)} · se manda con el mensaje</div></div>
-          <button className="x" onClick={() => setArchivo(null)} title="Sacar">{I.x}</button>
+          <div><div className="nm">{archivo.name}</div><div className="mt">{peso(archivo.size)} · {t.seMandaCon}</div></div>
+          <button className="x" onClick={() => setArchivo(null)} title={t.sacar}>{I.x}</button>
         </div></div>
       )}
       <textarea
         ref={taRef} rows={1} value={texto} placeholder={placeholder} autoFocus={autoFocus} maxLength={MAX_TEXTO}
-        aria-label={hilo ? 'Responder en el hilo' : 'Escribile a la sala'}
+        aria-label={hilo ? t.ariaHilo : t.ariaCanal}
         onChange={(e) => { setTexto(e.target.value); setCursor(e.target.selectionEnd); ajustar() }}
         onSelect={leerCursor}
         onBlur={() => setCerrada(clave)}
@@ -485,17 +510,17 @@ function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso, menciones }
         }}
       />
       <div className="bar">
-        <button className="iconbtn" onClick={() => fileRef.current?.click()} title="Adjuntar un archivo (hasta 50 MB)">{I.clip}</button>
+        <button className="iconbtn" onClick={() => fileRef.current?.click()} title={t.adjuntar}>{I.clip}</button>
         <input ref={fileRef} type="file" hidden onChange={(e) => { setArchivo(e.target.files?.[0] ?? null); e.target.value = '' }} />
         {hilo && (
-          <label className="also"><input type="checkbox" checked={tambien} onChange={(e) => setTambien(e.target.checked)} /><span>También mandar a la sala</span></label>
+          <label className="also" title={t.tambienTitulo}><input type="checkbox" checked={tambien} onChange={(e) => setTambien(e.target.checked)} /><span>{t.tambien}<small>{t.tambienAyuda}</small></span></label>
         )}
         <span className="grow" />
-        {abierta ? <span className="hint">↑↓ · Enter elige · Esc cierra</span>
-          : !hilo && <span className="hint">Enter para mandar · Shift + Enter, nueva línea</span>}
+        {abierta ? <span className="hint">{t.hintMencion}</span>
+          : !hilo && <span className="hint">{t.hintEnviar}</span>}
         {/* onMouseDown: que el toque no le saque el foco al textarea (en mobile el teclado se baja, el layout se mueve y el clic caía afuera). */}
         <button type="button" className={`send ${texto.trim() || archivo ? 'on' : ''}`} onMouseDown={(e) => e.preventDefault()} onClick={mandar} disabled={!texto.trim() && !archivo}
-          title={hilo ? 'Mandar en el hilo' : 'Mandar'} aria-label={hilo ? 'Mandar en el hilo' : 'Mandar'}>{I.up}</button>
+          title={hilo ? t.mandarHilo : t.mandar} aria-label={hilo ? t.mandarHilo : t.mandar}>{I.up}</button>
       </div>
     </div>
   )
@@ -534,8 +559,8 @@ function Pregunta({ m, ctx }: { m: Mensaje; ctx: Ctx }) {
   return (
     <div className={`decide ${d && !cambiando ? 'done' : ''} ${!puede ? 'wait' : ''}`}>
       <div className="dhead">
-        <span className="label">{d && !cambiando ? 'Decisión' : 'Necesita una decisión'}</span>
-        {!d && !puede && <span className="dwait">Esperando a {listar(para)}</span>}
+        <span className="label">{d && !cambiando ? t.decision : t.necesitaDecision}</span>
+        {!d && !puede && <span className="dwait">{t.esperandoA(listar(para))}</span>}
       </div>
       <div className="opts">
         {ops.map((o) => {
@@ -547,7 +572,7 @@ function Pregunta({ m, ctx }: { m: Mensaje; ctx: Ctx }) {
               onClick={() => elegir(o.id)}>
               <span className="ot">{elegida && <span className="ok">{I.check}</span>}{o.etiqueta || o.texto}</span>
               {detalle && <span className="od">{detalle}</span>}
-              {o.recomendada && <span className="orec">Recomendada</span>}
+              {o.recomendada && <span className="orec">{t.recomendada}</span>}
             </button>
           )
         })}
@@ -555,13 +580,13 @@ function Pregunta({ m, ctx }: { m: Mensaje; ctx: Ctx }) {
       {d && !cambiando && (
         <div className="dfoot">
           <span>{d.cambiada
-            ? (d.autor === yo.autor ? 'Cambiaste la elección' : `${d.autor} cambió la elección`)
-            : (d.autor === yo.autor ? 'Elegiste vos' : `Eligió ${d.autor}`)} · {hora(d.cuando)}</span>
-          {tomada ? <span className="dtaken">{m.autor} ya la tomó</span>
-            : puede && <button type="button" className="lnk" onClick={() => setCambiando(true)}>Cambiar</button>}
+            ? (d.autor === yo.autor ? t.cambiasteEleccion : t.cambioEleccion(d.autor))
+            : (d.autor === yo.autor ? t.elegisteVos : t.eligio(d.autor))} · {hora(d.cuando)}</span>
+          {tomada ? <span className="dtaken">{t.yaLaTomo(m.autor)}</span>
+            : puede && <button type="button" className="lnk" onClick={() => setCambiando(true)}>{t.cambiar}</button>}
         </div>
       )}
-      {cambiando && <div className="dfoot"><span>Elegí otra opción mientras {m.autor} no la tome.</span><button type="button" className="lnk" onClick={() => setCambiando(false)}>Cancelar</button></div>}
+      {cambiando && <div className="dfoot"><span>{t.elegiOtra(m.autor)}</span><button type="button" className="lnk" onClick={() => setCambiando(false)}>{t.cancelar}</button></div>}
     </div>
   )
 }
@@ -595,7 +620,7 @@ function Escribiendo({ m, equipo }: { m: Miembro; equipo: string[] }) {
     <div className="msg">
       <Avatar autor={m.autor} tipo={m.tipo} equipo={equipo} size={36} />
       <div>
-        <div className="working" role="status"><span className="spin" /><span>{m.autor} está escribiendo…</span></div>
+        <div className="working" role="status"><span className="spin" /><span>{t.estaEscribiendo(m.autor)}</span></div>
       </div>
     </div>
   )
@@ -632,17 +657,17 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
       <div className="main">
         {!cont && (
           <div className="meta">
-            <span className="who">{m.autor}</span>{agente ? <span className="tag">Agente</span> : !equipo.includes(m.autor) && <span className="tag guest">Invitado</span>}
-            <span className="time">{hora(m.creado)}</span>{m.editado && !m.borrado && <span className="edited">(editado)</span>}
+            <span className="who">{m.autor}</span>{agente ? <span className="tag">{t.agente}</span> : !equipo.includes(m.autor) && <span className="tag guest">{t.invitado}</span>}
+            <span className="time">{hora(m.creado)}</span>{m.editado && !m.borrado && <span className="edited">{t.editado}</span>}
           </div>
         )}
         {raiz && (
           <button className="in-thread" onClick={() => ctx.abrirHilo(raiz.id)}>
-            {I.hilo}<span>Respondió en un hilo: <b>{raiz.borrado ? 'mensaje borrado' : recortar(raiz.texto || raiz.archivo_nombre || '', 70)}</b></span>
+            {I.hilo}<span>{t.enRespuestaA}: <b>{raiz.borrado ? t.mensajeBorrado : recortar(raiz.texto || raiz.archivo_nombre || '', 70)}</b></span>
           </button>
         )}
         <div className="body">
-          {m.borrado ? <p className="gone">Mensaje borrado</p>
+          {m.borrado ? <p className="gone">{t.msgBorrado}</p>
             : editando ? (
               <div className="editbox">
                 <textarea value={borrador} autoFocus rows={Math.min(8, borrador.split('\n').length + 1)}
@@ -651,22 +676,22 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
                     if (e.key === 'Escape') { setEditando(false); setBorrador(m.texto) }
                     if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); guardar() }
                   }} />
-                <div className="acts"><span className="hint">Esc para cancelar · Enter para guardar</span><span className="grow" />
-                  <button className="btn sec sm" onClick={() => { setEditando(false); setBorrador(m.texto) }}>Cancelar</button>
-                  <button className="btn sm" onClick={guardar}>Guardar</button>
+                <div className="acts"><span className="hint">{t.escCancelar}</span><span className="grow" />
+                  <button className="btn sec sm" onClick={() => { setEditando(false); setBorrador(m.texto) }}>{t.cancelar}</button>
+                  <button className="btn sm" onClick={guardar}>{t.guardar}</button>
                 </div>
               </div>
             ) : <>
               <Texto texto={m.texto} nombres={nombres} equipo={equipo} />
-              {cont && m.editado && <span className="edited">(editado)</span>}
+              {cont && m.editado && <span className="edited">{t.editado}</span>}
               {!!m.opciones?.length && <Pregunta m={m} ctx={ctx} />}
               <Adjunto m={m} lado={ladoDe(m.autor, equipo)} />
             </>}
         </div>
         {borrando && (
-          <div className="confirm"><span>¿Borrar este mensaje? Los demás van a ver “Mensaje borrado”.</span>
-            <button className="btn sec sm" onClick={() => setBorrando(false)}>Cancelar</button>
-            <button className="btn danger sm" onClick={() => { setBorrando(false); ctx.borrar(m) }}>Borrar</button>
+          <div className="confirm"><span>{t.confirmarBorrar}</span>
+            <button className="btn sec sm" onClick={() => setBorrando(false)}>{t.cancelar}</button>
+            <button className="btn danger sm" onClick={() => { setBorrando(false); ctx.borrar(m) }}>{t.borrar}</button>
           </div>
         )}
         {reacciones.length > 0 && !m.borrado && (
@@ -674,12 +699,12 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
             {reacciones.map((r) => {
               const estado = r.emoji === '✓' || (r.emoji === '👀' && r.autores.every((a) => esAgente(a, tipoDe[a])))
               const mia = r.autores.includes(yo.autor)
-              const titulo = r.emoji === '✓' ? `Atendido por ${listar(r.autores)}` : estado ? `${listar(r.autores)} lo está viendo` : listar(r.autores)
+              const titulo = r.emoji === '✓' ? t.atendidoPor(listar(r.autores)) : estado ? t.loEstaViendo(listar(r.autores)) : listar(r.autores)
               return (
                 <button key={r.emoji} className={`rchip ${mia ? 'mine' : ''} ${estado ? 'st' : ''}`} title={titulo}
                   disabled={!REACCIONES.includes(r.emoji)} onClick={() => ctx.reaccionar(m, r.emoji)}>
                   <span className="e">{r.emoji === '✓' ? I.check : r.emoji}</span>
-                  {estado ? <span className="n">{r.emoji === '✓' ? 'Visto · ' : 'Leyendo · '}{r.autores.join(', ')}</span> : <span className="n">{r.autores.length}</span>}
+                  {estado ? <span className="n">{r.emoji === '✓' ? t.visto + ' · ' : t.leyendo + ' · '}{r.autores.join(', ')}</span> : <span className="n">{r.autores.length}</span>}
                 </button>
               )
             })}
@@ -688,10 +713,10 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
         {!enHilo && !m.respuesta_a && (m.respuestas ?? 0) > 0 && (
           <button className="thread-row" onClick={() => ctx.abrirHilo(m.id)}>
             <span className="stack">{(m.respondieron ?? []).slice(0, 3).map((a) => <Avatar key={a} autor={a} tipo={tipoDe[a]} equipo={equipo} size={24} />)}</span>
-            <span className="cnt">{m.respuestas} {m.respuestas === 1 ? 'respuesta' : 'respuestas'}</span>
-            {m.ultima_respuesta && <span className="last">última {hora(m.ultima_respuesta)}</span>}
-            {ctx.hiloConNovedad(m) && <span className="news" title="Hay respuestas nuevas" />}
-            <span className="go">Ver hilo</span>
+            <span className="cnt">{m.respuestas} {m.respuestas === 1 ? t.respuesta : t.respuestas}</span>
+            {m.ultima_respuesta && <span className="last">{t.ultima} {hora(m.ultima_respuesta)}</span>}
+            {ctx.hiloConNovedad(m) && <span className="news" title={t.hayNuevas} />}
+            <span className="go">{t.verRespuestas}</span>
           </button>
         )}
         {!m.pendiente && !m.borrado && !editando && (
@@ -699,10 +724,10 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
             {emojis
               ? REACCIONES.map((e) => <button key={e} className="em" onClick={() => { ctx.reaccionar(m, e); setEmojis(false); setActivo(false) }} title={e}>{e}</button>)
               : <>
-                <button onClick={() => setEmojis(true)} title="Reaccionar">{I.smile}</button>
-                {!enHilo && <button onClick={() => { setActivo(false); ctx.abrirHilo(m.respuesta_a ?? m.id) }} title="Responder en hilo">{I.hilo}</button>}
-                {mio && <button onClick={() => { setBorrador(m.texto); setEditando(true); setActivo(false) }} title="Editar">{I.edit}</button>}
-                {mio && <button onClick={() => { setBorrando(true); setActivo(false) }} title="Borrar">{I.trash}</button>}
+                <button onClick={() => setEmojis(true)} title={t.reaccionar}>{I.smile}</button>
+                {!enHilo && <button onClick={() => { setActivo(false); ctx.abrirHilo(m.respuesta_a ?? m.id) }} title={t.responderHiloAyuda} aria-label={t.responderHilo}>{I.hilo}</button>}
+                {mio && <button onClick={() => { setBorrador(m.texto); setEditando(true); setActivo(false) }} title={t.editar}>{I.edit}</button>}
+                {mio && <button onClick={() => { setBorrando(true); setActivo(false) }} title={t.borrar}>{I.trash}</button>}
               </>}
           </div>
         )}
@@ -718,7 +743,7 @@ function Lista({ mensajes, ctx, enHilo, nuevosDesde }: { mensajes: Mensaje[]; ct
   let marcado = false
   for (const m of mensajes) {
     const esNuevo = !marcado && nuevosDesde != null && m.id > nuevosDesde && !m.pendiente && m.autor !== ctx.yo.autor
-    if (esNuevo) { marcado = true; filas.push(<div className="nuevos" key={'n' + m.id}><span>Nuevos</span></div>) }
+    if (esNuevo) { marcado = true; filas.push(<div className="nuevos" key={'n' + m.id}><span>{t.nuevos}</span></div>) }
     if (!enHilo && (!anterior || dia(anterior.creado) !== dia(m.creado))) filas.push(<div className="day" key={'d' + m.id}><span className="label">{dia(m.creado)}</span></div>)
     const cont = !esNuevo && !!anterior && anterior.autor === m.autor && !anterior.borrado && !(anterior.respuestas ?? 0) && dia(anterior.creado) === dia(m.creado)
       && new Date(m.creado).getTime() - new Date(anterior.creado).getTime() < 5 * 60_000 && !(m.respuesta_a && !enHilo)
@@ -803,11 +828,11 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
           if (!vivo) return
           version.current = Math.max(version.current, r.version ?? 0)
           sumar(r.mensajes)
-          pausa = 1000; setAviso((a) => (a === 'Sin conexión, reintentando…' ? null : a))
+          pausa = 1000; setAviso((a) => (a === t.sinConexion ? null : a))
         } catch (e) {
           manejar(e)
           if (!vivo) return
-          setAviso('Sin conexión, reintentando…')
+          setAviso(t.sinConexion)
           await new Promise((res) => setTimeout(res, pausa)); pausa = Math.min(pausa * 2, 15000)
         }
       }
@@ -880,7 +905,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       avisados.current.add(m.id)
       if (new Date(m.creado).getTime() < arranque.current || document.visibilityState === 'visible') continue
       try {
-        const n = new Notification(`${m.autor} te nombró en ${yo.titulo}`, { body: m.texto.slice(0, 160), tag: 'sala-' + m.id })
+        const n = new Notification(t.notiNombro(m.autor, yo.titulo), { body: m.texto.slice(0, 160), tag: 'sala-' + m.id })
         n.onclick = () => { window.focus(); if (m.respuesta_a) setHiloId(m.respuesta_a); n.close() }
       } catch { /* algunos navegadores sólo permiten avisos desde un service worker */ }
     }
@@ -922,7 +947,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       if (archivo && archivo.size > MAX_BASE64) {
         const s = await api<{ path: string; url: string; tipo: string }>('/subir', clave, { method: 'POST', body: JSON.stringify({ nombre: archivo.name, tamano: archivo.size }) })
         const r = await fetch(s.url, { method: 'PUT', headers: { 'content-type': s.tipo }, body: archivo })
-        if (!r.ok) throw new Error(`no se pudo subir el archivo (HTTP ${r.status})`)
+        if (!r.ok) throw new Error(t.errSubida(r.status))
         cuerpo.archivo_subido = { path: s.path, nombre: archivo.name }
       } else if (archivo) {
         cuerpo.archivo = { nombre: archivo.name, base64: await base64De(archivo) }
@@ -946,7 +971,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     } catch (e) {
       manejar(e)
       setPorId((prev) => { const n = { ...prev }; delete n[tempId]; return n })
-      setAviso('No se pudo mandar. ' + (e as Error).message + ' Tu mensaje sigue en el cuadro de texto.')
+      setAviso(t.noSeMando((e as Error).message))
       return false
     }
   }, [yo, clave, manejar])
@@ -965,7 +990,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       return { ...prev, [m.id]: { ...actual, reacciones: rs.filter((x) => x.autores.length) } }
     })
     api('/reaccion', clave, { method: 'POST', body: JSON.stringify({ id: m.id, emoji, quitar }) })
-      .catch((e) => { manejar(e); setAviso('No se pudo reaccionar: ' + (e as Error).message) })
+      .catch((e) => { manejar(e); setAviso(t.noReaccion((e as Error).message)) })
   }, [yo, clave, manejar])
 
   const editar = useCallback(async (m: Mensaje, texto: string) => {
@@ -976,13 +1001,13 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       }
       setPorId((prev) => ({ ...prev, [m.id]: { ...prev[m.id], texto, editado: new Date().toISOString() } }))
       return true
-    } catch (e) { manejar(e); setAviso('No se pudo editar: ' + (e as Error).message); return false }
+    } catch (e) { manejar(e); setAviso(t.noEditar((e as Error).message)); return false }
   }, [clave, manejar])
 
   const borrar = useCallback((m: Mensaje) => {
     api('/borrar', clave, { method: 'POST', body: JSON.stringify({ id: m.id }) })
       .then(() => setPorId((prev) => ({ ...prev, [m.id]: { ...prev[m.id], borrado: new Date().toISOString(), texto: '', archivo_nombre: null, archivo_url: null } })))
-      .catch((e) => { manejar(e); setAviso('No se pudo borrar: ' + (e as Error).message) })
+      .catch((e) => { manejar(e); setAviso(t.noBorrar((e as Error).message)) })
   }, [clave, manejar])
 
   const decidir = useCallback(async (m: Mensaje, opcion: string) => {
@@ -996,7 +1021,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       manejar(e)
       const d = (e as { decision?: Decision }).decision
       if (d) setPorId((prev) => prev[m.id] ? { ...prev, [m.id]: { ...prev[m.id], decision: d } } : prev)
-      setAviso(`No se pudo elegir "${op?.etiqueta || op?.texto || opcion}": ${(e as Error).message}`)
+      setAviso(t.noElegir(op?.etiqueta || op?.texto || opcion, (e as Error).message))
     }
   }, [yo, clave, manejar])
 
@@ -1038,18 +1063,18 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   const lateral = yo && (
     <>
       <div className="logo"><MarcopoloLogo /></div>
-      <div className="room-id"><div className="label">Sala</div><div className="t">{yo.titulo}</div>{yo.subtitulo && <div className="s">{yo.subtitulo}</div>}</div>
-      <div className="sec label">En la sala</div>
+      <div className="room-id"><div className="label">{t.sala}</div><div className="t">{yo.titulo}</div>{yo.subtitulo && <div className="s">{yo.subtitulo}</div>}</div>
+      <div className="sec label">{t.enLaSalaSec}</div>
       {miembros.map((m) => (
         <div className="row" key={m.autor}>
           <Avatar autor={m.autor} tipo={m.tipo} equipo={equipo} size={24} />
-          <span className="n">{m.autor}{m.autor === yo.autor ? ' (vos)' : ''}</span>
-          {m.tipo !== 'agente' && !equipo.includes(m.autor) && <span className="tag guest">Invitado</span>}
-          {m.estado === 'trabajando' ? <span className="spin" title="Escribiendo" /> : <span className={`dot ${conectado(m) ? '' : 'off'}`} title={conectado(m) ? 'Conectado' : 'Sin conexión'} />}
+          <span className="n">{m.autor}{m.autor === yo.autor ? ' ' + t.vos : ''}</span>
+          {m.tipo !== 'agente' && !equipo.includes(m.autor) && <span className="tag guest">{t.invitado}</span>}
+          {m.estado === 'trabajando' ? <span className="spin" title={t.escribiendo} /> : <span className={`dot ${conectado(m) ? '' : 'off'}`} title={conectado(m) ? t.conectado : t.sinConexionDot} />}
         </div>
       ))}
       <div className="spacer" />
-      <div className="sec label">Archivos · {archivos.length}</div>
+      <div className="sec label">{t.archivos} · {archivos.length}</div>
       {archivos.slice(-8).reverse().map((m) => (
         <a className="row" key={m.id} href={m.archivo_url!} target="_blank" rel="noreferrer">
           <span className="ftile">{extension(m.archivo_nombre!)}</span><span className="n">{m.archivo_nombre}</span>
@@ -1057,23 +1082,23 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       ))}
       {yo.admin && (
         <div className="cfg">
-          <div className="label">Decisiones · quién responde</div>
-          <div className="seg sm" role="radiogroup" aria-label="Quién responde las decisiones">
-            <button type="button" role="radio" aria-checked={yo.decide !== 'todos'} className={yo.decide !== 'todos' ? 'on' : ''} onClick={() => cambiarDecide('dirigida')}>Sólo esa persona</button>
-            <button type="button" role="radio" aria-checked={yo.decide === 'todos'} className={yo.decide === 'todos' ? 'on' : ''} onClick={() => cambiarDecide('todos')}>Cualquiera</button>
+          <div className="label">{t.decisionesCfg}</div>
+          <div className="seg sm" role="radiogroup" aria-label={t.quienResponde}>
+            <button type="button" role="radio" aria-checked={yo.decide !== 'todos'} className={yo.decide !== 'todos' ? 'on' : ''} onClick={() => cambiarDecide('dirigida')}>{t.soloEsa}</button>
+            <button type="button" role="radio" aria-checked={yo.decide === 'todos'} className={yo.decide === 'todos' ? 'on' : ''} onClick={() => cambiarDecide('todos')}>{t.cualquiera}</button>
           </div>
         </div>
       )}
       <div className="me">
         <div className="me-row">
           <Avatar autor={yo.autor} tipo={yo.tipo} equipo={equipo} size={32} />
-          <div><div className="t">{yo.autor}</div><div className="s">Conectado desde este dispositivo</div></div>
+          <div><div className="t">{yo.autor}</div><div className="s">{t.conectadoDesde}</div></div>
         </div>
-        {permiso === 'default' && <button className="ghost" onClick={pedirPermiso}>{I.bell} Avisarme cuando me nombren</button>}
-        {permiso === 'granted' && <div className="fine-s">{I.bell} Te avisamos cuando te nombren</div>}
+        {permiso === 'default' && <button className="ghost" onClick={pedirPermiso}>{I.bell} {t.avisarme}</button>}
+        {permiso === 'granted' && <div className="fine-s">{I.bell} {t.avisamos}</div>}
         {/* Reconectar regenera la clave: a un Claude conectado le cortaría la sesión, así que sólo se ofrece si está apagado hace rato. */}
         {yo.tipo === 'persona' && (!miClaude || (miClaude.dueno === yo.autor && !(miClaude.visto && Date.now() - new Date(miClaude.visto).getTime() < 15 * 60_000))) && (
-          <button className="ghost" onClick={sumarClaude}>{I.plus} {miClaude ? 'Reconectar a mi Claude' : 'Sumar a mi Claude'}</button>
+          <button className="ghost" onClick={sumarClaude} title={t.sumarClaudeAyuda}>{I.plus} {miClaude ? t.reconectarClaude : t.sumarClaude}</button>
         )}
       </div>
     </>
@@ -1087,30 +1112,30 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       <aside className="side" {...fondoInerte}>{lateral}</aside>
       <div className="mtop" {...fondoInerte}>
         <div className="logo"><MarcopoloLogo /></div><span className="grow" />
-        <button className="iconbtn" onClick={alternarTema} title="Tema">{I.moon}</button>
-        <button className="iconbtn" onClick={() => setPanel(true)} title="Sala y archivos">{I.menu}</button>
+        <button className="iconbtn" onClick={alternarTema} title={t.tema}>{I.moon}</button>
+        <button className="iconbtn" onClick={() => setPanel(true)} title={t.salaYArchivos}>{I.menu}</button>
       </div>
       <main className="card" {...fondoInerte}>
         <div className="head">
           <div>
             <div className="t">{yo.titulo}</div>
-            <div className="s">{presenciaLista ? <>{miembros.length} en la sala{trabajando.length ? ` · ${trabajando.length} escribiendo` : ''}</> : 'Conectando…'}</div>
+            <div className="s">{presenciaLista ? <>{t.enLaSala(miembros.length)}{trabajando.length ? ` · ${t.nEscribiendo(trabajando.length)}` : ''}</> : t.conectando}</div>
           </div>
           <div className="grow" />
           <div className="stack">{miembros.slice(0, 5).map((m) => <Avatar key={m.autor} autor={m.autor} tipo={m.tipo} equipo={equipo} size={24} />)}</div>
-          <button className="iconbtn hide-m" onClick={alternarTema} title={tema === 'dark' ? 'Modo claro' : 'Modo oscuro'}>{I.moon}</button>
+          <button className="iconbtn hide-m" onClick={alternarTema} title={tema === 'dark' ? t.modoClaro : t.modoOscuro}>{I.moon}</button>
         </div>
         <div className="stream" ref={streamRef} onScroll={alScrollear}>
           <div className="inner">
-            {canal.length ? <Lista mensajes={canal} ctx={ctx} nuevosDesde={nuevosDesde} /> : <div className="empty">Todavía no hay mensajes. Escribí el primero.</div>}
+            {canal.length ? <Lista mensajes={canal} ctx={ctx} nuevosDesde={nuevosDesde} /> : <div className="empty">{t.vacio}</div>}
             {trabajando.filter((m) => hiloDe(m.autor) == null).map((m) => <Escribiendo key={'w' + m.autor} m={m} equipo={equipo} />)}
           </div>
         </div>
         {!abajo && noLeidos > 0 && (
-          <button className="jump" onClick={() => { const el = streamRef.current; if (el) el.scrollTop = el.scrollHeight }}>{noLeidos} {noLeidos === 1 ? 'mensaje nuevo' : 'mensajes nuevos'} ↓</button>
+          <button className="jump" onClick={() => { const el = streamRef.current; if (el) el.scrollTop = el.scrollHeight }}>{noLeidos} {noLeidos === 1 ? t.mensajeNuevo : t.mensajesNuevos} ↓</button>
         )}
         <div className="dock">
-          <Composer placeholder="Escribile a la sala…" onAviso={setAviso} menciones={mencionesCanal} onMandar={(t, a) => mandar(t, a, {})} />
+          <Composer placeholder={t.phCanal} onAviso={setAviso} menciones={mencionesCanal} onMandar={(t, a) => mandar(t, a, {})} />
           <div className={`rail ${aviso ? 'err' : ''}`}>{aviso}</div>
         </div>
       </main>
@@ -1118,21 +1143,21 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       {hiloId != null && (
         <section className="card tpanel">
           <div className="head">
-            <button className="iconbtn only-m" onClick={() => setHiloId(null)} title="Volver">{I.back}</button>
-            <div><div className="t">Hilo</div><div className="s">{raizHilo ? `${raizHilo.autor} · ${yo.titulo}` : yo.titulo}</div></div>
+            <button className="iconbtn only-m" onClick={() => setHiloId(null)} title={t.volver}>{I.back}</button>
+            <div><div className="t">{t.hilo} <span className="s inl">· {t.hiloAyuda}</span></div><div className="s">{raizHilo ? `${raizHilo.autor} · ${yo.titulo}` : yo.titulo}</div></div>
             <div className="grow" />
-            <button className="iconbtn hide-m" onClick={() => setHiloId(null)} title="Cerrar">{I.x}</button>
+            <button className="iconbtn hide-m" onClick={() => setHiloId(null)} title={t.cerrar}>{I.x}</button>
           </div>
           <div className="stream" ref={hiloRef}>
             <div className="inner">
               {raizHilo ? <Fila m={raizHilo} cont={false} ctx={ctx} enHilo /> : <div className="empty"><span className="spin" /></div>}
-              <div className="tsep"><span>{hilo.length ? `${hilo.length} ${hilo.length === 1 ? 'respuesta' : 'respuestas'}` : 'Todavía sin respuestas'}</span></div>
+              <div className="tsep"><span>{hilo.length ? `${hilo.length} ${hilo.length === 1 ? t.respuesta : t.respuestas}` : t.sinRespuestas}</span></div>
               <Lista mensajes={hilo} ctx={ctx} enHilo nuevosDesde={null} />
               {trabajando.filter((m) => hiloDe(m.autor) === hiloId).map((m) => <Escribiendo key={'w' + m.autor} m={m} equipo={equipo} />)}
             </div>
           </div>
           <div className="dock">
-            <Composer key={hiloId} hilo placeholder="Responder en el hilo…" onAviso={setAviso} autoFocus menciones={mencionesHilo}
+            <Composer key={hiloId} hilo placeholder={t.phHilo} onAviso={setAviso} autoFocus menciones={mencionesHilo}
               onMandar={(t, a, tambien) => mandar(t, a, { respuesta_a: hiloId, tambien_canal: tambien })} />
             <div className={`rail ${aviso ? 'err' : ''}`}>{aviso}</div>
           </div>
@@ -1147,15 +1172,15 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       {comandoClaude && (
         <div className="modal-bg" onClick={() => setComandoClaude(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h2>Sumar a tu Claude</h2>
-            <p>Si usás Claude Code en tu computadora, pegá esto en la terminal. Instala el conector de la sala con una clave sólo para tu Claude:</p>
+            <h2>{t.modalTitulo}</h2>
+            <p>{t.modal1}</p>
             <pre>{comandoClaude}</pre>
-            <p>Después abrí Claude con este comando (la primera vez muestra un aviso: elegí "I am using this for local development"):</p>
+            <p>{t.modal2}</p>
             <pre>claude --dangerously-load-development-channels server:sala</pre>
-            <p>Va a aparecer en la sala como "Claude de {yo.autor}" y va a leer y contestar los mensajes solo.</p>
+            <p>{t.modal3(yo.autor)}</p>
             <div className="acts">
-              <button className="btn sec" onClick={() => navigator.clipboard?.writeText(comandoClaude)}>Copiar el primero</button>
-              <button className="btn" onClick={() => setComandoClaude(null)}>Listo</button>
+              <button className="btn sec" onClick={() => navigator.clipboard?.writeText(comandoClaude)}>{t.copiarPrimero}</button>
+              <button className="btn" onClick={() => setComandoClaude(null)}>{t.listo}</button>
             </div>
           </div>
         </div>

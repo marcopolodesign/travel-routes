@@ -30,6 +30,7 @@ import HealthierFase1 from './pages/HealthierFase1'
 import PacerAvances from './pages/PacerAvances'
 import HealthierAvancesOctubre from './pages/HealthierAvancesOctubre'
 import Sala from './pages/Sala'
+import SalaPrivacidad from './pages/SalaPrivacidad'
 
 export default function App() {
   return (
@@ -292,6 +293,7 @@ export default function App() {
         <Route path="/deck/picnic" element={<PicnicDeck />} />
         <Route path="/agent" element={<Agent />} />
         <Route path="/sala" element={<Sala />} />
+        <Route path="/sala/privacidad" element={<SalaPrivacidad />} />
         <Route path="/sala/:codigo" element={<Sala />} />
         <Route path="/monotributo" element={<Monotributo />} />
       </Routes>
