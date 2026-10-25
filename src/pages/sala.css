@@ -429,4 +429,6 @@
 .sala .reply-txt.dir:hover { background: var(--accent-wash); color: var(--accent-ink); }
 .sala .newtag { display: inline-block; margin: 4px 8px 0 0; padding: 0 8px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 11px; line-height: 18px; font-weight: 600; letter-spacing: .02em; vertical-align: middle; }
 .sala .thread-row .newtag { margin: 0; }
+.sala .reply-txt.dir, .sala .newtag.after-reply { vertical-align: middle; }
+.sala .newtag.after-reply { margin: 6px 0 0 8px; }
 .sala .msg .tag.solo { display: inline-block; margin-top: 2px; color: var(--accent-ink); }

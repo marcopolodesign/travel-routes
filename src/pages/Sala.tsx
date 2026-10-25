@@ -683,7 +683,7 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
             {I.hilo}<span>{t.enRespuestaA}: <b>{raiz.borrado ? t.mensajeBorrado : recortar(raiz.texto || raiz.archivo_nombre || '', 70)}</b></span>
           </button>
         )}
-        {nuevoParaMi && <span className="newtag">{t.nuevoParaVos}</span>}
+        {nuevoParaMi && !agente && <span className="newtag">{t.nuevoParaVos}</span>}
         <div className="body">
           {m.borrado ? <p className="gone">{t.msgBorrado}</p>
             : editando ? (
@@ -741,6 +741,8 @@ function FilaMensaje({ m, cont, ctx, enHilo, nuevo }: { m: Mensaje; cont: boolea
           <button type="button" className={`reply-txt ${paraMi ? 'dir' : ''}`} onClick={() => ctx.abrirHilo(m.respuesta_a ?? m.id)}
             aria-label={paraMi ? t.ariaResponderleA(m.autor, recortar(raiz!.texto || raiz!.archivo_nombre || '', 40)) : ariaResponder}>{I.hilo}{paraMi ? t.responderleA(m.autor) : t.responder}</button>
         )}
+        {/* "Nuevo para vos" junto a la acción que lo apaga, no pegado al "En respuesta a" (ahí se cortaba y quedaba fuera de línea). */}
+        {nuevoParaMi && agente && !enHilo && !m.sistema && !m.pendiente && !m.borrado && !editando && <span className="newtag after-reply">{t.nuevoParaVos}</span>}
         {!m.pendiente && !m.borrado && !editando && (
           <div className="tools" onClick={(e) => e.stopPropagation()}>
             {emojis
