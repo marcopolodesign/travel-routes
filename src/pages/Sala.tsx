@@ -31,7 +31,7 @@ type Mensaje = {
 }
 type Opcion = { id: string; etiqueta?: string; texto: string; recomendada?: boolean }
 // En la pregunta: {opcion, texto, autor, cuando, respuesta_id}. En el "Elegí: …": {pregunta, opcion, …}.
-type Decision = { opcion: string; texto: string; etiqueta?: string; autor: string; cuando: string; respuesta_id?: number; pregunta?: number; cambiada?: boolean }
+type Decision = { opcion: string; texto: string; etiqueta?: string; autor: string; cuando: string; respuesta_id?: number; pregunta?: number; cambiada?: boolean; libre?: boolean; descartada?: boolean }
 type Miembro = { autor: string; tipo: string; dueno?: string | null; estado?: string | null; visto?: string | null }
 type Yo = { sala: string; autor: string; tipo: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[]; decide?: 'dirigida' | 'todos'; admin?: boolean }
 type Invitacion = { sala: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[]; miembros: Miembro[] }
@@ -559,7 +559,8 @@ function Pregunta({ m, ctx }: { m: Mensaje; ctx: Ctx }) {
   const ops = m.opciones ?? []
   const para = m.pregunta_para ?? []
   const puede = para.includes(yo.autor) || (yo.decide === 'todos' && yo.tipo === 'persona' && m.autor !== yo.autor)
-  const d = m.decision
+  // Descartada = sólo salió de "Te necesitan" en la app: acá sigue pendiente. Libre = se contestó escribiendo.
+  const d = m.decision?.descartada ? null : m.decision
   const resp = d?.respuesta_id ? ctx.porId[d.respuesta_id] : undefined
   const tomada = !!resp?.reacciones?.some((r) => (r.emoji === '👀' || r.emoji === '✓') && r.autores.includes(m.autor))
   const abierta = puede && (!d || cambiando)
@@ -590,6 +591,7 @@ function Pregunta({ m, ctx }: { m: Mensaje; ctx: Ctx }) {
           )
         })}
       </div>
+      {d?.libre && !cambiando && <div className="dlibre">“{d.texto}”</div>}
       {d && !cambiando && (
         <div className="dfoot">
           <span>{d.cambiada
