@@ -1,5 +1,21 @@
 # Marco Polo — Catchup
 
+## 2026-10-28 — Sala: onboarding "¿Qué necesitás?", pedidos con peso y pestaña Uso (hasta preview, sin producción)
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 11:45 → 13:23 (98 min)
+
+Para la sala de TAG, pensado para cualquier sala. Ramas `feat/sala-pedidos-uso` en `marcopolodesign/sala` (1c399b0, sobre origin/main + feat/sala-tag) y en este repo (0ea869b). **Nada en producción**: la función nueva corre como `sala-preview` (misma base garcon) y la preview de Vercel apunta ahí con `VITE_SALA_API` (env sólo de preview, sólo esta rama).
+
+- **Servidor** (`supabase/functions/sala/pedidos.ts` + rutas en index.ts): migración `20261028120000_pedidos_uso.sql` **sólo aditiva, ya aplicada en garcon** (tablas nuevas `sala_onboarding`, `sala_pedidos`, `sala_mensaje_tarjeta`, `sala_sesiones`, `sala_consumo`; ninguna columna nueva en tablas existentes). `POST /pedido-cerrado` (sólo agentes; chico 1, mediano 2, grande 0 = cotizado aparte; quién/cuándo/tarjeta salen del mensaje; un mensaje = un pedido), `/pedido-anular`, `GET /onboarding`, `GET /uso` (sólo dueño). `/yo` y `/presencia` traen `pedidos` (contador del mes, huso Europe/Madrid) y `/yo` el `onboarding`. Sesiones: una por persona al volver tras 30 min (en `miembroDeClave`, con waitUntil).
+- **Conector**: herramienta `pedido_cerrado` + `sala.mjs pedido …`. `dist/sala.mjs` reconstruido pero **no publicado** al bucket.
+- **Rol de TAG** (`salas/tag.rol.txt`): el contador pasa al servidor; criterio de tamaño por páginas/pantallas, si cambia datos y tiempo; al completar el cupo, ofrece adicional (15 €) o mes siguiente. Se borró `tag-pedidos.plantilla.md`. `salas/tag.onboarding.json`: `tipo` y `[dato]` por tarjeta, título "¿Qué necesitás?".
+- **Web**: offstage con tarjetas (sala vacía), tarjeta → ejemplo en el campo con el dato seleccionado (viaja `tarjeta`), tira + botón de cuatro cuadraditos con mensajes, "Pedidos del mes · N/30" (rojo al completar), pestaña **Uso** para el dueño (`SalaUso.tsx`). Las tarjetas sólo las ven los invitados (no el equipo). Felipe revisó Uso: 9 ajustes aplicados (menos texto en tiles, números en formato argentino, jerarquía, plurales, columna Quién en mobile).
+- **Consumo**: `scripts/consumo.py --subir` sube por día a `sala_consumo` (corrido una vez; falta programarlo).
+- **Probado desde el front**: local (vite → sala-preview) en Chrome 1440 y Playwright 390/1440 claro y oscuro: invitada toca tarjeta, tipea sobre el dato, manda; agente cierra pedido; contador en vivo hasta 32/30 en rojo; Mateo ve Uso. **Preview de Vercel** (travel-routes-pofd5asl5…, Playwright 390 con share link): tarjeta → "noviembre" → enviado → pedido cerrado → 0/30 → 1/30, sin errores de JS. Capturas en `marcopolodesign/sala` `docs/pedidos-uso/`. App iOS: no tocada.
+- **Control**: `node scripts/check-pedidos.mjs` en sala (10 checks: pesos, duplicado, permisos, cupo/adicional, anular, /uso, herramienta del conector) — en verde contra sala-preview.
+- **Ojo al publicar**: el `sala` de producción es origin/main **más `/archivar`** de `feat/borrar-sala` (sin mergear): desplegar esta rama sola lo borraría. Salas de prueba creadas en garcon: `prueba-pedidos`, `prueba-onboarding`, `prueba-check-pedidos`.
+
 ## 2026-10-25 — Sala: prueba con 5 usuarios nuevos (5 rondas, web + app)
 
 **Source:** Claude Code — Macbook Pro
