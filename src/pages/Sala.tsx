@@ -43,7 +43,8 @@ type Yo = {
 type Tarjeta = { id: string; tipo: string; titulo: string; ejemplo: string }
 type Onboarding = { titulo?: string; tarjetas: Tarjeta[] }
 // Contador del mes: suma de pesos de los pedidos cerrados (chico 1, mediano 2; grande va aparte).
-type Pedidos = { mes: string; usados: number; cupo: number; precio_extra?: number | null; lleno?: boolean; extra?: number }
+// Sin precios: el cobro lo maneja el dueño por fuera de la sala.
+type Pedidos = { mes: string; usados: number; cupo: number; lleno?: boolean; extra?: number }
 type Invitacion = { sala: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[]; miembros: Miembro[] }
 
 const leer = (k: string) => { try { return localStorage.getItem(k) } catch { return null } }
@@ -1405,8 +1406,8 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
           <div>
             <div className="t">{yo.titulo}</div>
             <div className="s">{pedidos
-              ? <span className={`cupo ${pedidos.usados >= pedidos.cupo ? 'lleno' : ''}`} title={pedidos.usados > pedidos.cupo && pedidos.precio_extra ? t.cupoExtra(pedidos.usados - pedidos.cupo, pedidos.precio_extra) : undefined}>
-                  {t.pedidosDelMes} · <span className="num">{pedidos.usados}/{pedidos.cupo}</span>{pedidos.usados > pedidos.cupo && <span className="hide-m"> · {t.adicionales(pedidos.usados - pedidos.cupo)}</span>}</span>
+              ? <span className={`cupo ${pedidos.usados >= pedidos.cupo ? 'lleno' : ''}`}>
+                  {t.pedidosDelMes} · <span className="num">{pedidos.usados}/{pedidos.cupo}</span>{pedidos.usados > pedidos.cupo && <span className="hide-m"> · {t.fueraDelCupo(pedidos.usados - pedidos.cupo)}</span>}</span>
               : presenciaLista ? <>{t.enLaSala(miembros.length)}{trabajando.length ? ` · ${t.nEscribiendo(trabajando.length)}` : ''}</> : t.conectando}</div>
           </div>
           <div className="grow" />

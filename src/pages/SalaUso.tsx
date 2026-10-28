@@ -8,7 +8,7 @@ type Mes = { mes: string; pedidos: number; peso: number; extra: number; chico: n
 type Persona = { autor: string; equipo: boolean; semanas: { semana: string; mensajes: number; sesiones: number; minutos: number }[]; mensajes: number; sesiones: number }
 type Pedido = { id: number; pedido_por: string | null; titulo: string; link: string | null; tamano: string; peso: number; tarjeta: string | null; abierto: string; cerrado: string; extra: number; minutos: number | null }
 export type DatosUso = {
-  semanas: string[]; cupo: number | null; precio_extra: number | null
+  semanas: string[]; cupo: number | null
   mes_actual: { mes: string; usados: number; cupo: number; pedidos: number; extra: number } | null
   pedidos: { por_mes: Mes[]; por_semana: Semana[]; ultimos: Pedido[] }
   personas: Persona[]
@@ -65,7 +65,7 @@ export default function Uso({ cargar }: { cargar: (semanas: number) => Promise<D
           <div className="label">Cupo de {m ? fMes(m.mes) : 'este mes'}</div>
           <div className="big">{m ? <>{m.usados}<small>/{m.cupo}</small></> : '—'}</div>
           {pct != null && <div className={`meter ${pct >= 100 ? 'lleno' : ''}`} role="meter" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label="Cupo usado"><i style={{ width: `${Math.min(100, pct)}%` }} /></div>}
-          <div className="sub">{pct == null ? 'Sin cupo cargado' : m!.usados > m!.cupo ? `${pl(m!.usados - m!.cupo, 'adicional', 'adicionales')}${d.precio_extra ? ` · ${(m!.usados - m!.cupo) * d.precio_extra} €` : ''}` : `quedan ${m!.cupo - m!.usados}`}</div>
+          <div className="sub">{pct == null ? 'Sin cupo cargado' : m!.usados > m!.cupo ? `${m!.usados - m!.cupo} fuera del cupo` : `quedan ${m!.cupo - m!.usados}`}</div>
         </div>
         <div className="tile">
           <div className="label">Pedidos este mes</div>
@@ -100,7 +100,7 @@ export default function Uso({ cargar }: { cargar: (semanas: number) => Promise<D
       <section>
         <h3>Por mes</h3>
         <div className="scroll"><table>
-          <thead><tr><th>Mes</th><th className="n">Pedidos</th><th className="n">Peso</th><th className="n">% cupo</th><th className="n">Chicos</th><th className="n">Medianos</th><th className="n">Grandes</th><th className="n">Adicionales</th></tr></thead>
+          <thead><tr><th>Mes</th><th className="n">Pedidos</th><th className="n">Peso</th><th className="n">% cupo</th><th className="n">Chicos</th><th className="n">Medianos</th><th className="n">Grandes</th><th className="n">Fuera del cupo</th></tr></thead>
           <tbody>{d.pedidos.por_mes.length ? d.pedidos.por_mes.map((x) => (
             <tr key={x.mes}><td>{fMes(x.mes)}</td><td className="n">{x.pedidos}</td><td className="n">{x.peso}</td><td className="n">{x.pct_cupo != null ? `${x.pct_cupo}%` : '—'}</td>
               <td className="n">{x.chico}</td><td className="n">{x.mediano}</td><td className="n">{x.grande}</td><td className="n">{x.extra || '—'}</td></tr>
@@ -147,7 +147,7 @@ export default function Uso({ cargar }: { cargar: (semanas: number) => Promise<D
           <thead><tr><th>Cerrado</th><th>Pedido</th><th className="quien">Quién</th><th>Tamaño</th>{conTiempo && <th className="n">Tardó</th>}</tr></thead>
           <tbody>{d.pedidos.ultimos.length ? d.pedidos.ultimos.map((p) => (
             <tr key={p.id}><td>{fFecha(p.cerrado)}</td>
-              <td>{p.link ? <a href={p.link} target="_blank" rel="noreferrer">{p.titulo}</a> : p.titulo}{p.extra > 0 && <span className="eq extra">adicional</span>}
+              <td>{p.link ? <a href={p.link} target="_blank" rel="noreferrer">{p.titulo}</a> : p.titulo}{p.extra > 0 && <span className="eq extra">fuera del cupo</span>}
                 {p.pedido_por && <span className="quien-m">{p.pedido_por}</span>}</td>
               <td className="quien">{p.pedido_por ?? '—'}</td><td className="tam">{TAM[p.tamano] ?? p.tamano}{p.tamano !== 'grande' && <small> · {p.peso}</small>}</td>
               {conTiempo && <td className="n">{p.minutos ? `${p.minutos} min` : '—'}</td>}</tr>
