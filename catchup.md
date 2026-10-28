@@ -1,5 +1,16 @@
 # Marco Polo — Catchup
 
+## 2026-10-28 — Sala TAG: pedidos, onboarding y Uso en PRODUCCIÓN
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 13:23 → 13:50 (27 min)
+
+Con el OK de Mateo y sus cambios: sin precios en ningún lado (rol, onboarding, avisos del servidor, UI: "fuera del cupo"); cupo de TAG 20/mes; al completar el cupo el agente avisa en la sala y consulta a Mateo con `preguntar` (no "@Mateo" en el chat: el rol lo prohíbe y el servidor lo ocultaría a los invitados); tarjetas sólo para invitados; consumo diario por launchd (`agency.marcopolo.sala-consumo`, 23:50, copia en `~/.sala/bin/consumo.py`).
+- **En producción**: sala `main` = `4c6a2fe` (incluye el merge de `feat/borrar-sala`, `/archivar` intacto) + capturas; función `sala` desplegada; `onboarding.py tag` (8 tarjetas, cupo 20); conector publicado al bucket y copiado a `~/.sala/sala.mjs`; rol nuevo en `~/.sala/salas/tag.rol.txt`; sesión `sala-tag` reiniciada (estaba ociosa, sin pendientes). Web `main` = `3afd884`, deploy de producción por el push (no lo bloqueó). Se borró la env `VITE_SALA_API` de preview.
+- **Controles en prod**: `check-pedidos.mjs` 10/10 y `check-sala.mjs` 233/233.
+- **Front en producción**: invitado nuevo por link de 1 uso (390 y 1440): tira con las 8 tarjetas, ejemplo en voseo con el dato seleccionado, contador 0/20, sin pestaña Uso. Mateo (sin marcar leído): Uso con 0/20 y consumo 0,3 %. Sin errores de JS. Miembro de prueba y sus sesiones borrados; ningún mensaje escrito en la sala de TAG. Capturas `prod-*.png` en `marcopolodesign/sala` `docs/pedidos-uso/`.
+- Ojo: el saludo del agente que ya estaba en la sala de TAG usa vosotros ("podéis… escribidme"), de antes del cambio a voseo.
+
 ## 2026-10-28 — Sala: onboarding "¿Qué necesitás?", pedidos con peso y pestaña Uso (hasta preview, sin producción)
 
 **Source:** Claude Code — Macbook Pro
