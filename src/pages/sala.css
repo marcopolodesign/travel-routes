@@ -433,3 +433,85 @@
 .sala .reply-txt.dir, .sala .newtag.after-reply { vertical-align: middle; }
 .sala .newtag.after-reply { margin: 6px 0 0 8px; }
 .sala .msg .tag.solo { display: inline-block; margin-top: 2px; color: var(--accent-ink); }
+
+/* ─── Onboarding "¿Qué necesitás?" (Felipe, 2026-10-28: docs/onboarding del repo sala) ─── */
+.sala [hidden] { display: none !important; }
+.sala .av-48 { width: 48px; height: 48px; font-size: 20px; }
+.sala .av-48 svg { width: 22px; height: 22px; }
+.sala .offstage { padding: 0 24px 18px; max-width: 928px; }
+.sala .offstage h1 { font-size: 32px; line-height: 38px; font-weight: 600; letter-spacing: -.02em; margin: 14px 0 0 -2px; }
+.sala .ogrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
+.sala .oc { height: 112px; border-radius: 14px; background: var(--sunken); padding: 14px 16px 16px; display: flex; flex-direction: column; justify-content: space-between; text-align: left; color: var(--ink); transition: box-shadow .12s, background .12s; }
+.sala .oc:hover { background: color-mix(in srgb, var(--sunken) 80%, var(--ink) 5%); }
+.sala .oc:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.sala .oc .ot { font-size: 15px; line-height: 20px; font-weight: 600; text-wrap: balance; }
+.sala .oc.pick { box-shadow: inset 0 0 0 2px var(--ink); }
+.sala .otira { display: flex; gap: 10px; padding: 0 0 10px; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 60px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 60px), transparent); scroll-snap-type: x proximity; }
+.sala .otira::-webkit-scrollbar { display: none; }
+.sala .otira .oc { flex: none; width: 200px; height: 84px; scroll-snap-align: start; }
+.sala .composer .iconbtn.ideas.on { background: var(--btn); color: var(--btn-ink); }
+.sala .head .cupo .num { font-variant-numeric: tabular-nums; }
+.sala .head .cupo.lleno { color: var(--accent-ink); font-weight: 600; }
+.sala .head .vistas { margin-right: 4px; }
+@media (max-width: 760px) {
+  .sala .offstage { padding: 0 16px 14px; }
+  .sala .offstage h1 { font-size: 30px; line-height: 36px; }
+  .sala .ogrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+  .sala .oc { height: 96px; border-radius: 16px; padding: 12px 14px 14px; }
+  .sala .oc .ot { font-size: 16px; line-height: 21px; }
+  .sala .otira { gap: 8px; padding-bottom: 8px; }
+  .sala .otira .oc { width: 156px; height: auto; min-height: 84px; gap: 8px; }
+  .sala .otira .oc .ot { font-size: 15px; line-height: 20px; }
+}
+
+/* ─── Uso (sólo el dueño) ─── */
+.sala .uso { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 24px 32px; }
+.sala .uso-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.sala .uso-top h2 { font-size: 22px; line-height: 28px; font-weight: 600; letter-spacing: -.01em; margin: 0; flex: 1; }
+.sala .uso-nota, .sala .uso-err { display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: 14px; }
+.sala .uso-err { color: var(--accent-ink); }
+.sala .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.sala .tile { background: var(--sunken); border-radius: var(--r-block); padding: 14px 16px 16px; min-width: 0; }
+.sala .tile .big { font-size: 32px; line-height: 38px; font-weight: 600; letter-spacing: -.02em; margin-top: 8px; font-variant-numeric: tabular-nums; }
+.sala .tile .big small { font-size: 18px; color: var(--muted); font-weight: 500; }
+.sala .tile .sub { font-size: 13px; line-height: 18px; color: var(--muted); margin-top: 6px; }
+.sala .meter { height: 6px; border-radius: 3px; background: var(--line); margin-top: 10px; overflow: hidden; }
+.sala .meter i { display: block; height: 100%; border-radius: 3px; background: var(--ink); }
+.sala .meter.lleno i { background: var(--accent); }
+.sala .uso section { margin-top: 40px; min-width: 0; }
+.sala .uso h3 { font-size: 18px; line-height: 24px; font-weight: 600; margin: 0 0 12px; }
+.sala .uso h3 span { font-weight: 400; color: var(--muted); font-size: 14px; margin-left: 6px; }
+.sala .bars { display: flex; align-items: flex-end; gap: 8px; height: 168px; padding-top: 18px; border-bottom: 1px solid var(--line); margin-bottom: 28px; }
+.sala .bcol { flex: 1; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
+.sala .bcol i { display: block; width: min(100%, 44px); min-height: 2px; background: var(--accent); border-radius: 4px 4px 0 0; }
+.sala .bcol i.cero { background: var(--line); }
+.sala .bcol:hover i { filter: brightness(.92); }
+.sala .bval { font-size: 12px; line-height: 16px; color: var(--ink-2); font-variant-numeric: tabular-nums; margin-bottom: 4px; }
+.sala .blab { position: absolute; top: 100%; margin-top: 6px; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.sala .uso .scroll { overflow-x: auto; }
+.sala .uso table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 20px; }
+.sala .uso th { text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 400; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.sala .uso td { padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.sala .uso .n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sala .uso td small, .sala .uso .cero { color: var(--muted); }
+.sala .uso td a { color: var(--ink); text-decoration-color: var(--line); text-underline-offset: 3px; }
+.sala .uso td.tam { white-space: nowrap; }
+.sala .uso .quien-m { display: none; }
+[data-theme='dark'] .sala .uso-top .seg button.on, .sala[data-theme='dark'] .uso-top .seg button.on { background: color-mix(in srgb, var(--ink) 14%, transparent); }
+.sala .uso .vacio { color: var(--muted); text-align: left; }
+.sala .uso .eq { margin-left: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.sala .uso .eq.extra { color: var(--accent-ink); }
+.sala .uso .dos { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; }
+@media (max-width: 760px) {
+  .sala .uso { padding: 16px 16px 28px; }
+  .sala .tiles { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .sala .tile .big { font-size: 26px; line-height: 32px; }
+  .sala .uso .dos { grid-template-columns: 1fr; }
+  .sala .head .vistas button { padding: 0 10px; }
+  .sala .head .s { white-space: nowrap; }
+  .sala .uso-top h2 { flex: 1 1 100%; }
+  .sala .uso-top .seg button { padding: 0 10px; }
+  .sala .uso .quien { display: none; }
+  .sala .uso .quien-m { display: block; font-size: 13px; line-height: 18px; color: var(--muted); }
+}
+.sala .uso-top .seg { grid-template-columns: repeat(3, auto); }

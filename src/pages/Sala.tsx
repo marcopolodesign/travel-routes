@@ -6,11 +6,13 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import MarcopoloLogo from '../components/MarcopoloLogo'
 import { T } from './sala-i18n'
+import Uso, { type DatosUso } from './SalaUso'
 import './sala.css'
 
 const t = T()
 
-const API = 'https://keevroiskubxjmrtoaur.supabase.co/functions/v1/sala'
+// Producción usa `sala`. Una preview de Vercel puede apuntar a `sala-preview` (la misma función desplegada aparte) con VITE_SALA_API.
+const API = (import.meta.env.VITE_SALA_API as string | undefined) || 'https://keevroiskubxjmrtoaur.supabase.co/functions/v1/sala'
 const CLAVE_KEY = 'sala.clave'
 const TEMA_KEY = 'sala.tema'
 const MAX_BASE64 = 8 * 1024 * 1024    // hasta acá va dentro del JSON
@@ -33,7 +35,15 @@ type Opcion = { id: string; etiqueta?: string; texto: string; recomendada?: bool
 // En la pregunta: {opcion, texto, autor, cuando, respuesta_id}. En el "Elegí: …": {pregunta, opcion, …}.
 type Decision = { opcion: string; texto: string; etiqueta?: string; autor: string; cuando: string; respuesta_id?: number; pregunta?: number; cambiada?: boolean }
 type Miembro = { autor: string; tipo: string; dueno?: string | null; estado?: string | null; visto?: string | null }
-type Yo = { sala: string; autor: string; tipo: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[]; decide?: 'dirigida' | 'todos'; admin?: boolean }
+type Yo = {
+  sala: string; autor: string; tipo: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[]; decide?: 'dirigida' | 'todos'; admin?: boolean
+  permisos?: { dueno?: boolean }; onboarding?: Onboarding; pedidos?: Pedidos
+}
+// "¿Qué necesitás?": tarjetas por sala (salas/<sala>.onboarding.json en el repo sala). En el ejemplo, el dato a cambiar va entre [ ].
+type Tarjeta = { id: string; tipo: string; titulo: string; ejemplo: string }
+type Onboarding = { titulo?: string; tarjetas: Tarjeta[] }
+// Contador del mes: suma de pesos de los pedidos cerrados (chico 1, mediano 2; grande va aparte).
+type Pedidos = { mes: string; usados: number; cupo: number; precio_extra?: number | null; lleno?: boolean; extra?: number }
 type Invitacion = { sala: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[]; miembros: Miembro[] }
 
 const leer = (k: string) => { try { return localStorage.getItem(k) } catch { return null } }
@@ -105,6 +115,7 @@ const I = {
   bell: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16zM10 20.5a2 2 0 0 0 4 0" /></svg>,
   back: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>,
   plus: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>,
+  ideas: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><rect x="4" y="4" width="7" height="7" rx="2" /><rect x="13" y="4" width="7" height="7" rx="2" /><rect x="4" y="13" width="7" height="7" rx="2" /><rect x="13" y="13" width="7" height="7" rx="2" /></svg>,
 }
 
 // Lado (color): el equipo de la sala (nuestro lado) va en coral. Forma: persona círculo, IA cuadrado.
@@ -113,7 +124,7 @@ function ladoDe(autor: string, equipo: string[]) {
 }
 const esAgente = (autor: string, tipo?: string) => tipo ? tipo === 'agente' : /^claude\b/i.test(autor)
 
-function Avatar({ autor, tipo, equipo, size }: { autor: string; tipo?: string; equipo: string[]; size: 24 | 32 | 36 }) {
+function Avatar({ autor, tipo, equipo, size }: { autor: string; tipo?: string; equipo: string[]; size: 24 | 32 | 36 | 48 }) {
   const agente = esAgente(autor, tipo)
   return (
     <div className={`av ${agente ? 'a' : 'h'} ${ladoDe(autor, equipo)} av-${size}`} title={autor}>
@@ -381,7 +392,7 @@ const listar = (xs: string[]) => t.listar(xs)
 // sala") y el panel de hilo muestra las respuestas de una raíz. Los cambios (nuevos, ediciones,
 // borrados, reacciones, respuestas) llegan por /recibir?v=<version>.
 
-type Envio = { respuesta_a?: number; tambien_canal?: boolean }
+type Envio = { respuesta_a?: number; tambien_canal?: boolean; tarjeta?: string | null }
 
 const uuid = () => (crypto as Crypto & { randomUUID?: () => string }).randomUUID?.()
   ?? 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => { const r = (Math.random() * 16) | 0; return (c === 'x' ? r : (r & 3) | 8).toString(16) })
@@ -427,13 +438,26 @@ function insertarMencion(texto: string, inicio: number, cursor: number, nombre: 
 
 type DatosMenciones = { miembros: Miembro[]; yo: string; equipo: string[]; participan: string[] }
 
-function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso, menciones }: {
+// Una tarjeta tocada: el ejemplo sin corchetes y el tramo que iba entre [ ] (lo que se selecciona para tipear encima).
+type Relleno = { texto: string; sel: [number, number]; tarjeta: string; n: number }
+function rellenoDe(t: Tarjeta, n: number): Relleno {
+  const m = t.ejemplo.match(/\[(.+?)\]/)
+  const texto = t.ejemplo.replace(/[[\]]/g, '')
+  const ini = m ? m.index! : texto.length
+  return { texto, sel: m ? [ini, ini + m[1].length] : [texto.length, texto.length], tarjeta: t.id, n }
+}
+
+function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso, menciones, relleno, ideas }: {
   placeholder: string; hilo?: boolean; autoFocus?: boolean
-  onMandar: (texto: string, archivo: File | null, tambienCanal: boolean) => Promise<boolean>
+  onMandar: (texto: string, archivo: File | null, tambienCanal: boolean, tarjeta: string | null) => Promise<boolean>
   onAviso: (a: string | null) => void
   menciones?: DatosMenciones
+  relleno?: Relleno | null
+  ideas?: { on: boolean; alternar: () => void }
 }) {
   const [texto, setTexto] = useState('')
+  // De qué tarjeta salió lo que está escrito (viaja con el mensaje para el uso por tarjeta); se pierde si se borra todo.
+  const [tarjeta, setTarjeta] = useState<string | null>(null)
   const [archivo, setArchivo] = useState<File | null>(null)
   const [tambien, setTambien] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -469,6 +493,16 @@ function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso, menciones }
     if (t) { t.focus(); t.setSelectionRange(c, c) }
     ajustar()
   })
+  // Tarjeta tocada: el ejemplo queda escrito, con el foco puesto y el dato seleccionado.
+  useLayoutEffect(() => {
+    if (!relleno) return
+    setTexto(relleno.texto); setTarjeta(relleno.tarjeta); setCursor(relleno.sel[1])
+    requestAnimationFrame(() => {
+      const t = taRef.current
+      if (!t) return
+      ajustar(); t.focus(); t.setSelectionRange(relleno.sel[0], relleno.sel[1])
+    })
+  }, [relleno?.n])   // eslint-disable-line react-hooks/exhaustive-deps
   const teclaMencion = (e: React.KeyboardEvent) => {
     if (!abierta || e.nativeEvent.isComposing) return false
     if (e.key === 'ArrowDown') setActiva((sel + 1) % candidatos.length)
@@ -483,11 +517,11 @@ function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso, menciones }
     const tx = texto.trim()
     if (!tx && !archivo) return
     if (archivo && archivo.size > MAX_SUBIDA) { onAviso(t.archivoMas50); return }
-    const a = archivo
-    setTexto(''); setCursor(0); setArchivo(null); onAviso(null)
+    const a = archivo, tj = tarjeta
+    setTexto(''); setCursor(0); setArchivo(null); setTarjeta(null); onAviso(null)
     requestAnimationFrame(ajustar)
-    const ok = await onMandar(tx, a, tambien)
-    if (!ok) { setTexto(tx); setArchivo(a); requestAnimationFrame(ajustar) }
+    const ok = await onMandar(tx, a, tambien, tj)
+    if (!ok) { setTexto(tx); setArchivo(a); setTarjeta(tj); requestAnimationFrame(ajustar) }
   }
   return (
     <div className="composer">
@@ -512,7 +546,7 @@ function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso, menciones }
       <textarea
         ref={taRef} rows={1} value={texto} placeholder={placeholder} autoFocus={autoFocus} maxLength={MAX_TEXTO}
         aria-label={hilo ? t.ariaHilo : t.ariaCanal}
-        onChange={(e) => { setTexto(e.target.value); setCursor(e.target.selectionEnd); ajustar() }}
+        onChange={(e) => { setTexto(e.target.value); setCursor(e.target.selectionEnd); if (!e.target.value.trim()) setTarjeta(null); ajustar() }}
         onSelect={leerCursor}
         onBlur={() => setCerrada(clave)}
         onFocus={() => setCerrada(null)}
@@ -524,6 +558,7 @@ function Composer({ placeholder, onMandar, hilo, autoFocus, onAviso, menciones }
       <div className="bar">
         <button className="iconbtn" onClick={() => fileRef.current?.click()} title={t.adjuntar}>{I.clip}</button>
         <input ref={fileRef} type="file" hidden onChange={(e) => { setArchivo(e.target.files?.[0] ?? null); e.target.value = '' }} />
+        {ideas && <button type="button" className={`iconbtn ideas ${ideas.on ? 'on' : ''}`} onClick={ideas.alternar} aria-pressed={ideas.on} title={ideas.on ? t.ocultarTarjetas : t.verTarjetas} aria-label={ideas.on ? t.ocultarTarjetas : t.verTarjetas}>{I.ideas}</button>}
         {hilo && (
           <label className="also" title={t.tambienTitulo}><input type="checkbox" checked={tambien} onChange={(e) => setTambien(e.target.checked)} /><span>{t.tambien}<small>{t.tambienAyuda}</small></span></label>
         )}
@@ -781,12 +816,24 @@ function Lista({ mensajes, ctx, enHilo, nuevosDesde }: { mensajes: Mensaje[]; ct
   return <>{filas}</>
 }
 
+function TarjetaBtn({ tj, on, onClick }: { tj: Tarjeta; on: boolean; onClick: () => void }) {
+  return (
+    <button type="button" role="listitem" className={`oc ${on ? 'pick' : ''}`} onClick={onClick} aria-label={`${tj.titulo}: ${tj.ejemplo.replace(/[[\]]/g, '')}`}>
+      <span className="label">{tj.tipo}</span><span className="ot">{tj.titulo}</span>
+    </button>
+  )
+}
+
 const ordenar = (xs: Mensaje[]) => xs.sort((a, b) => (a.pendiente ? Infinity : a.id) - (b.pendiente ? Infinity : b.id) || a.creado.localeCompare(b.creado))
 
 function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; tema: string; alternarTema: () => void; onClaveInvalida: () => void }) {
   const [yo, setYo] = useState<Yo | null>(null)
   const [porId, setPorId] = useState<Record<number, Mensaje>>({})
   const [miembros, setMiembros] = useState<Miembro[]>([])
+  const [pedidos, setPedidos] = useState<Pedidos | null>(null)
+  const [vista, setVista] = useState<'chat' | 'uso'>('chat')
+  const [tiraElegida, setTiraElegida] = useState<boolean | null>(null)   // null = automática: abierta hasta que escribo
+  const [relleno, setRelleno] = useState<Relleno | null>(null)
   const [presenciaLista, setPresenciaLista] = useState(false)   // hasta la primera respuesta no hay contador: "0 en la sala" sería mentira
   const [aviso, setAviso] = useState<string | null>(null)
   const [panel, setPanel] = useState(false)
@@ -842,7 +889,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
         // Primera vez en esta sala: arranca con todo leído.
         if (mapa[0] === undefined) mapa[0] = Math.max(0, ...h.mensajes.map((m) => m.id))
         setLecturas(mapa); setNuevosDesde(mapa[0])
-        setYo(y)
+        setYo(y); setPedidos(y.pedidos ?? null)
       } catch (e) { manejar(e) }
     })()
     return () => { vivo = false }
@@ -875,7 +922,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   // Presencia y "trabajando…": cada 4 s.
   useEffect(() => {
     if (!yo) return
-    const traer = () => api<{ miembros: Miembro[] }>('/presencia', clave).then((r) => { setMiembros(r.miembros); setPresenciaLista(true) }).catch(manejar)
+    const traer = () => api<{ miembros: Miembro[]; pedidos?: Pedidos }>('/presencia', clave).then((r) => { setMiembros(r.miembros); setPresenciaLista(true); if (r.pedidos) setPedidos(r.pedidos) }).catch(manejar)
     traer()
     const t = setInterval(traer, 4000)
     return () => clearInterval(t)
@@ -1140,7 +1187,8 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     setPorId((prev) => ({ ...prev, [tempId]: temporal }))
     if (extra.respuesta_a == null) pegado.current = true   // una respuesta en un hilo no mueve el chat de atrás
     try {
-      const cuerpo: Record<string, unknown> = { texto, cliente_id, ...extra }
+      const { tarjeta, ...resto0 } = extra
+      const cuerpo: Record<string, unknown> = { texto, cliente_id, ...resto0, ...(tarjeta ? { tarjeta } : {}) }
       if (archivo && archivo.size > MAX_BASE64) {
         const s = await api<{ path: string; url: string; tipo: string }>('/subir', clave, { method: 'POST', body: JSON.stringify({ nombre: archivo.name, tamano: archivo.size }) })
         const r = await fetch(s.url, { method: 'PUT', headers: { 'content-type': s.tipo }, body: archivo })
@@ -1177,6 +1225,8 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       return false
     }
   }, [yo, clave, manejar])
+
+  const cargarUso = useCallback((n: number) => api<DatosUso>(`/uso?semanas=${n}`, clave), [clave])
 
   const reaccionar = useCallback((m: Mensaje, emoji: string) => {
     if (!yo) return
@@ -1283,7 +1333,16 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   const agentes = useMemo(() => miembros.filter((m) => m.tipo === 'agente' && m.autor !== yo?.autor).map((m) => m.autor), [miembros, yo])
   const yaEscribi = !!yo && todos.some((m) => m.autor === yo.autor && !m.sistema)
   const phCanal = agentes.length === 1 ? t.phCanalAgente(agentes[0]) : agentes.length > 1 ? t.phCanalAgentes : t.phCanal
-  const pista = yo?.tipo === 'persona' && !yaEscribi && agentes.length > 0 ? (agentes.length === 1 ? t.pistaAgente(agentes[0]) : t.pistaAgentes) : null
+  // Onboarding "¿Qué necesitás?" (sólo personas, si la sala lo tiene): sala vacía → tarjetas grandes; con mensajes → tira sobre el
+  // campo, abierta hasta que escribo y después con el botón de cuatro cuadraditos.
+  // El equipo (Mateo) no las ve: son para los invitados. Las ve igual entrando con una clave de invitado.
+  const tarjetas = yo?.tipo === 'persona' && !(yo.equipo ?? []).includes(yo.autor) ? yo.onboarding?.tarjetas ?? [] : []
+  const salaVacia = !canal.some((m) => !m.sistema)
+  const offstage = tarjetas.length > 0 && salaVacia
+  const tira = tarjetas.length > 0 && !offstage && (tiraElegida ?? !yaEscribi)
+  const elegirTarjeta = (tj: Tarjeta) => setRelleno((r) => rellenoDe(tj, (r?.n ?? 0) + 1))
+  const agenteSala = miembros.find((m) => m.tipo === 'agente')
+  const pista = yo?.tipo === 'persona' && !yaEscribi && agentes.length > 0 && !tarjetas.length ? (agentes.length === 1 ? t.pistaAgente(agentes[0]) : t.pistaAgentes) : null
   const ctx: Ctx | null = yo ? { yo, equipo, nombres, tipoDe, reaccionar, abrirHilo, editar, borrar, hiloConNovedad, porId, ultimaDeAgenteA, decidir } : null
 
   const lateral = yo && (
@@ -1345,25 +1404,45 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
         <div className="head">
           <div>
             <div className="t">{yo.titulo}</div>
-            <div className="s">{presenciaLista ? <>{t.enLaSala(miembros.length)}{trabajando.length ? ` · ${t.nEscribiendo(trabajando.length)}` : ''}</> : t.conectando}</div>
+            <div className="s">{pedidos
+              ? <span className={`cupo ${pedidos.usados >= pedidos.cupo ? 'lleno' : ''}`} title={pedidos.usados > pedidos.cupo && pedidos.precio_extra ? t.cupoExtra(pedidos.usados - pedidos.cupo, pedidos.precio_extra) : undefined}>
+                  {t.pedidosDelMes} · <span className="num">{pedidos.usados}/{pedidos.cupo}</span>{pedidos.usados > pedidos.cupo && <span className="hide-m"> · {t.adicionales(pedidos.usados - pedidos.cupo)}</span>}</span>
+              : presenciaLista ? <>{t.enLaSala(miembros.length)}{trabajando.length ? ` · ${t.nEscribiendo(trabajando.length)}` : ''}</> : t.conectando}</div>
           </div>
           <div className="grow" />
+          {yo.permisos?.dueno && (
+            <div className="seg sm vistas" role="tablist" aria-label={t.vistas}>
+              <button type="button" role="tab" aria-selected={vista === 'chat'} className={vista === 'chat' ? 'on' : ''} onClick={() => setVista('chat')}>{t.chat}</button>
+              <button type="button" role="tab" aria-selected={vista === 'uso'} className={vista === 'uso' ? 'on' : ''} onClick={() => setVista('uso')}>{t.uso}</button>
+            </div>
+          )}
           <div className="stack">{miembros.slice(0, 5).map((m) => <Avatar key={m.autor} autor={m.autor} tipo={m.tipo} equipo={equipo} size={24} />)}</div>
           <button className="iconbtn hide-m" onClick={alternarTema} title={tema === 'dark' ? t.modoClaro : t.modoOscuro}>{I.moon}</button>
         </div>
-        <div className="stream" ref={streamRef} onScroll={alScrollear} onPointerDown={apoyar} onPointerUp={soltar} onPointerCancel={soltar}>
+        {vista === 'uso' && yo.permisos?.dueno && <Uso cargar={cargarUso} />}
+        <div className="stream" ref={streamRef} onScroll={alScrollear} onPointerDown={apoyar} onPointerUp={soltar} onPointerCancel={soltar} hidden={vista === 'uso'}>
           <div className="inner">
-            {canal.length ? <Lista mensajes={canal} ctx={ctx} nuevosDesde={nuevosDesde} /> : <div className="empty">{t.vacio}</div>}
+            {canal.length ? <Lista mensajes={canal} ctx={ctx} nuevosDesde={nuevosDesde} /> : !offstage && <div className="empty">{t.vacio}</div>}
+            {offstage && (
+              <div className="offstage">
+                {agenteSala && <Avatar autor={agenteSala.autor} tipo="agente" equipo={equipo} size={48} />}
+                <h1>{yo.onboarding?.titulo || t.queNecesitas}</h1>
+                <div className="ogrid">{tarjetas.map((tj) => <TarjetaBtn key={tj.id} tj={tj} on={relleno?.tarjeta === tj.id} onClick={() => elegirTarjeta(tj)} />)}</div>
+              </div>
+            )}
             {trabajando.filter((m) => hiloDe(m.autor) == null).map((m) => <Escribiendo key={'w' + m.autor} m={m} equipo={equipo} />)}
           </div>
         </div>
-        <div className="dock">
+        <div className="dock" hidden={vista === 'uso'}>
           {/* Dentro del dock: flota SIEMPRE por encima del campo de escribir, crezca lo que crezca (varias líneas, adjunto). */}
           {!abajo && noLeidos > 0 && (
             <button className="jump" onClick={() => { const el = streamRef.current; if (el) { pegado.current = true; el.scrollTop = el.scrollHeight } }}>{noLeidos} {noLeidos === 1 ? t.mensajeNuevo : t.mensajesNuevos} ↓</button>
           )}
           {pista && <p className="agent-hint" id="sala-pista">{pista}</p>}
-          <Composer placeholder={phCanal} onAviso={setAviso} menciones={mencionesCanal} onMandar={(t, a) => mandar(t, a, {})} />
+          {tira && <div className="otira" role="list" aria-label={t.queNecesitas}>{tarjetas.map((tj) => <TarjetaBtn key={tj.id} tj={tj} on={relleno?.tarjeta === tj.id} onClick={() => elegirTarjeta(tj)} />)}</div>}
+          <Composer placeholder={phCanal} onAviso={setAviso} menciones={mencionesCanal} relleno={relleno}
+            ideas={tarjetas.length ? { on: offstage || tira, alternar: () => setTiraElegida(!(offstage || tira)) } : undefined}
+            onMandar={async (t, a, _tc, tarjeta) => { const ok = await mandar(t, a, { tarjeta }); if (ok) setRelleno(null); return ok }} />
           <div className={`rail ${aviso ? 'err' : ''}`} role={aviso ? 'alert' : undefined}>{aviso}</div>
         </div>
       </main>
