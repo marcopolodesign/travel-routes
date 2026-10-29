@@ -386,6 +386,15 @@ escritorio. Barra de avance arriba, numeración y la firma de Marco Polo abajo.
 **Ruta sin `BudgetTemplate`** (`/deck/picnic`, junto a `/agent` y `/monotributo`): el
 encabezado de documento no tiene sentido en un deck, acá la presentación es la página.
 
+### 2026-10-29 — Mail a Cande con la factura de Picnic de octubre y el estado de su monotributo
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** sin registro (sesión sin reloj de `worklog.py`)
+
+- Enviado desde m@marcopolo.agency a candelacovoss@gmail.com, con la Factura C 0002-00000001 ($5.390.000) adjunta.
+- Resumen: año 2026 $23.091.800, 12 meses $27.112.680 → categoría D (tope $30.628.651); con la cuota de noviembre a su nombre le quedan ~$2,1M de margen (datos de FacturAI/ARCA hasta el 7/10).
+- Pendiente: Picnic debe el otro 50% de octubre ($2.695.000); decidir a nombre de quién sale la cuota de noviembre.
+
 ### Dos cosas que se descubrieron y valen para todo el repo
 
 **1 · Las clases `max-w-[Npx]` arbitrarias de Tailwind no se están generando.** La
