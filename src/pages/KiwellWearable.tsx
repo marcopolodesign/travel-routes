@@ -274,7 +274,7 @@ export default function KiwellWearable() {
           <Fila
             pct="2%"
             concepto="Evolución del producto"
-            detalle="Lo que viene después del lanzamiento: ideación, propuestas e implementación de las mejoras y funciones nuevas, y capacitación del equipo. Con vesting a 24 meses."
+            detalle="Lo que viene después del lanzamiento: ideación, propuestas e implementación de las mejoras y funciones nuevas, y capacitación del equipo. Con vesting a 12 meses, sin cliff."
           />
           <Fila
             pct="+2%"
@@ -377,10 +377,31 @@ export default function KiwellWearable() {
             </ul>
           </div>
         </div>
-        <p className="text-sm text-black/60 mt-5 max-w-2xl">
-          Sin exclusividad por ahora. Si el wearable crece, se firma exclusividad en salud y medicina
-          con liberación parcial del vesting.
-        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <div className="border border-[var(--marco-border)] rounded-lg p-6">
+            <p className="font-thunder uppercase text-black text-lg mb-3">Continuidad</p>
+            <p className="text-black/80 text-[15px] leading-relaxed">
+              El código queda en custodia de un tercero. Kiwell lo recibe si Pacer deja de dar soporte
+              durante 60 días, cierra o se vende a una prepaga o empresa de medicina, y lo usa para su
+              propio producto.
+            </p>
+          </div>
+          <div className="border border-[var(--marco-border)] rounded-lg p-6">
+            <p className="font-thunder uppercase text-black text-lg mb-3">Licencia propia</p>
+            <p className="text-black/80 text-[15px] leading-relaxed">
+              Desde el mes 24, Kiwell puede pasar a una licencia perpetua pagando tres veces lo
+              facturado por suscripciones en los últimos 12 meses. Desde ahí no paga más ese
+              porcentaje.
+            </p>
+          </div>
+          <div className="border border-[var(--marco-border)] rounded-lg p-6">
+            <p className="font-thunder uppercase text-black text-lg mb-3">Exclusividad</p>
+            <p className="text-black/80 text-[15px] leading-relaxed">
+              Sin exclusividad por ahora. Si el wearable crece, se firma exclusividad en salud y
+              medicina con liberación parcial del vesting.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Próximos pasos */}
