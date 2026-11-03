@@ -139,10 +139,8 @@ export default function KiwellWearable() {
           equipo que acompaña.
         </p>
         <p>
-          El wearable suma lo que falta entre un chequeo y el siguiente: datos de cada noche y de
-          cada día que el equipo médico puede leer, y una razón diaria para abrir la app. Por eso
-          lo pensamos como puerta de entrada a Kiwell, no como un accesorio. El upsell natural es
-          el acompañamiento humano.
+          El wearable cubre lo que pasa entre un chequeo y el siguiente, con datos diarios que lee
+          el equipo médico. Es la puerta de entrada a Kiwell, y el acompañamiento humano, el upsell.
         </p>
         <p className="text-sm text-black/60">
           Referencias de mercado: Function Health (250.000 miembros a cerca de U$1 por día), Oura y
@@ -156,8 +154,8 @@ export default function KiwellWearable() {
           Tres caminos de venta
         </h3>
         <p className="text-black/80 max-w-2xl mb-8">
-          No hace falta elegir uno antes de salir. Corren juntos durante el piloto y los números
-          deciden en cuál se pone el peso. Los precios son de partida, para validar en el piloto.
+          Corren juntos durante el piloto y los números deciden en cuál se pone el peso. Precios de
+          partida, a validar.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Camino letra="A" titulo="Plan Kiwell Pro" precio="~U$120 de ingreso + ~U$80 / mes">
@@ -239,14 +237,11 @@ export default function KiwellWearable() {
           sueño, estrés, recuperación y actividad, y un copiloto de IA que explica cada métrica.
         </p>
         <p>
-          Construirlo desde cero lleva entre 6 y 12 meses de desarrollo entre la integración con el
-          fabricante, la app y los algoritmos. Con Pacer de base, la app de Kiwell sale en 90 días y
-          el piloto arranca con el producto probado.
+          Desde cero son 6 a 12 meses de desarrollo. Con Pacer de base, la app de Kiwell sale en 90
+          días con el producto probado.
         </p>
         <p>
-          La app no es una copia de Pacer. Es una adaptación de la metodología de Kiwell al
-          wearable: las métricas que importan al equipo médico, el lenguaje de Kiwell y el camino
-          hacia el Plan.
+          No es una copia de Pacer: es la metodología de Kiwell llevada al wearable.
         </p>
         <ul className="space-y-2 text-black/80 text-[15px] pt-2">
           <li>— Integración del anillo y la banda, con marca Kiwell</li>
@@ -381,24 +376,22 @@ export default function KiwellWearable() {
           <div className="border border-[var(--marco-border)] rounded-lg p-6">
             <p className="font-thunder uppercase text-black text-lg mb-3">Continuidad</p>
             <p className="text-black/80 text-[15px] leading-relaxed">
-              El código queda en custodia de un tercero. Kiwell lo recibe si Pacer deja de dar soporte
-              durante 60 días, cierra o se vende a una prepaga o empresa de medicina, y lo usa para su
-              propio producto.
+              El código queda en custodia. Kiwell lo recibe si Pacer deja de dar soporte 60 días,
+              cierra o se vende a una prepaga.
             </p>
           </div>
           <div className="border border-[var(--marco-border)] rounded-lg p-6">
             <p className="font-thunder uppercase text-black text-lg mb-3">Licencia propia</p>
             <p className="text-black/80 text-[15px] leading-relaxed">
-              Desde el mes 24, Kiwell puede pasar a una licencia perpetua pagando tres veces lo
-              facturado por suscripciones en los últimos 12 meses. Desde ahí no paga más ese
-              porcentaje.
+              Desde el mes 24, Kiwell puede comprar la licencia perpetua por tres veces lo facturado
+              en suscripciones en los últimos 12 meses.
             </p>
           </div>
           <div className="border border-[var(--marco-border)] rounded-lg p-6">
             <p className="font-thunder uppercase text-black text-lg mb-3">Exclusividad</p>
             <p className="text-black/80 text-[15px] leading-relaxed">
-              Sin exclusividad por ahora. Si el wearable crece, se firma exclusividad en salud y
-              medicina con liberación parcial del vesting.
+              Ninguna por ahora. Si el wearable crece, exclusividad en salud y medicina con liberación
+              parcial del vesting.
             </p>
           </div>
         </div>
