@@ -1,94 +1,62 @@
-import ContentBox from '../components/ContentBox'
-import TwoColumnSection from '../components/TwoColumnSection'
-import BoxedListSection from '../components/BoxedListSection'
-import Timeline from '../components/Timeline'
 import ScrollNav from '../components/ScrollNav'
 import type { NavItem } from '../components/ScrollNav'
 
 const NAV: NavItem[] = [
-  { id: 'oportunidad', label: 'La oportunidad' },
-  { id: 'caminos', label: 'Tres caminos' },
-  { id: 'piloto', label: 'Piloto' },
-  { id: 'aporte', label: 'Qué aporta Pacer' },
-  { id: 'equity', label: 'Participación' },
+  { id: 'por-que', label: 'Por qué sí' },
+  { id: 'anillo', label: 'Cómo se vende' },
+  { id: 'reconocimiento', label: 'Lo que traigo' },
   { id: 'ventas', label: 'Sobre las ventas' },
-  { id: 'ejemplo', label: 'Por usuario' },
-  { id: 'reglas', label: 'Reglas' },
-  { id: 'pasos', label: 'Próximos pasos' },
+  { id: 'juntos', label: 'Cómo trabajamos' },
+  { id: 'propiedad', label: 'Qué es de quién' },
+  { id: 'no-funciona', label: 'Si no funciona' },
+  { id: 'resumen', label: 'En una mirada' },
 ]
 
-/** Una vía de venta del wearable. */
-function Camino({
-  letra,
-  titulo,
-  precio,
-  children,
-}: {
-  letra: string
-  titulo: string
-  precio: string
-  children: React.ReactNode
-}) {
+function Seccion({ id, titulo, children }: { id: string; titulo: string; children: React.ReactNode }) {
   return (
-    <div className="border border-[var(--marco-border)] rounded-lg p-6 flex flex-col">
-      <p className="font-thunder uppercase text-[var(--marco-accent)] text-lg mb-1">
-        {letra} · {titulo}
-      </p>
-      <p className="text-sm text-black/50 mb-4">{precio}</p>
-      <div className="text-black/80 text-[15px] leading-relaxed space-y-3">{children}</div>
-    </div>
+    <section id={id} className="mb-16 md:mb-24 scroll-mt-28 max-w-3xl">
+      <h2 className="font-thunder text-3xl md:text-5xl uppercase text-[var(--marco-accent)] mb-6">{titulo}</h2>
+      <div className="text-black/80 text-[17px] leading-relaxed space-y-4">{children}</div>
+    </section>
   )
 }
 
-/** Fila de la tabla de participación. */
-function Fila({ pct, concepto, detalle }: { pct: string; concepto: string; detalle: string }) {
+function Punto({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-[72px_1fr] md:grid-cols-[110px_1fr] gap-4 py-5 border-b border-[var(--marco-border)] last:border-0">
-      <p className="font-thunder text-3xl md:text-4xl text-[var(--marco-accent)] leading-none">{pct}</p>
-      <div>
-        <p className="font-thunder uppercase text-black text-lg leading-tight mb-1">{concepto}</p>
-        <p className="text-black/70 text-[15px] leading-relaxed">{detalle}</p>
-      </div>
-    </div>
+    <li>
+      — <strong className="text-black font-medium">{titulo}</strong> {children}
+    </li>
   )
 }
 
-/** Cuenta de un usuario en su primer año. */
-function Cuenta({
-  titulo,
-  filas,
-  kiwell,
-  pacer,
-  nota,
-}: {
-  titulo: string
-  filas: { label: string; valor: string }[]
-  kiwell: string
-  pacer: string
-  nota: string
-}) {
+function Tabla({ cabecera, filas, total }: { cabecera: string[]; filas: string[][]; total?: string[] }) {
   return (
-    <div className="border border-[var(--marco-border)] rounded-lg p-6">
-      <p className="font-thunder uppercase text-black text-lg mb-4">{titulo}</p>
-      <div className="space-y-2 text-[15px]">
-        {filas.map((f) => (
-          <div key={f.label} className="flex justify-between gap-4 text-black/70">
-            <span>{f.label}</span>
-            <span className="text-black">{f.valor}</span>
-          </div>
-        ))}
-      </div>
-      <div className="mt-5 pt-4 border-t border-[var(--marco-border)] grid grid-cols-2 gap-4">
-        <div>
-          <span className="text-xs uppercase tracking-wide text-black/50">Queda en Kiwell</span>
-          <p className="font-thunder text-2xl md:text-3xl text-[var(--marco-accent)] mt-1">{kiwell}</p>
-        </div>
-        <div>
-          <span className="text-xs uppercase tracking-wide text-black/50">Para Pacer</span>
-          <p className="font-thunder text-2xl md:text-3xl text-black mt-1">{pacer}</p>
-        </div>
-      </div>
-      <p className="text-sm text-black/60 mt-4">{nota}</p>
+    <div className="overflow-x-auto border border-[var(--marco-border)] rounded-lg">
+      <table className="w-full text-[15px] text-left">
+        <thead className="bg-[var(--marco-bg)] text-black/60">
+          <tr>
+            {cabecera.map((c) => (
+              <th key={c} className="font-normal px-4 py-3 border-b border-[var(--marco-border)]">{c}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {filas.map((f) => (
+            <tr key={f[0]} className="border-b border-[var(--marco-border)] last:border-0 align-top">
+              {f.map((c, i) => (
+                <td key={i} className={`px-4 py-3 ${i === 0 ? 'text-black' : 'text-black/80'} ${i >= 2 ? 'whitespace-nowrap' : ''}`}>{c}</td>
+              ))}
+            </tr>
+          ))}
+          {total && (
+            <tr className="border-t border-[var(--marco-border)] bg-[var(--marco-accent-light)]/20">
+              {total.map((c, i) => (
+                <td key={i} className="px-4 py-3 font-thunder uppercase text-lg text-black whitespace-nowrap">{c}</td>
+              ))}
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   )
 }
@@ -101,313 +69,128 @@ export default function KiwellWearable() {
       {/* Portada */}
       <div className="mb-16 md:mb-24">
         <span className="font-thunder text-lg md:text-2xl uppercase tracking-[0.08em] text-black">
-          Kiwell · Pacer
+          Kiwell · Pacer · Noviembre 2026
         </span>
         <h1 className="font-thunder text-[15vw] md:text-[8.5vw] leading-[0.88] uppercase text-[var(--marco-accent)] text-balance mt-3">
-          El wearable<br />como puerta<br />de entrada
+          Propuesta a<br />Alejo y Luca
         </h1>
         <p className="mt-8 md:mt-10 text-black/80 text-lg md:text-xl max-w-2xl">
-          Un anillo o una banda con la metodología médica de Kiwell adentro, para que el
-          seguimiento no dependa sólo del próximo chequeo. Proponemos salir con tres caminos de
-          venta a la vez, medirlos en 90 días y atar la participación de Pacer a lo que venda.
+          La respuesta a la propuesta del 26 de octubre, con lo que hablamos el 30.
         </p>
         <div className="mt-10 md:mt-14 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 border-t border-[var(--marco-border)] pt-8">
           <div>
-            <span className="text-xs uppercase tracking-wide text-black/50">Piloto</span>
+            <span className="text-xs uppercase tracking-wide text-black/50">Participación fija</span>
+            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">4%</p>
+          </div>
+          <div>
+            <span className="text-xs uppercase tracking-wide text-black/50">Por el éxito del anillo</span>
+            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">Hasta 2%</p>
+          </div>
+          <div>
+            <span className="text-xs uppercase tracking-wide text-black/50">Efectivo por adelantado</span>
+            <p className="font-thunder text-2xl md:text-3xl text-[var(--marco-accent)] mt-1">U$0</p>
+          </div>
+          <div>
+            <span className="text-xs uppercase tracking-wide text-black/50">MVP</span>
             <p className="font-thunder text-2xl md:text-3xl text-black mt-1">90 días</p>
           </div>
-          <div>
-            <span className="text-xs uppercase tracking-wide text-black/50">Caminos de venta</span>
-            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">3 en paralelo</p>
-          </div>
-          <div>
-            <span className="text-xs uppercase tracking-wide text-black/50">Costo del anillo</span>
-            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">U$50–60</p>
-          </div>
-          <div>
-            <span className="text-xs uppercase tracking-wide text-black/50">Participación fija</span>
-            <p className="font-thunder text-2xl md:text-3xl text-[var(--marco-accent)] mt-1">4%</p>
-          </div>
         </div>
       </div>
 
-      {/* La oportunidad */}
-      <TwoColumnSection title="La oportunidad" id="oportunidad">
-        <p className="text-lg">
-          La longevidad no genera urgencia de compra. El diagnóstico médico sí. Kiwell ya tiene lo
-          que ningún competidor ofrece en la región: análisis de sangre con mirada médica y un
-          equipo que acompaña.
+      <Seccion id="por-que" titulo="Por qué sí">
+        <p>Gracias por la propuesta. Me gusta lo que están armando y quiero ser parte.</p>
+        <p>
+          Kiwell pone la marca, los médicos y los pacientes. Yo traigo un negocio nuevo que la
+          impulsa: el anillo funcionando, la app que lo lee y cómo venderlo.
         </p>
         <p>
-          El wearable cubre lo que pasa entre un chequeo y el siguiente, con datos diarios que lee
-          el equipo médico. Es la puerta de entrada a Kiwell, y el acompañamiento humano, el upsell.
+          Lo implemento para la salida del producto, y después superviso e implemento lo que siga
+          para que crezca. Por eso propongo una parte de cada venta y un porcentaje de Kiwell, para
+          sentirlo propio.
         </p>
-        <p className="text-sm text-black/60">
-          Referencias de mercado: Function Health (250.000 miembros a cerca de U$1 por día), Oura y
-          Ultrahuman. Ninguno combina el dispositivo con seguimiento médico local.
-        </p>
-      </TwoColumnSection>
+      </Seccion>
 
-      {/* Tres caminos */}
-      <div id="caminos" className="mb-20 md:mb-28 scroll-mt-28">
-        <h3 className="font-thunder text-2xl md:text-3xl uppercase text-black mb-3">
-          Tres caminos de venta
-        </h3>
-        <p className="text-black/80 max-w-2xl mb-8">
-          Corren juntos durante el piloto y los números deciden en cuál se pone el peso. Precios de
-          partida, a validar.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Camino letra="A" titulo="Plan Kiwell Pro" precio="~U$120 de ingreso + ~U$80 / mes">
-            <p>
-              El Plan Kiwell con el wearable incluido y un contacto mensual con el equipo. Es el
-              camino de mayor ticket y el que mejor muestra el diferencial médico.
-            </p>
-            <p className="text-sm text-black/60">
-              Convive con el Plan Kiwell actual, que sigue igual para quien no quiera dispositivo.
-            </p>
-          </Camino>
-          <Camino letra="B" titulo="Wearable + IA" precio="~U$150 el anillo + U$8–10 / mes">
-            <p>
-              El anillo solo, con métricas básicas gratis y una suscripción de IA que explica cada
-              noche y cada día. Compite con Oura y Ultrahuman a un precio menor.
-            </p>
-            <p className="text-sm text-black/60">
-              Funciona como embudo: quien ya usa el anillo es el candidato natural al Diagnóstico y
-              al Plan.
-            </p>
-          </Camino>
-          <Camino letra="C" titulo="Empresas" precio="Lotes de 100 a 300 unidades">
-            <p>
-              El anillo como beneficio de salud corporativo, sumado a la oferta para empresas que
-              Kiwell ya vende. Es la vía más rápida para mover volumen de una vez.
-            </p>
-            <p className="text-sm text-black/60">
-              Abre la opción de marca compartida con la empresa para cuentas grandes.
-            </p>
-          </Camino>
-        </div>
-      </div>
+      <Seccion id="anillo" titulo="Cómo se vende el anillo">
+        <p>Coincido: no vendemos un anillo, vendemos un plan con un anillo adentro. Lo probaría por tres caminos a la vez:</p>
+        <ul className="space-y-3">
+          <Punto titulo="Dentro del Plan.">Un Plan Kiwell Pro con el anillo incluido y un contacto mensual con el equipo.</Punto>
+          <Punto titulo="Solo, con IA.">El anillo con métricas básicas y una suscripción de IA. Es la puerta al Diagnóstico y al Plan.</Punto>
+          <Punto titulo="Empresas.">Como regalo empresarial y dentro de Corporate Athletes, como ya plantearon.</Punto>
+        </ul>
+        <p>A los 90 días, los números dicen en cuál ponemos el peso.</p>
+      </Seccion>
 
-      {/* Piloto */}
-      <div id="piloto" className="mb-20 md:mb-28 scroll-mt-28">
-        <Timeline
-          title="Plan de acción · 90 días"
-          steps={[
-            {
-              label: 'Noviembre',
-              items: [
-                'Precios finales de los tres caminos',
-                'Diseño de la app Kiwell con el wearable',
-                'Primeros anillos con corredores y referentes',
-              ],
-            },
-            {
-              label: 'Hasta el 15/12',
-              items: [
-                'Preventa: 50 unidades con seña o 3 empresas',
-                'Experimento de pauta para medir interés por camino',
-                'Equipo de Kiwell capacitado en el producto',
-              ],
-            },
-            {
-              label: 'Enero',
-              items: [
-                'App en las tiendas con la marca Kiwell',
-                'Entrega de la preventa',
-                'Primeros datos de uso en manos del equipo médico',
-              ],
-            },
-            {
-              label: 'Febrero',
-              items: [
-                'Lectura de ventas, uso y conversión por camino',
-                'Decisión de en qué camino se pone el peso',
-                'Ajuste de precios y del plan del año',
-              ],
-            },
+      <Seccion id="reconocimiento" titulo="Lo que traigo y cómo se reconoce">
+        <p>Cuatro partes, cada una con su "a cambio de qué". A la valuación de la ronda, cada 1% vale USD 40.000.</p>
+        <Tabla
+          cabecera={['Parte', 'A cambio de qué', '%', 'Valor hoy (USD)']}
+          filas={[
+            ['Mi rol', 'Socio de producto y marca: una reunión por semana + conversación asincrónica. Se consolida en 12 meses, sin período de prueba.', '1%', '40.000'],
+            ['La salida del producto', 'La app de Kiwell con wearables, lista para lanzar: tecnología de Pacer licenciada, integración con el fabricante y diseño de la app. En lugar de los USD 30.000 en efectivo.', '1%', '40.000'],
+            ['La evolución del producto', 'Supervisión e implementación de lo que venga después del lanzamiento: ideas, propuestas, funciones nuevas y capacitación del equipo. Se consolida en 12 meses.', '2%', '80.000'],
+            ['El éxito del anillo', '0,5% por cada tramo: 500, 1.500, 3.000 y 5.000 dispositivos vendidos, en los primeros 3 años.', 'Hasta 2%', 'Hasta 80.000'],
+          ]}
+          total={['Total posible', '', 'Hasta 6%', 'Hasta 240.000']}
+        />
+        <p>La salida es la entrega inicial y la evolución es lo que sigue, sin presupuestos aparte.</p>
+      </Seccion>
+
+      <Seccion id="ventas" titulo="Sobre las ventas">
+        <p>El ingreso de cada venta es de Kiwell. Pido una parte chica de lo que se abre con el anillo:</p>
+        <ul className="space-y-3">
+          <Punto titulo="5% del precio de cada dispositivo vendido,">en cualquiera de los tres caminos.</Punto>
+          <Punto titulo="10% de las suscripciones que incluyen el anillo,">durante los primeros 24 meses de cada usuario. El Plan sin anillo no paga nada.</Punto>
+        </ul>
+        <p>Si entra una ronda de capital de riesgo, esta parte puede convertirse en equity para no pesar en la valuación.</p>
+      </Seccion>
+
+      <Seccion id="juntos" titulo="Cómo trabajamos juntos">
+        <ul className="space-y-3">
+          <Punto titulo="Primero el criterio médico.">Ninguna función sale sin el respaldo de sus médicos.</Punto>
+          <Punto titulo="Primero vendemos.">Los acompaño en la fase comercial con la app y las demos hasta el 15 de diciembre. La meta sigue siendo 3 empresas o 50 unidades con seña.</Punto>
+          <Punto titulo="Si llegamos,">firmamos, se hace el primer pedido al fabricante y arranca la integración.</Punto>
+          <Punto titulo="El MVP">sigue como lo plantearon: validación médica, empresas, embajadores y medición a los 90 días.</Punto>
+        </ul>
+      </Seccion>
+
+      <Seccion id="propiedad" titulo="Qué es de quién">
+        <ul className="space-y-3">
+          <Punto titulo="De Kiwell:">la marca, la app en sus tiendas, los usuarios y sus datos, la relación con el fabricante y el ingreso de cada venta.</Punto>
+          <Punto titulo="De Pacer:">la tecnología de base, que se licencia a Kiwell, y la app Pacer para el consumidor, que sigue aparte.</Punto>
+          <Punto titulo="Continuidad.">El código queda en custodia. Si Pacer deja de dar soporte 60 días, cierra o se vende a una prepaga, pasa a Kiwell.</Punto>
+        </ul>
+      </Seccion>
+
+      <Seccion id="no-funciona" titulo="Si no funciona">
+        <ul className="space-y-3">
+          <li>— Si a los 90 días el MVP no da, lo cerramos. Sin vueltas.</li>
+          <li>— Lo consolidado queda de cada uno. Los tramos por ventas que no se alcanzaron, no se ganan.</li>
+          <li>— Nadie queda atado. No hay exclusividad de ningún lado; si el anillo crece, la hablamos.</li>
+        </ul>
+      </Seccion>
+
+      <Seccion id="resumen" titulo="La propuesta en una mirada">
+        <Tabla
+          cabecera={['', '']}
+          filas={[
+            ['Rol', 'Socio de producto y marca de Kiwell, part-time'],
+            ['Salida del producto', '1%: la app de Kiwell con wearables, en lugar de efectivo'],
+            ['Por mi rol', '1%, consolidado en 12 meses, sin período de prueba'],
+            ['Evolución del producto', '2%, consolidado en 12 meses'],
+            ['Por el éxito del anillo', 'Hasta 2%: 0,5% a los 500, 1.500, 3.000 y 5.000 dispositivos, en 3 años'],
+            ['Participación total posible', 'Hasta 6% de Kiwell'],
+            ['Sobre las ventas', '5% de cada dispositivo + 10% de la suscripción con anillo, 24 meses por usuario'],
+            ['Propiedad', 'Marca, app, usuarios y datos de Kiwell; tecnología de base licenciada por Pacer'],
+            ['MVP', '3 empresas o 50 unidades con seña antes del 15/12; después, 90 días'],
           ]}
         />
-      </div>
+      </Seccion>
 
-      {/* Qué aporta Pacer */}
-      <TwoColumnSection title="Qué aporta Pacer" id="aporte">
-        <p className="text-lg">
-          Pacer ya funciona con este mismo fabricante: la conexión con el anillo, la lectura de
-          sueño, estrés, recuperación y actividad, y un copiloto de IA que explica cada métrica.
-        </p>
-        <p>
-          Desde cero son 6 a 12 meses de desarrollo. Con Pacer de base, la app de Kiwell sale en 90
-          días con el producto probado.
-        </p>
-        <p>
-          No es una copia de Pacer: es la metodología de Kiwell llevada al wearable.
-        </p>
-        <ul className="space-y-2 text-black/80 text-[15px] pt-2">
-          <li>— Integración del anillo y la banda, con marca Kiwell</li>
-          <li>— Diseño de la experiencia y de la app con el wearable</li>
-          <li>— Estrategia de planes y precios</li>
-          <li>— Capacitación del equipo para operar y vender el producto</li>
-          <li>— Automatizaciones de marketing y campañas</li>
-          <li>— Contactos con inversores y referentes interesados en wearables</li>
-        </ul>
-      </TwoColumnSection>
-
-      {/* Participación */}
-      <ContentBox title="Participación de Pacer" id="equity">
-        <div className="max-w-3xl">
-          <Fila
-            pct="1%"
-            concepto="Advisorship"
-            detalle="Acompañamiento estratégico a Kiwell: reunión semanal y trabajo asincrónico sobre producto, negocio y ronda."
-          />
-          <Fila
-            pct="1%"
-            concepto="App Kiwell con wearables"
-            detalle="La entrega inicial: licencia white label de la tecnología de Pacer y el SDK del fabricante, y la app de Kiwell con el wearable diseñada, integrada y lista para lanzar."
-          />
-          <Fila
-            pct="2%"
-            concepto="Evolución del producto"
-            detalle="Lo que viene después del lanzamiento: ideación, propuestas e implementación de las mejoras y funciones nuevas, y capacitación del equipo. Con vesting a 12 meses, sin cliff."
-          />
-          <Fila
-            pct="+2%"
-            concepto="Liberación por ventas"
-            detalle="0,5% al llegar a 500, 1.500, 3.000 y 5.000 dispositivos vendidos en tres años, como en el esquema que propuso Kiwell."
-          />
-        </div>
-        <p className="text-sm text-black/60 pt-2">
-          4% fijo y hasta 2% más si el wearable vende. El 1% de la app cubre la entrega inicial y el 2%
-          de evolución, el trabajo continuo sobre el producto: no se cobra dos veces lo mismo.
-        </p>
-      </ContentBox>
-
-      {/* Sobre las ventas */}
-      <TwoColumnSection title="Sobre las ventas" id="ventas">
-        <p className="text-lg">
-          El ingreso de cada venta es de Kiwell. Pacer participa con una parte chica de un negocio
-          que hoy no existe y que se abre con el wearable.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-          <div className="border border-[var(--marco-border)] rounded-lg p-6">
-            <p className="font-thunder uppercase text-[var(--marco-accent)] text-lg mb-1">Por dispositivo</p>
-            <p className="font-thunder text-4xl text-black mt-2">U$5</p>
-            <p className="text-black/70 text-[15px] leading-relaxed mt-3">
-              Por cada anillo o banda vendido, en cualquiera de los tres caminos. Menos del 10% del
-              margen de un anillo suelto.
-            </p>
-          </div>
-          <div className="border border-[var(--marco-border)] rounded-lg p-6">
-            <p className="font-thunder uppercase text-[var(--marco-accent)] text-lg mb-1">Por suscripción</p>
-            <p className="font-thunder text-4xl text-black mt-2">10%</p>
-            <p className="text-black/70 text-[15px] leading-relaxed mt-3">
-              Sólo de las suscripciones que incluyen el wearable (Plan Pro o IA), por usuario
-              activo y durante sus primeros 24 meses. El Plan Kiwell sin dispositivo no paga nada.
-            </p>
-          </div>
-        </div>
-        <p className="text-sm text-black/60">
-          Si entra una ronda de capital de riesgo, la participación en suscripciones puede
-          convertirse en equity, para que no pese en la valuación.
-        </p>
-      </TwoColumnSection>
-
-      {/* Ejemplo por usuario */}
-      <div id="ejemplo" className="mb-20 md:mb-28 scroll-mt-28">
-        <h3 className="font-thunder text-2xl md:text-3xl uppercase text-black mb-3">
-          Un usuario en su primer año
-        </h3>
-        <p className="text-black/80 max-w-2xl mb-8">
-          Con los precios de partida y un anillo de U$55. Antes de logística e impuestos.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <Cuenta
-            titulo="A · Plan Kiwell Pro"
-            filas={[
-              { label: 'Ingreso', valor: 'U$120' },
-              { label: '12 meses de plan', valor: 'U$960' },
-              { label: 'Costo del anillo', valor: '− U$55' },
-            ]}
-            kiwell="U$924"
-            pacer="U$101"
-            nota="U$5 del dispositivo y U$96 del 10% de la suscripción. Pacer se lleva cerca del 10% de lo que entra."
-          />
-          <Cuenta
-            titulo="B · Wearable + IA"
-            filas={[
-              { label: 'Anillo', valor: 'U$150' },
-              { label: '12 meses de IA', valor: 'U$108' },
-              { label: 'Costo del anillo', valor: '− U$55' },
-            ]}
-            kiwell="U$187"
-            pacer="U$16"
-            nota="U$5 del dispositivo y U$11 de la suscripción. Y cada usuario es un candidato al Diagnóstico y al Plan."
-          />
-        </div>
-      </div>
-
-      {/* Reglas */}
-      <div id="reglas" className="mb-20 md:mb-28 scroll-mt-28">
-        <h3 className="font-thunder text-2xl md:text-3xl uppercase text-black mb-3">
-          Qué queda de cada lado
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-          <div className="border border-[var(--marco-border)] rounded-lg p-6">
-            <p className="font-thunder uppercase text-[var(--marco-accent)] text-lg mb-3">De Kiwell</p>
-            <ul className="space-y-2 text-black/80 text-[15px]">
-              <li>— La marca, los usuarios y todos sus datos</li>
-              <li>— La app en sus cuentas de las tiendas</li>
-              <li>— La relación médica y el Plan</li>
-              <li>— La compra de los dispositivos, directo al fabricante</li>
-              <li>— El ingreso de cada venta</li>
-            </ul>
-          </div>
-          <div className="border border-[var(--marco-border)] rounded-lg p-6">
-            <p className="font-thunder uppercase text-black/70 text-lg mb-3">De Pacer</p>
-            <ul className="space-y-2 text-black/80 text-[15px]">
-              <li>— La tecnología de base, que se licencia a Kiwell</li>
-              <li>— La app Pacer para el consumidor, que sigue aparte</li>
-              <li>— El mantenimiento de la integración con el fabricante</li>
-            </ul>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-          <div className="border border-[var(--marco-border)] rounded-lg p-6">
-            <p className="font-thunder uppercase text-black text-lg mb-3">Continuidad</p>
-            <p className="text-black/80 text-[15px] leading-relaxed">
-              El código queda en custodia. Kiwell lo recibe si Pacer deja de dar soporte 60 días,
-              cierra o se vende a una prepaga.
-            </p>
-          </div>
-          <div className="border border-[var(--marco-border)] rounded-lg p-6">
-            <p className="font-thunder uppercase text-black text-lg mb-3">Licencia propia</p>
-            <p className="text-black/80 text-[15px] leading-relaxed">
-              Desde el mes 24, Kiwell puede comprar la licencia perpetua por tres veces lo facturado
-              en suscripciones en los últimos 12 meses.
-            </p>
-          </div>
-          <div className="border border-[var(--marco-border)] rounded-lg p-6">
-            <p className="font-thunder uppercase text-black text-lg mb-3">Exclusividad</p>
-            <p className="text-black/80 text-[15px] leading-relaxed">
-              Ninguna por ahora. Si el wearable crece, exclusividad en salud y medicina con liberación
-              parcial del vesting.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Próximos pasos */}
-      <BoxedListSection
-        id="pasos"
-        title="Próximos pasos"
-        items={[
-          'Kiwell: confirmar con qué caminos sale el piloto y validar los precios de partida.',
-          'Kiwell y Pacer: acordar los porcentajes y los hitos del vesting sobre esta base.',
-          'Pacer: con el acuerdo, arrancar el diseño de la app y pedir los primeros anillos para corredores y referentes.',
-          'Ambos: fijar la meta de preventa del 15 de diciembre como primer corte del piloto.',
-        ]}
-      />
+      <section className="mb-20 max-w-3xl text-black/80 text-[17px] leading-relaxed space-y-4">
+        <p>Lo podemos revisar juntos cuando tengan la cotización del fabricante. Me encantaría cerrarlo antes de fin de año.</p>
+        <p>Un abrazo,</p>
+        <p className="font-thunder uppercase text-2xl text-black">Mateo</p>
+      </section>
     </>
   )
 }
