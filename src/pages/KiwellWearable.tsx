@@ -268,13 +268,13 @@ export default function KiwellWearable() {
           />
           <Fila
             pct="1%"
-            concepto="Integración white label"
-            detalle="Licencia de la tecnología de Pacer y el SDK del fabricante, más la ideación de la app de Kiwell con wearables."
+            concepto="App Kiwell con wearables"
+            detalle="La entrega inicial: licencia white label de la tecnología de Pacer y el SDK del fabricante, y la app de Kiwell con el wearable diseñada, integrada y lista para lanzar."
           />
           <Fila
             pct="2%"
-            concepto="Producto y tecnología"
-            detalle="Implementación del wearable de punta a punta y capacitación del equipo. Con vesting a 24 meses atado a tres hitos: app en tiendas, equipo operando solo y primer cliente empresa."
+            concepto="Evolución del producto"
+            detalle="Lo que viene después del lanzamiento: ideación, propuestas e implementación de las mejoras y funciones nuevas, y capacitación del equipo. Con vesting a 24 meses."
           />
           <Fila
             pct="+2%"
@@ -283,8 +283,8 @@ export default function KiwellWearable() {
           />
         </div>
         <p className="text-sm text-black/60 pt-2">
-          4% fijo y hasta 2% más si el wearable vende. La mitad del fijo depende de que el producto
-          salga y funcione, que es el riesgo que asume Pacer.
+          4% fijo y hasta 2% más si el wearable vende. El 1% de la app cubre la entrega inicial y el 2%
+          de evolución, el trabajo continuo sobre el producto: no se cobra dos veces lo mismo.
         </p>
       </ContentBox>
 
