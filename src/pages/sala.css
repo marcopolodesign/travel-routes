@@ -313,6 +313,7 @@
   .sala .shot { width: 240px; }
   .sala .dock { padding: 0 10px calc(10px + env(safe-area-inset-bottom)); }
   .sala .composer textarea { font-size: 16px; }
+  .sala .decide .dotra textarea { font-size: 16px; }
   .sala .composer .hint { display: none; }
   .sala .entry { padding: 16px; }
   .sala .ecard { padding: 28px 22px 34px; }
@@ -348,6 +349,15 @@
 .sala .decide .opt.dim { opacity: .55; background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
 .sala .decide .dfoot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; font-size: 13px; color: var(--muted); }
 .sala .decide .dtaken { color: var(--ink-2); }
+/* Otra respuesta: campo siempre abierto debajo de las opciones (lo escrito es la decisión) */
+.sala .decide .dotra { display: flex; align-items: flex-end; gap: 6px; margin-top: 8px; padding: 3px 4px 3px 0; border-radius: var(--r-ctl); background: var(--card); box-shadow: inset 0 0 0 1px var(--line); }
+.sala .decide .dotra:focus-within { box-shadow: inset 0 0 0 1px var(--muted); }
+.sala .decide .dotra textarea { flex: 1; display: block; resize: none; border: 0; outline: 0; background: transparent; color: var(--ink); padding: 7px 12px; font: inherit; font-size: 14px; line-height: 20px; min-height: 34px; max-height: 160px; }
+.sala .decide .dotra textarea::placeholder { color: var(--muted); }
+.sala .decide .dotra .send { width: 32px; height: 32px; flex: none; }
+.sala .decide .dotra.busy { opacity: .6; }
+.sala .decide .dlibre { display: flex; align-items: flex-start; gap: 6px; margin-top: 8px; padding: 9px 14px; border-radius: var(--r-ctl); background: var(--btn); color: var(--btn-ink); font-size: 14px; line-height: 20px; font-weight: 600; white-space: pre-wrap; overflow-wrap: anywhere; }
+.sala .decide .dlibre .ok svg { width: 15px; height: 15px; margin-top: 2px; }
 .sala .lnk { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; font-size: 13px; }
 
 /* Selector de dos opciones (entrada: persona/agente; admin: quién decide) */

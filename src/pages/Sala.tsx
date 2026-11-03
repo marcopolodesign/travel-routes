@@ -33,7 +33,7 @@ type Mensaje = {
 }
 type Opcion = { id: string; etiqueta?: string; texto: string; recomendada?: boolean }
 // En la pregunta: {opcion, texto, autor, cuando, respuesta_id}. En el "Elegí: …": {pregunta, opcion, …}.
-type Decision = { opcion: string; texto: string; etiqueta?: string; autor: string; cuando: string; respuesta_id?: number; pregunta?: number; cambiada?: boolean }
+type Decision = { opcion: string; texto: string; etiqueta?: string; autor: string; cuando: string; respuesta_id?: number; pregunta?: number; cambiada?: boolean; libre?: boolean }
 type Miembro = { autor: string; tipo: string; dueno?: string | null; estado?: string | null; visto?: string | null }
 type Yo = {
   sala: string; autor: string; tipo: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[]; decide?: 'dirigida' | 'todos'; admin?: boolean
@@ -583,27 +583,38 @@ type Ctx = {
   hiloConNovedad: (m: Mensaje) => boolean
   porId: Record<number, Mensaje>
   ultimaDeAgenteA: Record<number, number>   // raíz → id de la última respuesta de un agente que se ve en el canal
-  decidir: (m: Mensaje, opcion: string) => Promise<void>
+  decidir: (m: Mensaje, opcion: string, texto?: string) => Promise<boolean>   // opcion 'libre' + texto = respuesta escrita
 }
 
 // Tarjeta de decisión: un agente pide que alguien elija. Botones para quien decide (la recomendada
-// llena y con su etiqueta), "Esperando a…" para los demás, y después qué se eligió.
+// llena y con su etiqueta) y, debajo, un campo SIEMPRE abierto para escribir otra respuesta (como el
+// "Otra" de la app de Claude): lo que se escribe ahí es la decisión. "Esperando a…" para los demás, y
+// después qué se eligió (una opción o el texto escrito).
 function Pregunta({ m, ctx }: { m: Mensaje; ctx: Ctx }) {
   const { yo } = ctx
   const [cambiando, setCambiando] = useState(false)
   const [enviando, setEnviando] = useState<string | null>(null)
+  const [otra, setOtra] = useState('')
   const ops = m.opciones ?? []
   const para = m.pregunta_para ?? []
   const puede = para.includes(yo.autor) || (yo.decide === 'todos' && yo.tipo === 'persona' && m.autor !== yo.autor)
   const d = m.decision
+  const libre = !!d && (d.opcion === 'libre' || !!d.libre)
   const resp = d?.respuesta_id ? ctx.porId[d.respuesta_id] : undefined
   const tomada = !!resp?.reacciones?.some((r) => (r.emoji === '👀' || r.emoji === '✓') && r.autores.includes(m.autor))
   const abierta = puede && (!d || cambiando)
-  const elegir = async (id: string) => {
-    if (enviando) return
+  const elegir = async (id: string, texto?: string) => {
+    if (enviando) return false
     setEnviando(id)
-    await ctx.decidir(m, id)
-    setEnviando(null); setCambiando(false)
+    const ok = await ctx.decidir(m, id, texto)
+    setEnviando(null)
+    if (ok) setCambiando(false)
+    return ok
+  }
+  const mandarOtra = async () => {
+    const tx = otra.trim()
+    if (!tx || enviando) return
+    if (await elegir('libre', tx)) setOtra('')
   }
   return (
     <div className={`decide ${d && !cambiando ? 'done' : ''} ${!puede ? 'wait' : ''}`}>
@@ -626,6 +637,19 @@ function Pregunta({ m, ctx }: { m: Mensaje; ctx: Ctx }) {
           )
         })}
       </div>
+      {libre && !cambiando && (
+        <div className="dlibre" data-libre>
+          <span className="ok">{I.check}</span><span className="dl-tx">{d!.texto}</span>
+        </div>
+      )}
+      {abierta && (
+        <form className={`dotra ${enviando === 'libre' ? 'busy' : ''}`} onSubmit={(e) => { e.preventDefault(); mandarOtra() }}>
+          <textarea rows={1} value={otra} placeholder={t.phOtraRespuesta} aria-label={t.phOtraRespuesta} disabled={!!enviando}
+            onChange={(e) => { setOtra(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 160) + 'px' }}
+            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); mandarOtra() } }} />
+          <button type="submit" className={`send ${otra.trim() ? 'on' : ''}`} aria-disabled={!otra.trim() || !!enviando} aria-label={t.mandarRespuesta}>{I.up}</button>
+        </form>
+      )}
       {d && !cambiando && (
         <div className="dfoot">
           <span>{d.cambiada
@@ -1263,19 +1287,30 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       .catch((e) => { manejar(e); setAviso(t.noBorrar((e as Error).message)) })
   }, [clave, manejar])
 
-  const decidir = useCallback(async (m: Mensaje, opcion: string) => {
-    if (!yo) return
+  const decidir = useCallback(async (m: Mensaje, opcion: string, texto?: string) => {
+    if (!yo) return false
     const op = m.opciones?.find((o) => o.id === opcion)
-    try {
-      const r = await api<{ decision: Decision }>('/decidir', clave, { method: 'POST', body: JSON.stringify({ id: m.id, opcion }) })
-      setPorId((prev) => prev[m.id] ? { ...prev, [m.id]: { ...prev[m.id], decision: r.decision } } : prev)
-      setAviso(null)
-    } catch (e) {
-      manejar(e)
-      const d = (e as { decision?: Decision }).decision
-      if (d) setPorId((prev) => prev[m.id] ? { ...prev, [m.id]: { ...prev[m.id], decision: d } } : prev)
-      setAviso(t.noElegir(op?.etiqueta || op?.texto || opcion, (e as Error).message))
+    // Respuesta escrita: el texto viaja en base64 (como /enviar, por el firewall) y en texto plano de respaldo.
+    const formas = opcion === 'libre' && texto != null
+      ? [{ id: m.id, texto_b64: b64Texto(texto) }, { id: m.id, texto }]
+      : [{ id: m.id, opcion }]
+    let error: unknown
+    for (const cuerpo of formas) {
+      try {
+        const r = await api<{ decision: Decision }>('/decidir', clave, { method: 'POST', body: JSON.stringify(cuerpo) })
+        setPorId((prev) => prev[m.id] ? { ...prev, [m.id]: { ...prev[m.id], decision: r.decision } } : prev)
+        setAviso(null)
+        return true
+      } catch (e) {
+        error = e
+        if (!bloqueado(e)) break
+      }
     }
+    manejar(error)
+    const d = (error as { decision?: Decision }).decision
+    if (d) setPorId((prev) => prev[m.id] ? { ...prev, [m.id]: { ...prev[m.id], decision: d } } : prev)
+    setAviso(t.noElegir(op?.etiqueta || op?.texto || texto || opcion, (error as Error).message))
+    return false
   }, [yo, clave, manejar])
 
   const cambiarDecide = async (decide: 'dirigida' | 'todos') => {

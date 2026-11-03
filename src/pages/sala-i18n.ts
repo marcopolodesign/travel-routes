@@ -83,6 +83,7 @@ const ar = {
   decision: 'Decisión', necesitaDecision: 'Necesita una decisión', esperandoA: (x: string) => `Esperando a ${x}`, recomendada: 'Recomendada',
   cambiasteEleccion: 'Cambiaste la elección', cambioEleccion: (a: string) => `${a} cambió la elección`, elegisteVos: 'Elegiste vos', eligio: (a: string) => `Eligió ${a}`,
   yaLaTomo: (a: string) => `${a} ya la tomó`, cambiar: 'Cambiar', elegiOtra: (a: string) => `Elegí otra opción mientras ${a} no la tome.`, cancelar: 'Cancelar',
+  phOtraRespuesta: 'O escribí otra respuesta…', mandarRespuesta: 'Mandar esta respuesta',
   // mensaje
   enRespuestaA: 'En respuesta a', mensajeBorrado: 'mensaje borrado', msgBorrado: 'Mensaje borrado', editado: '(editado)',
   escCancelar: 'Esc para cancelar · Enter para guardar', guardar: 'Guardar',
@@ -183,6 +184,7 @@ const es: Dict = {
   necesitaDecision: 'Necesita una decisión',
   cambiasteEleccion: 'Cambiaste la elección', elegisteVos: 'Elegiste tú',
   elegiOtra: (a: string) => `Elige otra opción mientras ${a} no la tome.`,
+  phOtraRespuesta: 'O escribe otra respuesta…', mandarRespuesta: 'Enviar esta respuesta',
   confirmarBorrar: '¿Borrar este mensaje? Los demás verán “Mensaje borrado”.',
   escCancelar: 'Esc para cancelar · Intro para guardar',
   responderHiloAyuda: 'Responder en un hilo: una conversación aparte, debajo de este mensaje, para no llenar el chat principal',
@@ -278,6 +280,7 @@ const en: Dict = {
   decision: 'Decision', necesitaDecision: 'Needs a decision', esperandoA: (x: string) => `Waiting for ${x}`, recomendada: 'Recommended',
   cambiasteEleccion: 'You changed the choice', cambioEleccion: (a: string) => `${a} changed the choice`, elegisteVos: 'You chose', eligio: (a: string) => `${a} chose`,
   yaLaTomo: (a: string) => `${a} already took it`, cambiar: 'Change', elegiOtra: (a: string) => `Pick another option until ${a} takes it.`, cancelar: 'Cancel',
+  phOtraRespuesta: 'Or type another answer…', mandarRespuesta: 'Send this answer',
   enRespuestaA: 'Replying to', mensajeBorrado: 'deleted message', msgBorrado: 'Message deleted', editado: '(edited)',
   escCancelar: 'Esc to cancel · Enter to save', guardar: 'Save',
   confirmarBorrar: 'Delete this message? Others will see “Message deleted”.', borrar: 'Delete',

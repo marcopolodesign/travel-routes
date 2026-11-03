@@ -1,5 +1,14 @@
 # Marco Polo — Catchup
 
+## 2026-11-03 — Sala: campo "O escribí otra respuesta…" siempre abierto en la tarjeta de decisión
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 14:05 → 14:31 (27 min)
+
+Pedido de Mateo: que la decisión venga como el AskUserQuestion de Claude, con un campo de texto abierto; lo que se escribe ahí es la decisión. `src/pages/Sala.tsx` (`Pregunta`): debajo de las opciones, para quien puede decidir (cualquiera de `pregunta_para`, p. ej. "Andrés Vicente" en TAG, o todos si la sala está en `decide: 'todos'`), un textarea "O escribí otra respuesta…" + flecha; Enter manda, Shift+Enter salto. Va a `POST /decidir {id, texto_b64}` (respaldo `{id, texto}` si el firewall corta), que el servidor ya aceptaba (decision `libre`). Decidida con texto: bloque lleno con ✓ y el texto. i18n es-AR/es-ES/en, CSS `.dotra` / `.dlibre`. Sin cambio de servidor.
+Probado desde el front (Playwright, local :5199 contra el servidor de prod, sala de laboratorio `lab-dec-*` que se borra): invitado "Andrés Vicente" en 375 touch y 1280 — campo abierto sin tocar nada, escribir + enviar (toque / Enter) → tarjeta decidida, base64 en el cable, servidor con decision libre y texto en el hilo; elegir opción sigue andando; el dueño (sala `dirigida`) ve "Esperando a…" sin campo. Capturas en `~/Local/sala/docs/reports/decision-texto-libre/web-*`.
+Control: `SOLO_DEC=1 node scripts/check-sala-web.mjs` (bloque nuevo al final de `check-sala-web.mjs`, `CAPTURAS=<dir>` guarda capturas). Rama `feat/sala-decision-texto-libre`, sin push ni deploy.
+
 ## 2026-10-28 — Sala TAG: pedidos, onboarding y Uso en PRODUCCIÓN
 
 **Source:** Claude Code — Macbook Pro

@@ -20,6 +20,11 @@
 //   lo propio se distingue ("Vos"/"You"), "Responderle a <agente>" abre MI hilo, aria-labels únicos, "N mensajes nuevos" no tapa el campo,
 //   el campo se llama "Mensaje"/"Message", "--" se ve como dos guiones. SOLO_R3=1 corre únicamente esto.
 //
+// Decisión con texto libre (2026-11-03, al final, sala lab-dec-*): debajo de las opciones hay un campo SIEMPRE abierto
+//   ("O escribí otra respuesta…") para quien decide —también un invitado como "Andrés Vicente", no sólo el dueño—;
+//   lo que escribe ahí es su decisión (decision libre en el servidor, el texto en el hilo) y la tarjeta lo muestra elegido.
+//   Quien no decide no ve el campo. SOLO_DEC=1 corre únicamente esto. CAPTURAS=<dir> guarda capturas.
+//
 //   npm run dev:vite -- --port 5199    (en otra terminal)
 //   node scripts/check-sala-web.mjs    (WEB_URL, SALA_API, PLAYWRIGHT si hace falta)
 // Usa la sala "prueba" del servidor (claves de ~/.sala/claves.json: prueba/Mateo y prueba/Claude de Mateo).
@@ -38,7 +43,8 @@ const claves = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.sala', 'clav
 const DUENO = process.env.SALA_DUENO_KEY ?? claves['prueba/Mateo']
 const AGENTE = process.env.SALA_AGENTE_KEY ?? claves['prueba/Claude de Mateo']
 const SOLO_R4 = !!process.env.SOLO_R4
-const SOLO_R5 = !!process.env.SOLO_R5
+const SOLO_DEC = !!process.env.SOLO_DEC
+const SOLO_R5 = !!process.env.SOLO_R5 || SOLO_DEC
 const SOLO_R2 = !!process.env.SOLO_R2 || !!process.env.SOLO_R3 || SOLO_R4 || SOLO_R5
 const SOLO_R3 = !!process.env.SOLO_R3 || SOLO_R4 || SOLO_R5
 let fallas = 0
@@ -776,7 +782,7 @@ try {
 //       el error se ve enseguida, el texto sigue en el campo y el aviso queda a la vista.
 //   2 · privacidad: "Los agentes de IA trabajan en computadoras del equipo de Marco Polo…" en es-AR y en-US (sin nombres de personas ni máquinas).
 //   3 · atrás desde un hilo (mobile: atrás del navegador y ←; desktop: ✕), con y sin haber respondido en el hilo: se vuelve al mensaje de origen, en su lugar.
-if (SOLO_R5 || !(process.env.SOLO_R2 || process.env.SOLO_R3 || SOLO_R4)) {
+if (!SOLO_DEC && (SOLO_R5 || !(process.env.SOLO_R2 || process.env.SOLO_R3 || SOLO_R4))) {
 const LAB5 = 'lab-r5-' + sufijo
 const limpiarLab5 = () => { try { sql(`delete from sala_mensajes where sala='${LAB5}'; delete from sala_lecturas where token_hash in (select token_hash from sala_miembros where sala='${LAB5}'); delete from sala_claves where token_hash in (select token_hash from sala_miembros where sala='${LAB5}'); delete from sala_miembros where sala='${LAB5}'; delete from sala_invitaciones where sala='${LAB5}'; delete from sala_salas where sala='${LAB5}'`) } catch (e) { console.log('(limpieza del laboratorio R5 falló: ' + String(e).slice(0, 120) + ')') } }
 sql(`insert into sala_salas (sala, titulo, subtitulo, anfitrion, equipo, creada_por) values ('${LAB5}', 'Lab R5', 'QA', 'Mateo', array['Mateo','Alan'], 'Mateo')`)
@@ -895,6 +901,83 @@ try {
   }
 } finally {
   limpiarLab5()
+}
+}
+
+// ─── Decisión con texto libre ────────────────────────────────────────────────────────────────
+if (SOLO_DEC || !(process.env.SOLO_R2 || process.env.SOLO_R3 || SOLO_R4 || process.env.SOLO_R5)) {
+const LABD = 'lab-dec-' + sufijo
+const CAP = process.env.CAPTURAS
+if (CAP) fs.mkdirSync(CAP, { recursive: true })
+const foto = async (p, nombre) => { if (CAP) await p.screenshot({ path: path.join(CAP, nombre) }) }
+const limpiarLabD = () => { try { sql(`delete from sala_reacciones where mensaje_id in (select id from sala_mensajes where sala='${LABD}'); delete from sala_mensajes where sala='${LABD}'; delete from sala_lecturas where token_hash in (select token_hash from sala_miembros where sala='${LABD}'); delete from sala_claves where token_hash in (select token_hash from sala_miembros where sala='${LABD}'); delete from sala_miembros where sala='${LABD}'; delete from sala_invitaciones where sala='${LABD}'; delete from sala_salas where sala='${LABD}'`) } catch (e) { console.log('(limpieza del laboratorio de decisiones falló: ' + String(e).slice(0, 120) + ')') } }
+sql(`insert into sala_salas (sala, titulo, subtitulo, anfitrion, equipo, creada_por) values ('${LABD}', 'Lab decisiones', 'QA', 'Mateo', array['Mateo'], 'Mateo')`)
+try {
+  const K = { Mateo: JSON.parse(py('alta.py', LABD, 'Mateo', '--persona')).clave, Alan: JSON.parse(py('alta.py', LABD, 'Alan', '--dueno', 'Mateo')).clave }
+  const entrarComo = async (nombre, vp, movil) => {
+    const c = await browser.newContext({ viewport: vp, hasTouch: movil, isMobile: movil, locale: 'es-AR' })
+    const p = await c.newPage()
+    await p.goto(`${WEB}/sala/${(await post('/invitar', { horas: 1, usos: 5 }, K.Mateo)).codigo}`); await p.waitForSelector('#sala-nombre')
+    await p.fill('#sala-nombre', nombre); await p.locator('button.cta').click()
+    await p.waitForSelector('main.card textarea', { timeout: 20000 })
+    return { c, p }
+  }
+  for (const [etiqueta, vp, movil] of [['mobile 375 touch', { width: 375, height: 667 }, true], ['desktop 1280', { width: 1280, height: 800 }, false]]) {
+    console.log(`\n── Decisión con texto libre · ${etiqueta}`)
+    const quien = `Andrés Vicente ${movil ? 'M' : 'D'}${sufijo}`
+    const { c, p } = await entrarComo(quien, vp, movil)
+    const q = await post('/enviar', { texto: `¿Publicamos el aviso hoy o mañana? ${etiqueta}`, opciones: ['Hoy', 'Mañana'], recomendada: 1, pregunta_para: [quien] }, K.Alan)
+    ok(q.pregunta_para?.[0] === quien, `la pregunta va para ${quien} (un invitado, no el dueño)`)
+    const card = p.locator(`.msg[data-mid="${q.id}"] .decide`)
+    await card.waitFor({ timeout: 15000 })
+    await card.scrollIntoViewIfNeeded()
+    const campo = card.locator('.dotra textarea')
+    ok(await campo.isVisible() && /O escribí otra respuesta/.test(await campo.getAttribute('placeholder') ?? ''), 'el campo "O escribí otra respuesta…" está abierto sin tocar nada')
+    ok(await card.locator('button.opt').count() === 2, '  y las opciones siguen como botones')
+    await foto(p, `web-${movil ? 'mobile' : 'desktop'}-1-abierta.png`)
+    const libre = `Ninguna: esperemos al lunes ${etiqueta}`
+    const reqs = []
+    p.on('request', (r) => { if (r.url().includes('/sala/decidir')) reqs.push(r.postData() ?? '') })
+    if (movil) await campo.tap(); else await campo.click()
+    await p.keyboard.type(libre)
+    await foto(p, `web-${movil ? 'mobile' : 'desktop'}-2-escrita.png`)
+    if (movil) await card.locator('.dotra button.send').tap(); else await p.keyboard.press('Enter')
+    await card.locator('.dlibre').waitFor({ timeout: 10000 }).catch(() => {})
+    ok((await card.locator('.dlibre').innerText().catch(() => '')).includes(libre), `${movil ? 'tocar enviar' : 'Enter'}: la tarjeta muestra lo escrito como la decisión`)
+    ok(await card.locator('.dotra').count() === 0, '  el campo se cierra (ya está decidida)')
+    ok(reqs.length >= 1 && reqs.every((b) => b.includes('texto_b64') && !b.includes('esperemos')), '  el texto viaja en base64 (texto_b64)')
+    let hq = null
+    for (let k = 0; k < 20 && !hq?.raiz?.decision; k++) { hq = await get(`/hilo?id=${q.id}`, K.Alan); if (!hq?.raiz?.decision) await dormir(300) }
+    const resp = hq?.respuestas?.find((r) => r.id === hq.raiz?.decision?.respuesta_id)
+    ok(hq?.raiz?.decision?.opcion === 'libre' && hq.raiz.decision.texto === libre && hq.raiz.decision.autor === quien, '  el servidor la guarda como decisión libre de quien escribió')
+    ok(resp?.decision?.pregunta === q.id && resp.texto === libre, '  y al agente le llega en el hilo con decision (pregunta y texto completo)')
+    await foto(p, `web-${movil ? 'mobile' : 'desktop'}-3-decidida.png`)
+    // el agente la toma (👀): ya no se puede cambiar
+    await post('/reaccion', { id: resp.id, emoji: '👀' }, K.Alan)
+    const tarde = await fetch(API + '/decidir', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + K.Mateo }, body: JSON.stringify({ id: q.id, texto: 'otra cosa' }) })
+    ok(tarde.status === 403, '  el dueño no puede decidir una pregunta dirigida a otra persona (403)')
+    // otra pregunta: elegir una opción sigue funcionando y el campo desaparece
+    const q2 = await post('/enviar', { texto: `¿Color? ${etiqueta}`, opciones: ['Rojo', 'Azul'], pregunta_para: [quien] }, K.Alan)
+    const card2 = p.locator(`.msg[data-mid="${q2.id}"] .decide`)
+    await card2.waitFor({ timeout: 15000 }); await card2.scrollIntoViewIfNeeded()
+    const azul = card2.locator('button.opt', { hasText: 'Azul' })
+    if (movil) await azul.tap(); else await azul.click()
+    await card2.locator('button.opt.chosen').waitFor({ timeout: 10000 }).catch(() => {})
+    ok((await card2.locator('button.opt.chosen').innerText().catch(() => '')).includes('Azul') && await card2.locator('.dotra').count() === 0, 'elegir una opción sigue funcionando y el campo se cierra')
+    await c.close()
+    // quien no decide (el dueño, con la sala en 'dirigida') ve "Esperando a…" y ningún campo
+    const cm = await browser.newContext({ viewport: vp, hasTouch: movil, isMobile: movil, locale: 'es-AR' })
+    const pm = await cm.newPage()
+    const q3 = await post('/enviar', { texto: `¿Sí o no? ${etiqueta}`, opciones: ['Sí', 'No'], pregunta_para: [quien] }, K.Alan)
+    await pm.goto(`${WEB}/sala#k=${K.Mateo}`)
+    const card3 = pm.locator(`.msg[data-mid="${q3.id}"] .decide`)
+    const vio = await card3.waitFor({ timeout: 15000 }).then(() => true).catch(() => false)
+    ok(vio && await card3.locator('.dotra').count() === 0 && /Esperando a/.test(await card3.innerText()), 'quien no decide (el dueño, sala en "dirigida") ve "Esperando a…" y no ve el campo')
+    if (vio) { await card3.scrollIntoViewIfNeeded(); await foto(pm, `web-${movil ? 'mobile' : 'desktop'}-4-dueno-esperando.png`) }
+    await cm.close()
+  }
+} finally {
+  limpiarLabD()
 }
 }
 
