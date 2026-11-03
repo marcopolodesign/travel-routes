@@ -29,6 +29,7 @@ const HealthierCierre = lazy(() => import('./pages/HealthierCierre'))
 const HealthierSemana = lazy(() => import('./pages/HealthierSemana'))
 const HealthierFase1 = lazy(() => import('./pages/HealthierFase1'))
 const PacerAvances = lazy(() => import('./pages/PacerAvances'))
+const KiwellWearable = lazy(() => import('./pages/KiwellWearable'))
 const HealthierAvancesOctubre = lazy(() => import('./pages/HealthierAvancesOctubre'))
 const Sala = lazy(() => import('./pages/Sala'))
 const SalaPrivacidad = lazy(() => import('./pages/SalaPrivacidad'))
@@ -300,6 +301,16 @@ export default function App() {
             whatLabel="Informe de avance"
           >
             <PacerAvances />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/kiwell-wearable" element={
+          <BudgetTemplate
+            title="Wearable — Kiwell × Pacer"
+            timeline="Piloto de 90 días · Noviembre 2026"
+            stack="Anillo y banda · App Kiwell · Tecnología Pacer"
+            whatLabel="Propuesta de sociedad"
+          >
+            <KiwellWearable />
           </BudgetTemplate>
         } />
         {/* link viejo, por si ya se compartió */}
