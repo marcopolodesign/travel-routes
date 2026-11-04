@@ -76,6 +76,14 @@
       "destination": "/tecno/tvs-nuevas/index.html"
     },
     {
+      "source": "/m77r",
+      "destination": "/m77r/index.html"
+    },
+    {
+      "source": "/m77r/",
+      "destination": "/m77r/index.html"
+    },
+    {
       "source": "/tecno/tvs-nuevas/",
       "destination": "/tecno/tvs-nuevas/index.html"
     },

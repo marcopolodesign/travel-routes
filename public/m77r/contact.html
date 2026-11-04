@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M77R — Contact</title>
+<link rel="stylesheet" href="assets/m77r.css">
+<style>
+  .head{padding-top:176px}
+  .head .d1{grid-column:1 / span 8;margin-left:-5px}
+  .who{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);margin-top:64px}
+  .opt{border:1px solid var(--line);border-radius:20px;padding:28px 32px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;cursor:pointer}
+  .opt .d3{margin:10px 0 6px}
+  .opt .dot{width:22px;height:22px;border-radius:50%;border:1px solid var(--line);flex:none;margin-top:2px}
+  .opt.on{background:var(--pine);color:var(--cream);border-color:var(--pine)}
+  .opt.on .muted{color:rgba(246,242,234,.7)}
+  .opt.on .dot{border:6px solid var(--cream)}
+  .body{margin-top:72px}
+  .form{grid-column:1 / span 8;display:grid;grid-template-columns:1fr 1fr;gap:28px var(--gap)}
+  .side{grid-column:10 / span 3}
+  .f{display:flex;flex-direction:column;gap:10px}
+  .f.w{grid-column:1 / -1}
+  .f input,.f textarea{border-bottom:1px solid rgba(29,28,25,.35);padding:10px 0;font-size:18px;outline:0}
+  .f input::placeholder,.f textarea::placeholder{color:#A7A198}
+  .f textarea{min-height:110px;resize:none}
+  .send{grid-column:1 / -1;display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:8px}
+  .send button{height:52px;padding:0 28px;border-radius:26px;background:var(--ink);color:var(--cream)}
+  .side>div{border-top:1px solid var(--line);padding:20px 0 28px}
+  .side p{font-size:16px;line-height:1.55}
+  .side .ph{aspect-ratio:4/5;border-radius:16px;overflow:hidden;margin-top:8px}
+  [data-for]{display:none}
+  body.dev [data-for~=dev],body.buy [data-for~=buy]{display:flex}
+  body.dev .side [data-for~=dev],body.buy .side [data-for~=buy]{display:block}
+  @media(max-width:760px){
+    .head{padding-top:120px}
+    .who{grid-template-columns:1fr;gap:10px;margin-top:40px}.opt{padding:20px 22px;border-radius:16px}
+    .body{margin-top:48px}
+    .form{grid-template-columns:1fr;row-gap:24px}
+    .side{margin-top:64px}
+    .send{flex-direction:column;align-items:stretch}.send button{width:100%}
+  }
+</style>
+</head>
+<body class="dev">
+<section class="wrap head"><div class="g"><h1 class="d1"><span class="ln"><span>Contact</span></span></h1></div>
+  <p class="lbl muted" style="margin-top:56px">I am</p>
+  <div class="who" style="margin-top:14px">
+    <a class="opt" data-w="dev" href="?"><div><p class="lbl">A developer or hotel brand</p><p class="d3">Write to M77R about a project</p><p class="muted">Residences, condominiums, hotels and restorations.</p></div><span class="dot"></span></a>
+    <a class="opt" data-w="buy" href="?who=buyer"><div><p class="lbl">A buyer</p><p class="d3">Write to M77R about a residence</p><p class="muted">Homes and condominiums designed by M77R.</p></div><span class="dot"></span></a>
+  </div>
+</section>
+
+<section class="wrap body"><div class="g">
+  <form class="form" onsubmit="return false">
+    <label class="f"><span class="lbl muted">Name</span><input placeholder="Your name"></label>
+    <label class="f" data-for="dev"><span class="lbl muted">Company</span><input placeholder="Developer, hotel group or brand"></label>
+    <label class="f" data-for="buy"><span class="lbl muted">Phone</span><input placeholder="+1"></label>
+    <label class="f w"><span class="lbl muted">Mail</span><input placeholder="name@company.com"></label>
+
+    <div class="f w" data-for="dev"><span class="lbl muted">Project type</span>
+      <div class="chips"><span class="chip">Single-family residence</span><span class="chip on">Multifamily / condominium</span><span class="chip">Hotel</span><span class="chip">Restoration</span><span class="chip">Installation</span></div></div>
+    <label class="f" data-for="dev"><span class="lbl muted">Location</span><input placeholder="City, state"></label>
+    <label class="f" data-for="dev"><span class="lbl muted">Approx. size</span><input placeholder="sq ft or units / keys"></label>
+    <div class="f w" data-for="dev"><span class="lbl muted">Where are you today?</span>
+      <div class="chips"><span class="chip">Site under contract</span><span class="chip on">Site acquired</span><span class="chip">Feasibility</span><span class="chip">Need a new architect</span></div></div>
+
+    <div class="f w" data-for="buy"><span class="lbl muted">Residence of interest</span>
+      <div class="chips"><span class="chip on">Tula — North Bay Village</span><span class="chip">La Jolla — Bay Harbor Islands</span><span class="chip">A custom home</span></div></div>
+
+    <label class="f w"><span class="lbl muted">Message</span><textarea placeholder="Leave us your message"></textarea></label>
+    <div class="send"><span class="muted" style="font-size:14px;max-width:30em">By submitting your information, you agree to be contacted by MA77ER through the provided channel in order to respond to your inquiry.</span><button class="lbl">Send</button></div>
+  </form>
+
+  <aside class="side">
+    <div data-for="dev"><p class="lbl muted">Your message goes to</p><p>The M77R studio in Miami. Recent work for developers: Tula, 54 units, $83 million.</p><div class="ph"><img id="sdev" alt=""></div></div>
+    <div data-for="buy"><p class="lbl muted">Your message goes to</p><p>The M77R studio in Miami. Tula — 54 units in North Bay Village, under construction.</p><div class="ph"><img id="sbuy" alt=""></div></div>
+    <div><p class="lbl muted">Miami</p><p>M77R<br>7290 NW 1st Ct<br>Miami, FL 33150</p><p style="margin-top:12px">studio@ma77er.com<br>Tel. <span class="tab">+1 (310) 497.7303</span></p></div>
+  </aside>
+</div></section>
+<div style="height:160px"></div>
+<script src="assets/data.js"></script>
+<script src="assets/m77r.js"></script>
+<script>
+  const buy = /who=buyer/.test(location.search);
+  document.body.className = buy ? 'buy' : 'dev';
+  document.querySelector(`.opt[data-w=${buy ? 'buy' : 'dev'}]`).classList.add('on');
+  sdev.src = img(P('tula').imgs[1], 1024); sbuy.src = img(P('tula').imgs[9], 1024);
+  pill(); footer(); reveal();
+</script>
+</body>
+</html>

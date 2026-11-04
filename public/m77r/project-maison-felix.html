@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M77R — Maison Felix</title>
+<link rel="stylesheet" href="assets/m77r.css">
+<style>
+  .back{position:absolute;z-index:3;top:40px;left:var(--m);color:var(--cream)}
+  .facts{display:grid;grid-template-columns:repeat(6,1fr);gap:var(--gap);padding:32px 0;border-bottom:1px solid var(--line)}
+  .facts dt{margin-bottom:8px}
+  .facts dd{font-size:16px;line-height:1.45}
+  .facts dd small{display:block;color:var(--stone);font-size:14px}
+  .story .lbl{grid-column:1 / span 3;padding-top:10px}
+  .story .lead{grid-column:4 / span 7;font-size:32px;line-height:1.35}
+  .full{aspect-ratio:16/9}
+  .dip{margin-top:var(--gap)}
+  .dip>div{border-radius:20px;overflow:hidden}
+  .dip .a{grid-column:1 / span 6;aspect-ratio:4/5}.dip .b{grid-column:7 / span 6;aspect-ratio:4/5}
+  .air{padding:160px 0;background:var(--sand)}
+  .air .c{grid-column:4 / span 6;aspect-ratio:3/2}
+  .air p{grid-column:4 / span 6;margin-top:16px}
+  .strip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--gap)}
+  .strip>div{aspect-ratio:3/4;border-radius:16px;overflow:hidden}
+  .press .row{display:grid;grid-template-columns:3fr 7fr 2fr;gap:var(--gap);padding:24px 0;border-top:1px solid var(--line);align-items:baseline}
+  .press .row:last-child{border-bottom:1px solid var(--line)}
+  .ctab{background:var(--pine);color:var(--cream);border-radius:24px;padding:56px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
+  .ctab .btn{display:inline-flex;align-items:center;height:48px;padding:0 24px;border-radius:24px;background:var(--cream);color:var(--ink);white-space:nowrap}
+  .next{position:relative;display:block;height:80vh;min-height:560px;overflow:hidden;color:var(--cream)}
+  .next img{position:absolute;inset:0}.next:after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.3)}
+  .next .t{position:absolute;z-index:2;left:var(--m);bottom:40px}
+  @media(max-width:760px){
+    .back{top:92px}
+    .facts{grid-template-columns:1fr 1fr;row-gap:24px}
+    .story .lead{font-size:22px}.story .lbl{padding:0 0 14px}
+    .full{aspect-ratio:4/5}
+    .dip .b{margin-top:12px}.dip>div{border-radius:14px}
+    .air{padding:72px 0}
+    .strip{grid-template-columns:1fr 1fr;gap:12px}.strip>div:first-child{grid-column:1/-1;aspect-ratio:4/5}.strip>div{border-radius:14px}
+    .press .row{grid-template-columns:1fr;gap:4px}
+    .ctab{flex-direction:column;align-items:flex-start;padding:28px;border-radius:20px}
+    .next{height:70vh}
+  }
+  .ctab{align-items:flex-start}
+  .ctab .l{flex:0 0 36%}
+  .lm{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .lm label,.lm .w{display:flex;flex-direction:column;gap:8px}.lm .w{grid-column:1/-1}
+  .lm span.lbl{opacity:.65}
+  .lm input{border-bottom:1px solid rgba(246,242,234,.4);padding:8px 0;font-size:18px;outline:0;color:var(--cream)}
+  .lm input::placeholder{color:rgba(246,242,234,.45)}
+  .lm .chip{border-color:rgba(246,242,234,.3)}.lm .chip.on{background:var(--cream);color:var(--ink);border-color:var(--cream)}
+  .lm .snd{align-items:flex-start}.lm button{height:48px;padding:0 28px;border-radius:24px;background:var(--cream);color:var(--ink);cursor:pointer}
+  @media(max-width:760px){.ctab .l{flex:none}.lm{grid-template-columns:1fr;width:100%;gap:20px}.lm button{width:100%}}
+</style>
+</head>
+<body>
+<header class="hero" style="height:92vh">
+  <img id="h" alt="Maison Felix">
+  <a class="back lbl" href="projects.html">← Projects</a>
+  <div class="cap">
+    <h1 class="d1"><span class="ln"><span>Maison Felix</span></span></h1>
+    <p class="lbl">Hospitality · 16 / 24</p>
+  </div>
+</header>
+
+<section class="wrap">
+  <dl class="facts" id="facts"></dl>
+</section>
+
+<section class="sec wrap story"><div class="g">
+  <p class="lbl muted">Maison Felix · 2025</p>
+  <p class="lead">Maison Felix is an exclusive 29-key, 13,569 SF boutique hotel in North Miami Beach, Florida. Conceived as an urban oasis with a nostalgic European flair, the project repurposes a historic 1940s structure, infusing it with distinctive character and a carefully curated thematic identity.</p>
+</div></section>
+
+<section class="wrap"><div class="rv full"><img id="i3" alt=""></div>
+  <div class="g dip"><div class="a rv"><img id="i4" alt=""></div><div class="b rv"><img id="i6" alt=""></div></div>
+</section>
+
+<section class="air" style="margin-top:160px"><div class="wrap g">
+  <div class="c rv"><img id="i2" alt=""></div>
+  <p class="lbl muted">The 1940s building at night, North Miami Beach</p>
+</div></section>
+
+<section class="sec wrap"><div class="strip"><div class="rv"><img id="i5" alt=""></div><div class="rv"><img id="i8" alt=""></div><div class="rv"><img id="i9" alt=""></div></div></section>
+
+<section class="wrap press" style="padding-bottom:120px">
+  <h2 class="d2" style="margin-bottom:32px">In the press</h2>
+  <a class="row" href="#"><span class="lbl muted">Travel + Leisure</span><span class="d3">A new boutique hotel just opened in Miami’s North Beach—and we were the first to stay</span><span class="lbl muted" style="text-align:right">Read →</span></a>
+  <a class="row" href="#"><span class="lbl muted">Dec 2025</span><span class="d3">Inside the sanctuary of Maison Felix</span><span class="lbl muted" style="text-align:right">Read →</span></a>
+  <a class="row" href="#"><span class="lbl muted">Hotel Designs</span><span class="d3">Maison Felix opens in Miami Beach</span><span class="lbl muted" style="text-align:right">Read →</span></a>
+</section>
+
+<section class="wrap" style="padding-bottom:120px">
+  <div class="ctab">
+    <div class="l"><p class="lbl" style="opacity:.7;margin-bottom:16px">Learn more</p><p class="d2">Ask M77R about<br>Maison Felix.</p></div>
+    <form class="lm" onsubmit="return false">
+      <label><span class="lbl">Name</span><input placeholder="Your name"></label>
+      <label><span class="lbl">Mail</span><input placeholder="Your email"></label>
+      <div class="w"><span class="lbl">I am</span><div class="chips"><span class="chip on">A developer or hotel brand</span><span class="chip">A buyer</span></div></div>
+      <label class="w"><span class="lbl">Project</span><input value="Maison Felix"></label>
+      <label class="w"><span class="lbl">Message</span><input placeholder="Leave us your message"></label>
+      <div class="w snd"><button class="lbl">Send</button></div>
+    </form>
+  </div>
+</section>
+
+<a class="next" href="#"><img id="nx" alt=""><div class="t"><p class="lbl" style="margin-bottom:8px">Next · Hospitality</p><p class="d1">M Hotel</p></div></a>
+
+<script src="assets/data.js"></script>
+<script src="assets/m77r.js"></script>
+<script>
+  const p = P('maison-felix'), I = p.imgs;
+  h.src = img(I[0], 2560);
+  for (const n of [2, 3, 4, 5, 6, 8, 9]) { const e = document.getElementById('i' + n); if (e) e.src = img(I[n], n === 3 ? 2560 : 1600); }
+  nx.src = img(P('abbott').imgs[2], 2048);
+  facts.innerHTML = [
+    ['Type', 'Boutique hotel', 'Hospitality'],
+    ['Location', 'Miami Beach, FL', '2025'],
+    ['Specs', '13,569 Square Feet', '29 Rooms, Lobby, Pool · ' + m2(13569)],
+    ['Budget', '$3.5 million', ''],
+    ['Status', 'Completed', ''],
+    ['Press', 'Travel + Leisure', 'Hotel Designs'],
+  ].map(([k, v, s]) => `<div><dt class="lbl muted">${k}</dt><dd class="tab">${v}${s ? `<small>${s}</small>` : ''}</dd></div>`).join('');
+  pill(); footer(); reveal();
+</script>
+</body>
+</html>

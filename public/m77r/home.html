@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M77R — Home</title>
+<link rel="stylesheet" href="assets/m77r.css">
+<style>
+  /* Hero carousel — timing measured on Apple's MediaCardGallery (apple.com/airpods-pro, 27 Oct 2026):
+     each slide holds 5.7 s, the change takes 1.0 s with a symmetric ease-in-out, the active
+     indicator is a 48 px pill (32 px on small screens) that fills linearly. */
+  :root{--hold:5.7s;--xfade:1s;--cycle:6.7s;--ease-apple:cubic-bezier(.45,0,.55,1)}
+  .car{position:relative;height:100vh;min-height:640px;overflow:hidden;background:#111;color:var(--cream);touch-action:pan-y;user-select:none}
+  .car .sl{position:absolute;inset:0;opacity:0;transition:opacity var(--xfade) var(--ease-apple)}
+  .car .sl img{transform:scale(1.07);transition:transform 7.7s cubic-bezier(.25,.1,.25,1)}
+  .car .sl.on{opacity:1;z-index:2}
+  .car .sl.prev{opacity:1;z-index:1}
+  .car .sl.on img,.car .sl.prev img{transform:scale(1)}
+  .car:after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.22) 0,rgba(0,0,0,0) 26%,rgba(0,0,0,0) 52%,rgba(0,0,0,.5) 100%)}
+  .car .cap{position:absolute;z-index:4;left:var(--m);right:var(--m);bottom:40px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
+  .car .cap .d1{margin-left:-5px}
+  .car .meta{display:flex;flex-direction:column;align-items:flex-end;gap:16px}
+  .car .ttl{position:relative;height:16px;min-width:340px;text-align:right}
+  .car .ttl span{position:absolute;right:0;top:0;white-space:nowrap;opacity:0;transform:translateY(8px);transition:opacity .6s var(--ease-apple),transform .6s var(--ease-apple)}
+  .car .ttl span.on{opacity:1;transform:none;transition-delay:.35s}
+  .dots{display:flex;gap:8px;align-items:center}
+  .dots button{position:relative;height:8px;width:8px;border-radius:4px;background:rgba(246,242,234,.42);overflow:hidden;transition:width .5s var(--ease-apple),background-color .25s linear;cursor:pointer}
+  .dots button:hover{background:rgba(246,242,234,.7)}
+  .dots button.on{width:48px}
+  .dots button.on:after{content:"";position:absolute;inset:0 auto 0 0;width:0;background:var(--cream);border-radius:4px;animation:fill var(--cycle) linear forwards}
+  .car.paused .dots button.on:after{animation-play-state:paused}
+  @keyframes fill{to{width:100%}}
+  .car .hint{font-size:12px;opacity:.7}
+
+  .intro .lead{grid-column:4 / span 7;font-size:32px;line-height:1.35;font-weight:300}
+  .intro .lbl{grid-column:1 / span 3;padding-top:12px}
+  .intro .more{grid-column:4 / span 6;margin-top:40px}
+  .feat .big{aspect-ratio:16/9}
+  .feat .cap{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px;gap:16px}
+  .feat .cap .nm{font-size:24px;font-weight:400}
+  .pair{margin-top:120px;align-items:end}
+  .pair .a{grid-column:1 / span 7}.pair .a .ph{aspect-ratio:4/5}
+  .pair .b{grid-column:9 / span 4}.pair .b .ph{aspect-ratio:3/4}
+  .night{position:relative;margin-top:160px;height:100vh;min-height:600px;overflow:hidden;background:#0d0f14;color:var(--cream)}
+  .night video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .night .cap{position:absolute;left:var(--m);bottom:40px;z-index:2}
+  .row{display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gap);align-items:center;padding:28px 0;border-top:1px solid var(--line)}
+  .row:last-child{border-bottom:1px solid var(--line)}
+  .row .n{grid-column:1}.row .t{grid-column:2 / span 5}
+  .row .th{grid-column:8 / span 4;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .row .th div{aspect-ratio:4/3}.row .go{grid-column:12;justify-self:end}
+  .press .item{grid-column:span 4;border-top:1px solid var(--line);padding-top:20px}
+  .press .item .d3{margin:12px 0 16px;max-width:18em}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+  .panel{border-radius:24px;padding:48px;min-height:420px;display:flex;flex-direction:column;justify-content:space-between}
+  .panel.dev{background:var(--pine);color:var(--cream)}.panel.buy{background:var(--sand)}
+  .panel .d2{max-width:9em}
+  .panel .btn{align-self:flex-start;display:inline-flex;align-items:center;height:48px;padding:0 24px;border-radius:24px;background:var(--cream);color:var(--ink)}
+  .panel.buy .btn{background:var(--ink);color:var(--cream)}
+  @media(max-width:760px){
+    .car{height:86vh;min-height:560px}
+    .car .cap{flex-direction:column;align-items:flex-start;bottom:28px;gap:20px}.car .cap .d1{margin-left:-2px}
+    .car .meta{align-items:flex-start;gap:12px;width:100%}
+    .car .ttl{text-align:left;min-width:0;width:100%}.car .ttl span{left:0;right:auto}
+    .dots button.on{width:32px}
+    .intro .lead{font-size:24px}.intro .lbl{padding:0 0 16px}.intro .more{margin-top:28px}
+    .pair{margin-top:64px}.pair .b{margin-top:48px}
+    .night{margin-top:96px;height:80vh}
+    .row{grid-template-columns:32px 1fr auto;padding:20px 0}.row .n{grid-column:1}.row .t{grid-column:2}.row .go{grid-column:3}.row .th{display:none}
+    .press .item{margin-bottom:28px}
+    .split{grid-template-columns:1fr}.panel{padding:28px;min-height:300px;border-radius:20px}
+    .feat .cap{flex-direction:column;gap:4px}
+  }
+</style>
+</head>
+<body>
+<header class="car" id="car" aria-roledescription="carousel">
+  <div id="slides"></div>
+  <div class="cap">
+    <h1 class="d1"><span class="ln"><span>Space,<br class="mbr"> With Intention.</span></span><span class="ln" data-i="1"><span>Nature,<br class="mbr"> In balance.</span></span></h1>
+    <div class="meta"><div class="ttl lbl" id="ttl"></div><div class="dots" id="dots" role="tablist"></div></div>
+  </div>
+</header>
+
+<section class="sec wrap intro">
+  <div class="g">
+    <p class="lbl muted">About Us</p>
+    <p class="lead">M77R is a multidisciplinary design studio led by Juan Azulay, Sylvia Pawlowski and Benjamin Rice—residences, luxury condominiums and heritage hotels. The studio operates mainly in Miami, Austin and Los Angeles, holding licenses in all three states.</p>
+    <p class="more"><a class="link" href="about.html">About Us</a></p>
+  </div>
+</section>
+
+<section class="wrap" id="work"></section>
+
+<section class="night" aria-label="M77R film">
+  <video id="film" muted loop playsinline autoplay preload="auto" src="https://mediumvioletred-oryx-603921.hostingersite.com/wp-content/uploads/2026/01/Renderi-Gcg5.mp4"></video>
+  <p class="cap lbl">M77R · Miami</p>
+</section>
+
+<section class="sec wrap idx">
+  <h2 class="d2" style="margin-bottom:48px">Projects</h2>
+  <div id="rows"></div>
+</section>
+
+<section class="sec tight wrap press">
+  <div class="g" style="margin-bottom:40px"><h2 class="d2" style="grid-column:1/span 6">News</h2></div>
+  <div class="g">
+    <a class="item" href="about.html#news"><p class="lbl muted">Travel + Leisure</p><p class="d3">A New Boutique Hotel Just Opened in Miami’s North Beach—and We Were the First to Stay</p><p class="lbl muted">Maison Felix</p></a>
+    <a class="item" href="about.html#news"><p class="lbl muted">North Bay Village · July 2025</p><p class="d3">Tula Residences in Miami Beach’s North Bay Village begins sale</p><p class="lbl muted">Tula</p></a>
+    <a class="item" href="about.html#news"><p class="lbl muted">Miami · Dec 2025</p><p class="d3">Inside the Sanctuary of Maison Felix</p><p class="lbl muted">Maison Felix</p></a>
+  </div>
+</section>
+
+<section class="sec wrap" style="padding-top:64px">
+  <div class="split">
+    <a class="panel dev" href="contact.html"><p class="lbl">Developers &amp; hotel brands</p><div><p class="d2">Plan your next building with us.</p><p class="p" style="margin-top:16px;opacity:.75">Write to the studio about a residence, condominium or hotel.</p></div><span class="btn lbl">Contact M77R</span></a>
+    <a class="panel buy" href="contact.html?who=buyer"><p class="lbl">Buyers</p><div><p class="d2">Interested in a home by M77R?</p><p class="p muted" style="margin-top:16px">Write to the studio about the residence you have in mind.</p></div><span class="btn lbl">Contact M77R</span></a>
+  </div>
+</section>
+
+<script src="assets/data.js"></script>
+<script src="assets/m77r.js"></script>
+<script>
+  // Completed works only (status "Completed" on ma77er.com)
+  const S = [['north-shore', 0], ['maison-felix', 0], ['the-high-road', 6], ['broadview', 2], ['daytonia', 0]].map(([s, i]) => ({ p: P(s), src: P(s).imgs[i] }));
+  slides.innerHTML = S.map((s, i) => `<div class="sl" data-i="${i}"><img src="${img(s.src, 2560)}" alt="${s.p.name}"></div>`).join('');
+  ttl.innerHTML = S.map((s, i) => `<span data-i="${i}">${s.p.name} · ${s.p.place} · Completed ${s.p.year}</span>`).join('');
+  dots.innerHTML = S.map((s, i) => `<button role="tab" aria-label="${s.p.name}" data-i="${i}"></button>`).join('');
+  const sl = [...document.querySelectorAll('.sl')], tt = [...ttl.children], dd = [...dots.children];
+  let cur = -1, timer = null, paused = false;
+  function go(n) {
+    n = (n + S.length) % S.length; if (n === cur) return;
+    sl.forEach(e => e.classList.remove('prev'));
+    if (cur >= 0) { sl[cur].classList.remove('on'); sl[cur].classList.add('prev'); }
+    // restart the Ken Burns on the incoming slide
+    const img0 = sl[n].querySelector('img'); img0.style.transition = 'none'; img0.style.transform = 'scale(1.07)'; img0.offsetWidth; img0.style.transition = ''; img0.style.transform = '';
+    sl[n].classList.add('on'); tt.forEach((e, i) => e.classList.toggle('on', i === n));
+    dd.forEach((e, i) => { e.classList.toggle('on', i === n); if (i === n) { e.style.animation = 'none'; e.offsetWidth; e.style.animation = ''; } });
+    cur = n; schedule();
+  }
+  let left = 6700, t0 = 0;
+  function schedule() { clearTimeout(timer); left = 6700; t0 = performance.now(); if (!paused) timer = setTimeout(() => go(cur + 1), left); }
+  car.addEventListener('mouseenter', () => { paused = true; car.classList.add('paused'); clearTimeout(timer); left -= performance.now() - t0; });
+  car.addEventListener('mouseleave', () => { paused = false; car.classList.remove('paused'); t0 = performance.now(); timer = setTimeout(() => go(cur + 1), Math.max(left, 400)); });
+  dd.forEach(b => b.addEventListener('click', () => go(+b.dataset.i)));
+  // swipe (mobile)
+  let x0 = null;
+  car.addEventListener('pointerdown', e => { x0 = e.clientX; });
+  car.addEventListener('pointerup', e => { if (x0 === null) return; const dx = e.clientX - x0; if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1)); x0 = null; });
+
+  // Mockup stills: ?shot&slide=N&mix=0..1 freezes the change from slide N-1 to N
+  const q = new URLSearchParams(location.search);
+  if (shot && q.has('slide')) {
+    const n = +q.get('slide'), mix = q.has('mix') ? +q.get('mix') : 1, pv = (n - 1 + S.length) % S.length;
+    sl.forEach(e => e.style.transition = 'none');
+    sl[pv].style.opacity = 1; sl[pv].style.zIndex = 1; sl[pv].querySelector('img').style.transform = 'scale(1)';
+    sl[n].style.opacity = mix; sl[n].style.zIndex = 2; sl[n].querySelector('img').style.transform = `scale(${1.07 - 0.07 * mix * 0.25})`;
+    tt.forEach((e, i) => { e.style.transition = 'none'; e.style.opacity = i === n ? Math.max(0, (mix - .5) * 2) : i === pv ? Math.max(0, 1 - mix * 1.7) : 0; e.style.transform = 'none'; });
+    dd.forEach((e, i) => { e.style.transition = 'none'; e.style.width = i === n ? (8 + 40 * mix) + 'px' : i === pv ? (48 - 40 * mix) + 'px' : '8px'; if (i === pv && mix < 1) { e.style.background = 'var(--cream)'; } });
+    if (innerWidth <= 760) dd.forEach((e, i) => { if (i === n) e.style.width = (8 + 24 * mix) + 'px'; if (i === pv) e.style.width = (32 - 24 * mix) + 'px'; });
+  } else if (shot) { sl[0].classList.add('on'); tt[0].classList.add('on'); dd[0].classList.add('on'); }
+  else go(0);
+
+  const mf = P('maison-felix'), tu = P('tula'), hr = P('the-high-road');
+  const tag = p => `${p.place} · ${p.status}${p.year && !/Sold/.test(p.status) ? ' ' + p.year : ''}`;
+  work.innerHTML = `
+    <div class="feat">
+      <a href="project-maison-felix.html"><div class="rv big"><img src="${img(mf.imgs[7], 2560)}" alt=""></div></a>
+      <div class="cap"><span class="nm">Maison Felix <span class="muted">— Boutique hotel, 29 rooms</span></span><span class="lbl muted">${tag(mf)}</span></div>
+    </div>
+    <div class="g pair">
+      <a class="a card" href="#"><div class="rv ph"><img src="${img(tu.imgs[2])}" alt=""></div><div class="meta"><span class="nm">Tula <span class="muted" style="font-weight:400">— 54 units</span></span><span class="sub">${tag(tu)}</span></div></a>
+      <a class="b card" href="#"><div class="rv ph"><img src="${img(hr.imgs[0])}" alt=""></div><div class="meta"><span class="nm">The High Road</span><span class="sub">${tag(hr)}</span></div></a>
+    </div>`;
+  const used = ['north-shore', 'maison-felix', 'the-high-road', 'broadview', 'daytonia'];
+  rows.innerHTML = TYPES.map(([k, n], i) => {
+    const ps = PROJECTS.filter(p => p.type === k).slice(0, 3);
+    return `<a class="row" href="projects.html#${k}"><span class="lbl muted tab n">0${i + 1}</span><span class="d2 t">${n} <sup class="lbl muted tab" style="vertical-align:top">${String(count(k)).padStart(2, '0')}</sup></span>
+      <span class="th">${ps.map(p => `<div><img src="${img(used.includes(p.slug) ? p.imgs[3] : p.cover, 512)}" alt=""></div>`).join('')}</span><span class="go lbl">View →</span></a>`;
+  }).join('');
+  pill(); footer(); reveal();
+</script>
+</body>
+</html>

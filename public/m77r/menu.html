@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M77R — Menu</title>
+<link rel="stylesheet" href="assets/m77r.css">
+<style>
+  html,body{background:var(--pine);color:var(--cream)}
+  .menu{min-height:100vh;padding:136px var(--m) 40px;display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gap);grid-template-rows:1fr auto}
+  .nav{grid-column:1 / span 7}
+  .nav a.top{display:flex;align-items:baseline;gap:16px;font-size:60px;font-weight:300;line-height:1.2;letter-spacing:-.02em}
+  .nav a.top .i{font-size:12px;font-weight:500;letter-spacing:.08em;opacity:.55;width:28px}
+  .sub{display:flex;flex-wrap:wrap;gap:8px 28px;margin:12px 0 28px 44px}
+  .sub a{font-size:16px;opacity:.85}.sub a sup{font-size:11px;opacity:.6;margin-left:2px}
+  .pic{grid-column:9 / span 4;align-self:start}
+  .pic .ph{aspect-ratio:4/5;border-radius:16px;overflow:hidden}
+  .pic p{margin-top:12px;opacity:.7}
+  .base{grid-column:1 / -1;display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap);border-top:1px solid rgba(246,242,234,.2);padding-top:24px;margin-top:56px}
+  .base p{font-size:14px;line-height:1.5}.base .lbl{opacity:.55;margin-bottom:6px}
+  .pill{background:rgba(246,242,234,.12)}
+  @media(max-width:760px){
+    .menu{display:block;padding:108px var(--m) 28px}
+    .nav a.top{font-size:36px}.sub{margin:8px 0 20px 44px;gap:6px 20px}.sub a{font-size:16px}
+    .pic{display:none}
+    .base{grid-template-columns:1fr 1fr;row-gap:24px;margin-top:40px}
+  }
+</style>
+</head>
+<body>
+<div class="menu">
+  <div class="nav" id="nav"></div>
+  <div class="pic"><div class="ph"><img id="pic" alt=""></div><p class="lbl">Maison Felix · Miami Beach, FL</p></div>
+  <div class="base">
+    <div><p class="lbl">Miami</p><p>7290 NW 1st Ct<br>Miami, FL 33150</p></div>
+    <div><p class="lbl">Studios</p><p>Miami · Austin<br>Los Angeles</p></div>
+    <div><p class="lbl">Contact</p><p>studio@ma77er.com<br><span class="tab">+1 (310) 497.7303</span></p></div>
+    <div><p class="lbl">Instagram</p><p>@gaiam77r<br>@mttrmgmt</p></div>
+  </div>
+</div>
+<script src="assets/data.js"></script>
+<script src="assets/m77r.js"></script>
+<script>
+  document.getElementById('pic').src = img(P('maison-felix').imgs[1], 1024);
+  const items = [['About', 'about.html'], ['Projects', 'projects.html'], ['Awards', 'about.html#awards'], ['News', 'about.html#news'], ['Clients', 'about.html#clients'], ['Contact', 'contact.html']];
+  document.getElementById('nav').innerHTML = items.map(([n, h], i) =>
+    `<a class="top" href="${h}"><span class="i tab">0${i + 1}</span><span class="ln" data-i="${i}"><span>${n}</span></span></a>` +
+    (i === 1 ? `<div class="sub">${TYPES.map(([k, t]) => `<a href="projects.html#${k}">${t}<sup class="tab">${count(k)}</sup></a>`).join('')}</div>` : '')
+  ).join('');
+  pill({ close: true }); reveal();
+</script>
+</body>
+</html>

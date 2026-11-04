@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M77R — Work</title>
+<link rel="stylesheet" href="assets/m77r.css">
+<style>
+  .head{padding-top:176px}
+  .head .d1{grid-column:1 / span 6;margin-left:-5px}
+  .head .lead{grid-column:8 / span 5;align-self:end;padding-bottom:18px}
+  .bar{position:sticky;top:0;z-index:20;background:var(--paper);display:flex;justify-content:space-between;align-items:center;gap:16px;padding:96px var(--m) 20px;border-bottom:1px solid var(--line)}
+  .views{display:flex;gap:4px;border:1px solid var(--line);border-radius:20px;padding:3px}
+  .views a{height:32px;display:inline-flex;align-items:center;padding:0 14px;border-radius:16px;font-size:14px}
+  .views a.on{background:var(--ink);color:var(--cream)}
+  .grp{padding-top:80px}
+  .grp h2{display:flex;align-items:baseline;gap:12px;margin-bottom:32px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:56px var(--gap)}
+  .grid .card .ph{overflow:hidden}
+  .list .lr{display:grid;grid-template-columns:96px 2.6fr 2fr 1.3fr 1.4fr 1.6fr .7fr;gap:var(--gap);align-items:center;padding:14px 0;border-top:1px solid var(--line);font-size:16px}
+  .list .lr .th{aspect-ratio:4/3;background:var(--sand)}
+  .list .lr .nm{font-size:24px;font-weight:300}
+  .list .hd{border-top:0;padding:0 0 10px}
+  .st{display:inline-flex;align-items:center;gap:8px}
+  .st:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--stone)}
+  .st.done:before{background:var(--pine)}.st.cons:before{background:#B9894D}
+  @media(max-width:760px){.bar{position:static}
+    .head{padding-top:120px}.head .lead{padding:16px 0 0}
+    .bar{flex-direction:column;align-items:stretch;padding:80px var(--m) 14px}
+    .bar .chips{gap:6px}.bar .chip{height:36px;padding:0 14px}
+    .views{align-self:flex-start}
+    .grp{padding-top:56px}
+    .grid{grid-template-columns:1fr 1fr;gap:32px 12px}
+    .grid .card .nm{font-size:14px}.grid .card .sub{font-size:12px}
+    .list .lr{grid-template-columns:72px 1fr auto;gap:12px}.list .lr .nm{font-size:20px}
+    .list .lr .c3,.list .lr .c4,.list .lr .c7,.list .hd{display:none}
+    .list .lr .c5{grid-column:2}.list .lr .c6{grid-column:3;grid-row:1;font-size:14px}
+  }
+</style>
+</head>
+<body>
+<section class="wrap head"><div class="g">
+  <h1 class="d1">Projects</h1>
+  <p class="lead">Architecture and installations—residences, condominiums and hotels in Florida, Texas and California.</p>
+</div></section>
+<div class="bar"><div class="chips" id="chips"></div><div class="views" id="views"></div></div>
+<main class="wrap" id="out" style="padding-bottom:160px"></main>
+<script src="assets/data.js"></script>
+<script src="assets/m77r.js"></script>
+<script>
+  const q = new URLSearchParams(location.search);
+  const view = q.get('view') || 'grid', only = q.get('type') || 'all';
+  const link = (k, v) => `?${[k !== 'all' ? 'type=' + k : '', v !== 'grid' ? 'view=' + v : ''].filter(Boolean).join('&')}`;
+  document.getElementById('chips').innerHTML =
+    `<a class="chip ${only === 'all' ? 'on' : ''}" href="${link('all', view)}">Show all<sup>${PROJECTS.length}</sup></a>` + `<a class="chip ${only === 'architecture' ? 'on' : ''}" href="${link('architecture', view)}">Architecture<sup>${PROJECTS.length - count('installations')}</sup></a>` +
+    TYPES.map(([k, n]) => `<a class="chip ${only === k ? 'on' : ''}" href="${link(k, view)}">${n}<sup>${count(k)}</sup></a>`).join('');
+  document.getElementById('views').innerHTML = ['grid', 'list'].map(v => `<a class="${v === view ? 'on' : ''}" href="${link(only, v)}">${v === 'grid' ? 'Grid' : 'List'}</a>`).join('');
+  const cls = s => /Completed|Built|Performed/.test(s) ? 'done' : /Under construction/.test(s) ? 'cons' : '';
+  const yr = p => p.year || 'Upcoming';
+  const groups = TYPES.filter(([k]) => only === 'all' || only === k || (only === 'architecture' && k !== 'installations'));
+  document.getElementById('out').innerHTML = groups.map(([k, n]) => {
+    const ps = PROJECTS.filter(p => p.type === k);
+    const body = view === 'grid'
+      ? `<div class="grid">${ps.map(p => `<a class="card" href="${p.slug === 'maison-felix' ? 'project-maison-felix.html' : '#'}"><div class="ph rv"><img src="${img(p.cover, 1024)}" alt=""></div>
+          <div class="meta"><span class="nm">${p.name}</span><span class="sub">${p.place}</span></div>
+          <div class="sub" style="margin-top:2px;display:flex;justify-content:space-between;gap:8px"><span class="st ${cls(p.status)}">${p.status}</span><span class="tab">${p.budget || ''}</span></div></a>`).join('')}</div>`
+      : `<div class="list"><div class="lr hd lbl muted"><span></span><span>Project</span><span class="c3">Location</span><span class="c4">Size</span><span class="c7">Budget</span><span>Status</span><span>Year</span></div>
+          ${ps.map(p => `<a class="lr" href="${p.slug === 'maison-felix' ? 'project-maison-felix.html' : '#'}"><span class="th"><img src="${img(p.cover, 256)}" alt=""></span><span class="nm">${p.name}</span><span class="c3 muted">${p.place}</span><span class="c4 tab muted">${p.sf ? sf(p.sf) : p.prog}</span><span class="c7 tab muted">${p.budget || '—'}</span><span class="c5 muted"><span class="st ${cls(p.status)}">${p.status}</span></span><span class="c6 tab muted">${yr(p)}</span></a>`).join('')}</div>`;
+    return `<section class="grp" id="${k}"><h2><span class="d2">${n}</span><span class="lbl muted tab">${String(ps.length).padStart(2, '0')}</span></h2>${body}</section>`;
+  }).join('');
+  pill(); footer(); reveal();
+</script>
+</body>
+</html>

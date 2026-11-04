@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M77R — About Us</title>
+<link rel="stylesheet" href="assets/m77r.css">
+<style>
+  .head{padding-top:176px}
+  .head .d1{grid-column:1 / span 8;margin-left:-5px}
+  .about .lead{grid-column:4 / span 8;font-size:32px;line-height:1.35}
+  .about .lbl{grid-column:1 / span 3;padding-top:10px}
+  .team .ph{aspect-ratio:2000/1742;max-height:88vh;width:100%}
+  .feat-team{display:grid;grid-template-columns:repeat(12,1fr);column-gap:var(--gap);align-items:end}
+  .feat-team .ph2{grid-column:1 / span 5;aspect-ratio:2000/2495}
+  .feat-team .names{grid-column:7 / span 6}
+  .feat-team .names p.d2{border-top:1px solid var(--line);padding:16px 0}
+  .nums{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
+  .nums div{border-top:1px solid var(--line);padding-top:20px}
+  .nums .n{font-size:96px;font-weight:300;line-height:1;letter-spacing:-.03em;margin:0 0 12px -6px}
+  h2.d2.sh{margin-bottom:40px;display:flex;align-items:baseline;gap:12px}
+  .news{display:grid;grid-template-columns:repeat(5,1fr);gap:40px var(--gap)}
+  .news .th{aspect-ratio:3/4;background:var(--sand);overflow:hidden;border-radius:12px}
+  .news .th img{object-position:top}
+  .news .t{font-size:18px;line-height:1.35;margin:14px 0 6px}
+  .aw .row{display:grid;grid-template-columns:5fr 7fr;gap:var(--gap);padding:18px 0;border-top:1px solid var(--line);align-items:baseline}
+  .aw .row:last-child{border-bottom:1px solid var(--line)}
+  .aw .row .t{font-size:20px;font-weight:300;line-height:1.35}
+  .aw .row p{font-size:16px;line-height:1.5}
+  .logos{display:grid;grid-template-columns:repeat(8,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+  .logos div{background:var(--paper);aspect-ratio:1;display:flex;align-items:center;justify-content:center;padding:22%}
+  .logos img{object-fit:contain;filter:grayscale(1);mix-blend-mode:multiply;opacity:.85}
+  @media(max-width:760px){
+    .head{padding-top:120px}
+    .about .lead{font-size:22px}.about .lbl{padding:0 0 14px}
+    .feat-team .ph2,.feat-team .names{grid-column:1/-1}.feat-team .names{margin-top:24px}
+    .nums{grid-template-columns:1fr 1fr;row-gap:32px}.nums .n{font-size:56px;margin-left:-3px}
+    .news{grid-template-columns:1fr 1fr;gap:28px 12px}.news .t{font-size:16px}
+    .aw .row{grid-template-columns:1fr;gap:4px}
+    .logos{grid-template-columns:repeat(4,1fr)}
+  }
+</style>
+</head>
+<body>
+<section class="wrap head"><div class="g"><h1 class="d1">About Us</h1></div></section>
+
+<section class="sec wrap about" style="padding-top:96px"><div class="g">
+  <p class="lbl muted">M77R</p>
+  <p class="lead">Led by Juan Azulay, Sylvia Pawlowski, and Benjamin Rice, M77R is a multidisciplinary design studio operating at the highest tier of architectural design, urban planning, and immersive spatial interventions. The studio approaches heritage hotel design and restorations as acts of cultural continuity, creates rigorously thought out residences for discerning clients, and conceives luxury condominium projects as architectural narratives—shaping perception, identity, and enduring cultural presence. The studio operates mainly in Miami, Austin and Los Angeles – holding licenses in all three states.</p>
+</div></section>
+
+<section class="wrap team">
+  <div class="ph rv"><img id="team" alt="Juan Azulay, Sylvia Pawlowski and Ben Rice" style="object-position:50% 30%"></div>
+</section>
+
+<section class="sec wrap">
+  <div class="feat-team">
+    <div class="ph2 rv"><img id="team2" alt="M77R team"></div>
+    <div class="names"><p class="lbl muted" style="margin-bottom:16px">Featured Team</p><p class="d2">Juan Azulay</p><p class="d2">Sylvia Pawlowski</p><p class="d2" style="border-bottom:1px solid var(--line)">Ben Rice</p></div>
+  </div>
+</section>
+
+<section class="wrap" style="padding-bottom:160px"><div class="nums" id="nums"></div></section>
+
+<section class="wrap" id="news" style="padding-bottom:160px">
+  <h2 class="d2 sh">News <span class="lbl muted tab">10</span></h2>
+  <div class="news" id="newsg"></div>
+</section>
+
+<section class="wrap aw" id="awards" style="padding-bottom:160px">
+  <h2 class="d2 sh">Awards</h2>
+  <div id="awl"></div>
+</section>
+
+<section class="wrap" id="clients" style="padding-bottom:160px">
+  <h2 class="d2 sh">Clients <span class="lbl muted tab">24</span></h2>
+  <div class="logos" id="logos"></div>
+</section>
+
+<script src="assets/data.js"></script>
+<script src="assets/m77r.js"></script>
+<script>
+  team.src = F + 'bCRgRcQ3bav5ozdlQf6kzSkMsVI.jpg?scale-down-to=2048';
+  team2.src = F + 'K8FY85eDJyeiDhB4JTqliBj4.jpg?scale-down-to=1600';
+  // News — every item on ma77er.com/press, in its order, with its image and wording
+  const N = [
+    ['lahALaLcckZo978AwAP36ip8VE.jpg', 'Miami’s Newest Residences Have Old Hollywood Roots', 'North Bay Village, June 2025'],
+    ['HXY1EPNQ9LNfeVW8mg2jrYoBug.jpg', 'Pacific & Orient Properties Reveals and Breaks Ground on Japanese-Inspired 7918 West Drive North Bay Village Luxury Condo', 'North Bay Village, Feb 2023'],
+    ['bCram6yH2z1ZNhdN4jDt4Mjpo.png', 'Inside the Sanctuary of Maison Felix', 'Miami, Dec 2025'],
+    ['FW7qBdK9V6rRMW3uVytPGzk6ZeQ.png', 'Maison Felix opens in Miami Beach', 'Hotel Designs'],
+    ['bE7iVYMG2pXFawNPbcZXkcBxC0c.png', 'Tula Residences in Miami Beach’s North Bay Village begins sale', 'North Bay Village, July 2025'],
+    ['234RkGAt821BvcxuBhgFZG0JbBE.jpg', 'Juan Azulay / Matter Management: Vivarium', 'Los Angeles, May 2010'],
+    ['TMGbJDtrchIj0ZBTFGOifalSPo.jpg', 'SCI-Arc', 'March 2010'],
+    ['lxQCUs0Rc7JINIkNsxkwQZUEFy0.jpg', 'Sigur Rós Is Doing Sound Baths Now', 'Los Angeles, Feb 2019'],
+    ['lqVlHlQWj3szEQZxC9R7Qx8dPU.png', 'A New Boutique Hotel Just Opened in Miami’s North Beach—and We Were the First to Stay', 'Travel + Leisure'],
+    ['NEZMPrYUkY6PYmreTTrjHJ4dI.png', 'Architecture Xenoculture: eVolo 5', 'Amazon, Feb 2013'],
+  ];
+  newsg.innerHTML = N.map(([i, t, m]) => `<a href="#"><div class="th rv"><img src="${F + i}?scale-down-to=1024" alt=""></div><p class="t">${t}</p><p class="lbl muted">${m}</p></a>`).join('');
+  // Awards — every item on ma77er.com/awards, verbatim
+  const A = [
+    ['Vivarium', ['Pasadena Arts Alliance Grant']],
+    ['Satellite Library (Library Connection)', ['City of Glendale', 'AIA / Pasadena Foothill Honor Award']],
+    ['Northview Gymnasium', ['AIA / Pasadena Foothill Merit Award']],
+    ['Coachella Energy Factory', ['Winning Selection for Coachella Music Festival']],
+    ['MAK t6 Vacant', ['Winning Entry for MAK Center Vertical Garden Competition']],
+    ['3x1 Multiple Dwelling Prototypes', ['AIA / Los Angeles Next LA Merit Award', 'AIA Pasadena Foothill Merit Award']],
+    ['NLS', ['AIA Pasadena Foothill Design Citation']],
+    ['Clifton Middle School', ['AIA / Los Angeles Merit Award']],
+    ['Aquaterrari for the New Barcelona Zoo', ['Commission from Open International Competition', 'New Barcelona Zoo']],
+    ['Raven', ['Los Angeles Underground Film Festival', 'Best Experimental Installation Film for Raven']],
+    ['Yu Tsun', ['Iberminuto Film Festival', 'Honorable Mention for Yu Tsun, Short Installation Film']],
+    ['Columbia University Graduate School of Architecture and Planning', ['First Prize in Design', 'William J. Kinne Travel Fellowship']],
+    ['Fulbright Scholar / Fondo Nacional de las Artes', []],
+    ['Enhanced Oil Recovery Center', ['AIA Pasadena Foothill Design Award']],
+    ['Society for Moving Images', ['Graham Foundation Grant', 'Society for the Moving Images About the Built Environment']],
+  ];
+  awl.innerHTML = A.map(([t, l]) => `<div class="row"><span class="t">${t}</span><div>${l.map(x => `<p class="muted">${x}</p>`).join('')}</div></div>`).join('');
+  const L = ['4nOwQxVvbAjxqrCXqyYAPPPMgtc.jpeg','N6Cuc591zD6mTO7M0h3glCSXbg.png','VFRPtSzavFcfWB68Bu6seX0wE.png','HAjd9S8pYC35CYkBhElnMvtg.png','pC08LX65mRD8CNi90MhJoTYrNo.png','feev04fm2ib1Sg5n7fA4IqOkghM.png','MH4zm0l15WoEnvbR8GpKOnhlQU.png','A4CB49LaPezXlXUqDbP5v8mAk.png','L6xgCiGVz22OSoGJGVqoaxelY8.png','BBEVAxjYh2UyoiaeBUBX8LaZxU.png','UORg2oJ2xzxdDIUsMYehMQRi6o.png','tRU3tnJ2oJFKLya3nx7MpmDNKzY.png','5AL3L4UYEjPqHAw8o59CQVRPqcQ.png','J1kjVEbjW4Rqv7yaEDkBqjHTo.png','hvtySOJlKREjqVf4hyIjzi2VCXk.png','UNkvTy8FvB6xFtjSdPYCwgu7as4.png','0o92uxaAQewraM6MAPIrkHpil0.png','ffsfmwm3Edo6uYQa44bGCo23iw.jpg','pSuwNfe957VHeY5V9OiNAb8AFL0.jpg','YTyY5QIxJeVAHpdUe8La1sz9BTs.png','kWbL84b9Bh0QisToZaFRRtQXtM.png','LvKSAChNnVVnz1PuS1Q51AkXoI.jpg','aOi3nsI4T5DaN1id9ahG3nQaoAU.png','QHalMPjFXkXkxe3CNo3lgCcTk.jpeg'];
+  logos.innerHTML = L.map(i => `<div><img src="${F + i}?scale-down-to=512" alt=""></div>`).join('');
+  const built = PROJECTS.filter(p => /Completed|Built/.test(p.status) && p.type !== 'installations').length;
+  const cons = PROJECTS.filter(p => /Under construction/.test(p.status)).length;
+  nums.innerHTML = [[PROJECTS.length, 'Projects'], [built, 'Completed'], [cons, 'Under construction'], [3, 'States licensed — FL, TX, CA']]
+    .map(([n, t]) => `<div><p class="n tab">${String(n).padStart(2, '0')}</p><p class="lbl muted">${t}</p></div>`).join('');
+  pill(); footer(); reveal();
+</script>
+</body>
+</html>
