@@ -1,5 +1,14 @@
 # Marco Polo — Catchup
 
+## 2026-11-04 — M77R: propuesta navegable de ma77er.com publicada en /m77r
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 11:52 → 11:59 (7 min)
+
+Mateo pidió el link de la propuesta de ma77er.com (bocetos v2 de Felipe del 2026-10-27, que vivían sólo en `~/Local/brand/referencias/calibracion-m77r/propuesta/`) para pasársela al cliente. Copia en `public/m77r/` con 7 pantallas: portada, home con carrusel, menú, proyectos (grilla y lista), Maison Felix, About y contacto. Cambios para el cliente: la portada dice "Proposal · Prepared by Marco Polo · November 2026" en lugar de "Internal mockup · not published", se sacaron los "(mockup)" de los títulos, se agregó `noindex` y se dejó afuera `references.html`, que nombra a René González (competidor directo en Miami) como "la vara a superar". Las fotos salen de framerusercontent (la web actual de M77R) y el video de Hostinger. Los formularios no envían. Sólo Maison Felix abre su ficha; las otras tarjetas son `#`.
+`vercel.json`: redirect `/m77r` → `/m77r/` (sin la barra, los assets relativos resolvían contra `/`) y rewrite `/m77r/` → index. Commits 677bfb9 y el siguiente. Verificado en Chrome sobre producción: portada, home (21/21 imágenes, carrusel), proyectos y Maison Felix (11/11). `/m77r/references.html` da 404.
+Control: `curl -sI https://travels.marcopolo.agency/m77r` → 307 a `/m77r/`.
+
 ## 2026-11-03 — Sala: campo "O escribí otra respuesta…" siempre abierto en la tarjeta de decisión
 
 **Source:** Claude Code — Macbook Pro
