@@ -141,6 +141,7 @@ const MarcopoloLogo = ({ color = RED, width = 84 }: { color?: string; width?: nu
 interface DocProps {
   client: string
   amount: string
+  currency: string
   month: string
   services: string
   items: Record<string, string[]>
@@ -168,7 +169,7 @@ const DocFooter = () => (
   </View>
 )
 
-const CoverPage = ({ client, amount, services, date }: Pick<DocProps, 'client' | 'amount' | 'services' | 'date'>) => (
+const CoverPage = ({ client, amount, currency, services, date }: Pick<DocProps, 'client' | 'amount' | 'currency' | 'services' | 'date'>) => (
   <Page size="A4" style={s.page}>
     <DocHeader date={date} client={client} />
     <Text style={s.coverTitle}>PAYMENT{'\n'}REQUEST</Text>
@@ -178,7 +179,7 @@ const CoverPage = ({ client, amount, services, date }: Pick<DocProps, 'client' |
         <Text style={s.infoBoxTopText}>{services.toUpperCase()}</Text>
       </View>
       <View style={s.infoBoxBottom}>
-        <Text style={s.totalText}>TOTAL: U$ {amount}</Text>
+        <Text style={s.totalText}>TOTAL: {currency} {amount}</Text>
       </View>
     </View>
     <DocFooter />
@@ -207,6 +208,8 @@ const OverviewPage = ({ client, month, items, date }: Pick<DocProps, 'client' | 
     <DocFooter />
   </Page>
 )
+
+const CURRENCY_SYMBOLS: Record<string, string> = { USD: 'U$', EUR: '€' }
 
 const BANK_FIELDS: [string, string][] = [
   ['Account Holder', 'Mateo Aldao Suaya'],
@@ -237,7 +240,7 @@ const PaymentRequestDoc = (props: DocProps) => {
   const hasItems = Object.keys(props.items).length > 0
   return (
     <Document>
-      <CoverPage client={props.client} amount={props.amount} services={props.services} date={props.date} />
+      <CoverPage client={props.client} amount={props.amount} currency={props.currency} services={props.services} date={props.date} />
       {hasItems && (
         <OverviewPage client={props.client} month={props.month} items={props.items} date={props.date} />
       )}
@@ -249,7 +252,7 @@ const PaymentRequestDoc = (props: DocProps) => {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const { client, amount, month, services, items, date } = req.body ?? {}
+  const { client, amount, currency, month, services, items, date } = req.body ?? {}
 
   if (!client) return res.status(400).json({ error: 'client is required' })
   if (!amount) return res.status(400).json({ error: 'amount is required' })
@@ -260,6 +263,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const resolvedAmount: string = typeof amount === 'number'
     ? amount.toLocaleString('de-DE')
     : String(amount)
+  const resolvedCurrency: string = CURRENCY_SYMBOLS[String(currency ?? 'USD').toUpperCase()] ?? String(currency)
   const resolvedServices: string = services ?? 'PLATFORM UX UI / BRANDING / DEVELOPMENT'
   const resolvedItems: Record<string, string[]> = items ?? {}
 
@@ -267,6 +271,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     <PaymentRequestDoc
       client={client}
       amount={resolvedAmount}
+      currency={resolvedCurrency}
       month={month}
       services={resolvedServices}
       items={resolvedItems}
