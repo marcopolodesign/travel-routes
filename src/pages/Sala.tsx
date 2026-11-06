@@ -38,7 +38,9 @@ type Miembro = { autor: string; tipo: string; dueno?: string | null; estado?: st
 type Yo = {
   sala: string; autor: string; tipo: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[]; decide?: 'dirigida' | 'todos'; admin?: boolean
   permisos?: { dueno?: boolean }; onboarding?: Onboarding; pedidos?: Pedidos
+  mail?: string | null   // undefined = servidor sin "entrar con mail"; null = sin mail todavía
 }
+type SalaPorMail = { sala: string; titulo: string; autor: string; tipo: string; clave: string }
 // "¿Qué necesitás?": tarjetas por sala (salas/<sala>.onboarding.json en el repo sala). En el ejemplo, el dato a cambiar va entre [ ].
 type Tarjeta = { id: string; tipo: string; titulo: string; ejemplo: string }
 type Onboarding = { titulo?: string; tarjetas: Tarjeta[] }
@@ -55,6 +57,14 @@ const guardar = (k: string, v: string | null) => {
 // Los errores del servidor llegan en rioplatense. Los que se muestran tal cual y son simples se mapean acá por
 // estado / bandera; el resto (permisos de dueño, "esa opción no existe", etc.) se muestra como lo manda el servidor.
 function mensajeDeError(status: number, c: Record<string, unknown>): string | null {
+  // Entrar con mail + código (van antes que los genéricos: un 410 acá es un código vencido, no un link)
+  if (c.incorrecto) return t.errCodigo(Number(c.restantes ?? 0))
+  if (c.vencido || c.sin_codigo) return t.errCodigoVencido
+  if (c.agotado) return t.errAgotado
+  if (c.limite) return t.errLimite
+  if (c.mail_invalido) return t.errMailInvalido
+  if (c.mail_tomado) return t.errMailTomado
+  if (status === 404 && c.error === 'ruta desconocida') return t.errNoDisponible
   if (c.limite_ia) return t.errLimiteIA
   if (c.invalido) return t.errNombreInvalido
   if (c.reservado) return status === 409 ? t.errNombreReservado : t.errNombreBot
@@ -116,6 +126,7 @@ const I = {
   bell: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15L6 16zM10 20.5a2 2 0 0 0 4 0" /></svg>,
   back: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>,
   plus: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>,
+  mail: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5" /><path d="M4.5 7l7.5 6 7.5-6" /></svg>,
   ideas: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"><rect x="4" y="4" width="7" height="7" rx="2" /><rect x="13" y="4" width="7" height="7" rx="2" /><rect x="4" y="13" width="7" height="7" rx="2" /><rect x="13" y="13" width="7" height="7" rx="2" /></svg>,
 }
 
@@ -267,7 +278,7 @@ export default function Sala() {
         ? <Entrada codigo={codigo} onEntrar={(c) => { guardar(CLAVE_KEY, c); setClave(c); navigate('/sala', { replace: true }) }} />
         : clave
           ? <Chat clave={clave} tema={tema} alternarTema={alternarTema} onClaveInvalida={salir} />
-          : <SinAcceso />}
+          : <SinAcceso onEntrar={(c) => { guardar(CLAVE_KEY, c); setClave(c) }} />}
     </div>
   )
 }
@@ -287,16 +298,137 @@ function Cargando() {
   )
 }
 
-function SinAcceso() {
+// Sin clave en este dispositivo. Quien ya está en una sala y tiene mail entra con un código (otro navegador, otra compu).
+function SinAcceso({ onEntrar }: { onEntrar: (clave: string) => void }) {
   useEffect(() => { document.title = 'Sala · Marco Polo' }, [])
+  const [paso, setPaso] = useState<'inicio' | 'mail' | 'codigo' | 'elegir'>('inicio')
+  const [mail, setMail] = useState('')
+  const [codigo, setCodigo] = useState('')
+  const [salas, setSalas] = useState<SalaPorMail[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [enviando, setEnviando] = useState(false)
+  const [reenviado, setReenviado] = useState(false)
+  const mailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail.trim())
+
+  const pedir = async (ev?: React.FormEvent) => {
+    ev?.preventDefault()
+    if (!mailOk || enviando) return
+    setEnviando(true); setError(null)
+    try {
+      await api('/acceso/pedir', null, { method: 'POST', body: JSON.stringify({ mail: mail.trim() }) })
+      if (paso === 'codigo') { setReenviado(true); setTimeout(() => setReenviado(false), 4000) }
+      setPaso('codigo'); setCodigo('')
+    } catch (e) { setError((e as Error).message) }
+    setEnviando(false)
+  }
+  const canjear = async (valor: string) => {
+    if (valor.length !== 6 || enviando) return
+    setEnviando(true); setError(null)
+    try {
+      const r = await api<{ salas: SalaPorMail[] }>('/acceso/canjear', null, { method: 'POST', body: JSON.stringify({ mail: mail.trim(), codigo: valor }) })
+      if (r.salas.length === 1) { onEntrar(r.salas[0].clave); return }
+      if (!r.salas.length) { setError(t.sinSalasMail); setEnviando(false); return }
+      setSalas(r.salas); setPaso('elegir')
+    } catch (e) { setError((e as Error).message); setCodigo('') }
+    setEnviando(false)
+  }
+  const alCodigo = (v: string) => {
+    const d = v.replace(/\D/g, '').slice(0, 6)
+    setCodigo(d); setError(null)
+    if (d.length === 6) canjear(d)   // se manda solo al completar (también al pegar o autocompletar)
+  }
+
   return (
     <div className="entry"><div className="ecard">
       <div className="logo"><MarcopoloLogo /></div>
       <div className="label">{t.sala}</div>
       <h1>{t.sinAcceso}</h1>
-      <p className="lede">{t.sinAccesoLede}</p>
+      {paso === 'inicio' && <>
+        <p className="lede">{t.sinAccesoLede}</p>
+        <button type="button" className="cta alt" onClick={() => setPaso('mail')}>{t.conMail} {I.arrow}</button>
+      </>}
+      {paso === 'mail' && (
+        <form onSubmit={pedir}>
+          <div className="fld">
+            <label htmlFor="sala-mail">{t.tuMail}</label>
+            <input id="sala-mail" className="inp" type="email" inputMode="email" autoComplete="email" autoFocus value={mail}
+              placeholder={t.phMail} onChange={(e) => { setMail(e.target.value); setError(null) }} />
+          </div>
+          <button className="cta" type="submit" disabled={!mailOk || enviando}>{enviando ? t.mandando : <>{t.mandarCodigo} {I.arrow}</>}</button>
+        </form>
+      )}
+      {paso === 'codigo' && (
+        <form onSubmit={(e) => { e.preventDefault(); canjear(codigo) }}>
+          <p className="lede">{t.codigoMandado(mail.trim())}</p>
+          <div className="fld">
+            <label htmlFor="sala-codigo">{t.codigo}</label>
+            <input id="sala-codigo" className="inp codigo" inputMode="numeric" autoComplete="one-time-code" autoFocus value={codigo}
+              maxLength={7} placeholder="000000" onChange={(e) => alCodigo(e.target.value)} aria-invalid={!!error} />
+          </div>
+          <button className="cta" type="submit" disabled={codigo.length !== 6 || enviando}>{enviando ? t.verificando : <>{t.entrarSala} {I.arrow}</>}</button>
+          <p className="fine acciones">
+            <button type="button" className="lnk" onClick={() => pedir()} disabled={enviando}>{reenviado ? t.reenviado : t.reenviar}</button>
+            <span aria-hidden="true"> · </span>
+            <button type="button" className="lnk" onClick={() => { setPaso('mail'); setCodigo(''); setError(null) }}>{t.cambiarMail}</button>
+          </p>
+        </form>
+      )}
+      {paso === 'elegir' && <>
+        <p className="lede">{t.elegirSala}</p>
+        <div className="elegir">{salas.map((x) => (
+          <button key={x.sala} type="button" className="ghost" onClick={() => onEntrar(x.clave)}>{x.titulo} {I.arrow}</button>
+        ))}</div>
+      </>}
+      {error && <p className="fine err" role="alert">{error}</p>}
       <p className="fine"><Link className="lnk" to="/sala/privacidad" state={{ desdeSala: true }}>{t.privacidad}</Link></p>
     </div></div>
+  )
+}
+
+// "Agregar mi mail" desde adentro: el mail queda asociado a esta persona (confirmado con un código) para entrar desde otro dispositivo.
+function MiMail({ clave, mail, onMail }: { clave: string; mail: string | null; onMail: (m: string | null) => void }) {
+  const [paso, setPaso] = useState<'cerrado' | 'mail' | 'codigo'>('cerrado')
+  const [nuevo, setNuevo] = useState('')
+  const [codigo, setCodigo] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [enviando, setEnviando] = useState(false)
+  const mailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(nuevo.trim())
+  const pedir = async (ev?: React.FormEvent) => {
+    ev?.preventDefault()
+    if (!mailOk || enviando) return
+    setEnviando(true); setError(null)
+    try { await api('/acceso/mail', clave, { method: 'POST', body: JSON.stringify({ mail: nuevo.trim() }) }); setPaso('codigo'); setCodigo('') }
+    catch (e) { setError((e as Error).message) }
+    setEnviando(false)
+  }
+  const confirmar = async (valor: string) => {
+    if (valor.length !== 6 || enviando) return
+    setEnviando(true); setError(null)
+    try {
+      const r = await api<{ mail: string }>('/acceso/mail/confirmar', clave, { method: 'POST', body: JSON.stringify({ codigo: valor }) })
+      onMail(r.mail); setPaso('cerrado')
+    } catch (e) { setError((e as Error).message); setCodigo('') }
+    setEnviando(false)
+  }
+  if (paso === 'cerrado') return mail
+    ? <div className="fine-s mi-mail" title={t.agregarMailAyuda}>{I.mail} <span className="n">{mail}</span></div>
+    : <button className="ghost" onClick={() => setPaso('mail')} title={t.agregarMailAyuda}>{I.mail} {t.agregarMail}</button>
+  return (
+    <form className="mi-mail-form" onSubmit={paso === 'mail' ? pedir : (e) => { e.preventDefault(); confirmar(codigo) }}>
+      {paso === 'mail'
+        ? <input className="inp sm" type="email" inputMode="email" autoComplete="email" autoFocus value={nuevo} placeholder={t.tuMail}
+            aria-label={t.tuMail} onChange={(e) => { setNuevo(e.target.value); setError(null) }} />
+        : <>
+            <div className="fine-s">{t.codigoA(nuevo.trim())}</div>
+            <input className="inp sm codigo" inputMode="numeric" autoComplete="one-time-code" autoFocus value={codigo} maxLength={7} placeholder="000000"
+              aria-label={t.codigo} onChange={(e) => { const d = e.target.value.replace(/\D/g, '').slice(0, 6); setCodigo(d); setError(null); if (d.length === 6) confirmar(d) }} />
+          </>}
+      <div className="mi-mail-acc">
+        <button type="button" className="lnk" onClick={() => { setPaso('cerrado'); setError(null) }}>{t.cancelar}</button>
+        <button type="submit" className="cta sm" disabled={enviando || (paso === 'mail' ? !mailOk : codigo.length !== 6)}>{enviando ? '…' : paso === 'mail' ? t.mandarCodigo : t.confirmar}</button>
+      </div>
+      {error && <div className="fine-s err" role="alert">{error}</div>}
+    </form>
   )
 }
 
@@ -1415,6 +1547,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
           <Avatar autor={yo.autor} tipo={yo.tipo} equipo={equipo} size={32} />
           <div><div className="t">{yo.autor}</div><div className="s">{t.conectadoDesde}</div></div>
         </div>
+        {yo.tipo === 'persona' && yo.mail !== undefined && <MiMail clave={clave} mail={yo.mail} onMail={(m) => setYo((y) => y ? { ...y, mail: m } : y)} />}
         {permiso === 'default' && <button className="ghost" onClick={pedirPermiso}>{I.bell} {t.avisarme}</button>}
         {permiso === 'granted' && <div className="fine-s">{I.bell} {t.avisamos}</div>}
         {/* Reconectar regenera la clave: a un Claude conectado le cortaría la sesión, así que sólo se ofrece si está apagado hace rato. */}

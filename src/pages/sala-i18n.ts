@@ -52,6 +52,18 @@ const ar = {
   // pantallas
   entrando: 'Entrando a la sala…',
   sinAcceso: 'Sin acceso', sinAccesoLede: 'Para entrar hace falta el link de invitación. Pedíselo a Mateo.',
+  // entrar con mail + código (otro dispositivo)
+  conMail: '¿Ya estás en la sala? Entrá con tu mail', tuMail: 'Tu mail', phMail: 'nombre@empresa.com',
+  mandarCodigo: 'Mandarme un código', mandando: 'Mandando…', codigo: 'Código',
+  codigoMandado: (m: string) => `Si ${m} está en una sala, te llegó un código. Vence en 10 minutos.`,
+  reenviar: 'Reenviar', reenviado: 'Reenviado', cambiarMail: 'Cambiar el mail', verificando: 'Verificando…',
+  elegirSala: 'Elegí la sala', sinSalasMail: 'No encontramos salas con ese mail.',
+  errCodigo: (n: number) => `Código incorrecto. ${n === 1 ? 'Queda 1 intento' : `Quedan ${n} intentos`}.`,
+  errCodigoVencido: 'El código venció. Pedí otro.', errAgotado: 'Demasiados intentos. Pedí otro código.',
+  errLimite: 'Demasiados pedidos. Probá en unos minutos.', errMailInvalido: 'Ese mail no parece válido.',
+  errMailTomado: 'Ese mail ya es de otra persona de la sala.', errNoDisponible: 'Todavía no está disponible.',
+  agregarMail: 'Agregar mi mail', agregarMailAyuda: 'Para entrar desde otro dispositivo', confirmar: 'Confirmar',
+  mailGuardado: 'Mail guardado', quitarMail: 'Quitar', codigoA: (m: string) => `Te mandamos un código a ${m}`,
   descSala: (equipo: string[], personas: number, agentes: string[]) => {
     const partes = [listaDe('y')(equipo.length ? equipo : ['Mateo'])]
     if (personas > 0) partes.push(`${personas} ${personas === 1 ? 'persona' : 'personas'}`)
@@ -156,6 +168,18 @@ const es: Dict = {
   noReaccion: (e: string) => `No se pudo reaccionar: ${e}`,
   copiar: 'Copiar', tocarBajar: 'Toca para descargarlo', abrirOBajar: 'Abrir o descargar',
   sinAccesoLede: 'Para entrar hace falta el enlace de invitación. Pídeselo a Mateo.',
+  // entrar con mail + código (otro dispositivo)
+  conMail: '¿Ya estás en la sala? Entra con tu correo', tuMail: 'Tu correo', phMail: 'nombre@empresa.com',
+  mandarCodigo: 'Enviarme un código', mandando: 'Enviando…', codigo: 'Código',
+  codigoMandado: (m: string) => `Si ${m} está en una sala, te ha llegado un código. Vence en 10 minutos.`,
+  reenviar: 'Reenviar', reenviado: 'Reenviado', cambiarMail: 'Cambiar el correo', verificando: 'Verificando…',
+  elegirSala: 'Elige la sala', sinSalasMail: 'No hemos encontrado salas con ese correo.',
+  errCodigo: (n: number) => `Código incorrecto. ${n === 1 ? 'Queda 1 intento' : `Quedan ${n} intentos`}.`,
+  errCodigoVencido: 'El código ha caducado. Pide otro.', errAgotado: 'Demasiados intentos. Pide otro código.',
+  errLimite: 'Demasiadas solicitudes. Prueba en unos minutos.', errMailInvalido: 'Ese correo no parece válido.',
+  errMailTomado: 'Ese correo ya es de otra persona de la sala.', errNoDisponible: 'Todavía no está disponible.',
+  agregarMail: 'Añadir mi correo', agregarMailAyuda: 'Para entrar desde otro dispositivo', confirmar: 'Confirmar',
+  mailGuardado: 'Correo guardado', quitarMail: 'Quitar', codigoA: (m: string) => `Te hemos enviado un código a ${m}`,
   descSala: (equipo: string[], personas: number, agentes: string[]) => {
     const partes = [listaDe('y')(equipo.length ? equipo : ['Mateo'])]
     if (personas > 0) partes.push(`${personas} ${personas === 1 ? 'persona' : 'personas'}`)
@@ -243,6 +267,17 @@ const en: Dict = {
   privacidad: 'Privacy',
   entrando: 'Joining the room…',
   sinAcceso: 'No access', sinAccesoLede: 'You need an invitation link to get in. Ask Mateo for one.',
+  conMail: 'Already in the room? Sign in with your email', tuMail: 'Your email', phMail: 'name@company.com',
+  mandarCodigo: 'Send me a code', mandando: 'Sending…', codigo: 'Code',
+  codigoMandado: (m: string) => `If ${m} is in a room, a code is on its way. It expires in 10 minutes.`,
+  reenviar: 'Resend', reenviado: 'Sent again', cambiarMail: 'Change email', verificando: 'Checking…',
+  elegirSala: 'Choose the room', sinSalasMail: 'We couldn’t find any rooms for that email.',
+  errCodigo: (n: number) => `Wrong code. ${n === 1 ? '1 attempt left' : `${n} attempts left`}.`,
+  errCodigoVencido: 'The code expired. Request a new one.', errAgotado: 'Too many attempts. Request a new code.',
+  errLimite: 'Too many requests. Try again in a few minutes.', errMailInvalido: 'That email doesn’t look right.',
+  errMailTomado: 'That email belongs to someone else in the room.', errNoDisponible: 'Not available yet.',
+  agregarMail: 'Add my email', agregarMailAyuda: 'To sign in from another device', confirmar: 'Confirm',
+  mailGuardado: 'Email saved', quitarMail: 'Remove', codigoA: (m: string) => `We sent a code to ${m}`,
   descSala: (equipo: string[], personas: number, agentes: string[]) => {
     const partes = [listaDe('and')(equipo.length ? equipo : ['Mateo'])]
     if (personas > 0) partes.push(`${personas} ${personas === 1 ? 'person' : 'people'}`)
