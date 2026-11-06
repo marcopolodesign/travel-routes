@@ -114,6 +114,7 @@ const I = {
   dl: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v12M7 11l5 5 5-5M5 20h14" /></svg>,
   menu: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>,
   moon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" /></svg>,
+  sobre: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5" /><path d="M4.5 7l7.5 6 7.5-6" /></svg>,
   x: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>,
   arrow: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>,
   spark: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4" /></svg>,
@@ -1492,6 +1493,15 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
   }
 
   const [modalMail, setModalMail] = useState(false)
+  // "Sumá tu mail" en el chat (Felipe, OK de Mateo 2026-11-06): a una persona sin mail, hasta que lo suma o la descarta.
+  // Se recuerda por sala y nombre en este dispositivo.
+  const claveLinea = yo ? `sala.lineaMail.${yo.sala}` : ''
+  const [lineaFuera, setLineaFuera] = useState(false)
+  useEffect(() => { setLineaFuera(!!claveLinea && leer(claveLinea) === '1') }, [claveLinea])
+  // No con un hilo abierto ni con una decisión esperándome (esa va primero).
+  const decisionParaMi = !!yo && Object.values(porId).some((m) => m.opciones && !m.decision && !m.borrado && (m.pregunta_para ?? []).includes(yo.autor))
+  const lineaMail = !!yo && yo.tipo === 'persona' && yo.mail === null && !lineaFuera && hiloId == null && !decisionParaMi
+  const descartarLinea = () => { guardar(claveLinea, '1'); setLineaFuera(true) }
   const sumarClaude = async () => {
     try {
       const r = await api<{ comando: string }>('/agente', clave, { method: 'POST', body: '{}' })
@@ -1649,6 +1659,14 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
           {/* Dentro del dock: flota SIEMPRE por encima del campo de escribir, crezca lo que crezca (varias líneas, adjunto). */}
           {!abajo && noLeidos > 0 && (
             <button className="jump" onClick={() => { const el = streamRef.current; if (el) { pegado.current = true; el.scrollTop = el.scrollHeight } }}>{noLeidos} {noLeidos === 1 ? t.mensajeNuevo : t.mensajesNuevos} ↓</button>
+          )}
+          {lineaMail && (
+            <div className="linea-mail" role="note">
+              <button type="button" className="lm-cta" onClick={() => setModalMail(true)}>
+                {I.sobre}<span className="lm-tx">{t.lineaMail}</span><b>{t.agregarMail}</b>
+              </button>
+              <button type="button" className="lm-x" onClick={descartarLinea} aria-label={t.lineaMailCerrar}>{I.x}</button>
+            </div>
           )}
           {pista && <p className="agent-hint" id="sala-pista">{pista}</p>}
           {tira && <div className="otira" role="list" aria-label={t.queNecesitas}>{tarjetas.map((tj) => <TarjetaBtn key={tj.id} tj={tj} on={relleno?.tarjeta === tj.id} onClick={() => elegirTarjeta(tj)} />)}</div>}

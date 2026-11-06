@@ -64,6 +64,7 @@ const ar = {
   errMailTomado: 'Ese mail ya es de otra persona de la sala.', errNoDisponible: 'Todavía no está disponible.',
   elegirSala: '¿A cuál entrás?', entrasComo: (a: string) => `Entrás como ${a}`, sinSalasMail: 'No encontramos salas con ese mail.',
   agregarMail: 'Sumar mi mail', sumaTuMail: 'Sumá tu mail', agregarMailAyuda: 'Para entrar desde otro dispositivo.',
+  lineaMail: 'Entrá desde otro dispositivo.', lineaMailCerrar: 'Ahora no',
   mandarElCodigo: 'Mandame el código', codigoA: (m: string) => `Te mandamos un código a ${m}.`,
   descSala: (equipo: string[], personas: number, agentes: string[]) => {
     const partes = [listaDe('y')(equipo.length ? equipo : ['Mateo'])]
@@ -181,6 +182,7 @@ const es: Dict = {
   errMailTomado: 'Ese correo ya es de otra persona de la sala.', errNoDisponible: 'Todavía no está disponible.',
   elegirSala: '¿A cuál entras?', entrasComo: (a: string) => `Entras como ${a}`, sinSalasMail: 'No hemos encontrado salas con ese correo.',
   agregarMail: 'Añadir mi correo', sumaTuMail: 'Añade tu correo', agregarMailAyuda: 'Para entrar desde otro dispositivo.',
+  lineaMail: 'Entra desde otro dispositivo.', lineaMailCerrar: 'Ahora no',
   mandarElCodigo: 'Envíame el código', codigoA: (m: string) => `Te hemos enviado un código a ${m}.`,
   descSala: (equipo: string[], personas: number, agentes: string[]) => {
     const partes = [listaDe('y')(equipo.length ? equipo : ['Mateo'])]
@@ -280,6 +282,7 @@ const en: Dict = {
   errMailTomado: 'That email belongs to someone else in the room.', errNoDisponible: 'Not available yet.',
   elegirSala: 'Which room?', entrasComo: (a: string) => `You’re ${a}`, sinSalasMail: 'We couldn’t find any rooms for that email.',
   agregarMail: 'Add my email', sumaTuMail: 'Add your email', agregarMailAyuda: 'To sign in from another device.',
+  lineaMail: 'Sign in from another device.', lineaMailCerrar: 'Not now',
   mandarElCodigo: 'Send me the code', codigoA: (m: string) => `We sent a code to ${m}.`,
   descSala: (equipo: string[], personas: number, agentes: string[]) => {
     const partes = [listaDe('and')(equipo.length ? equipo : ['Mateo'])]

@@ -552,3 +552,13 @@
 .sala .me .sumar-mail:hover { text-decoration: underline; }
 .sala .modal-mail { width: 420px; }
 .sala .modal-mail .casillas { margin-top: 4px; }
+.sala .linea-mail { margin: 0 0 8px; min-height: 44px; display: flex; align-items: center; gap: 4px; background: var(--sunken); border-radius: 14px; padding: 0 4px 0 14px; animation: lm-in .2s ease-out; }
+@keyframes lm-in { from { opacity: 0 } to { opacity: 1 } }
+.sala .linea-mail .lm-cta { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 0; border: 0; background: none; cursor: pointer; text-align: left; font-size: 14px; line-height: 20px; color: var(--ink-2); }
+.sala .linea-mail .lm-cta svg { width: 18px; height: 18px; color: var(--muted); flex: none; }
+.sala .linea-mail .lm-tx { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sala .linea-mail .lm-cta b { color: var(--accent-ink); font-weight: 600; white-space: nowrap; }
+.sala .linea-mail .lm-cta:hover b { text-decoration: underline; }
+.sala .linea-mail .lm-x { width: 44px; height: 44px; flex: none; border: 0; background: none; color: var(--muted); display: grid; place-items: center; border-radius: 10px; cursor: pointer; }
+.sala .linea-mail .lm-x:hover { color: var(--ink); }
+.sala .linea-mail .lm-x svg { width: 14px; height: 14px; }
