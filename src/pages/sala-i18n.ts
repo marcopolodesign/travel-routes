@@ -52,6 +52,20 @@ const ar = {
   // pantallas
   entrando: 'Entrando a la sala…',
   sinAcceso: 'Sin acceso', sinAccesoLede: 'Para entrar hace falta el link de invitación. Pedíselo a Mateo.',
+  // entrar con mail + código (otro dispositivo) — copy de Felipe, 2026-11-06
+  tituloMail: 'Entrá con tu mail', tuMail: 'Tu mail', phMail: 'nombre@empresa.com', mandarCodigo: 'Mandame un código',
+  sinSalaLink: '¿No estás en ninguna sala? Pedile el link a Mateo.', mandando: 'Mandando…',
+  tituloCodigo: 'Revisá tu mail', codigo: 'Código',
+  codigoMandado: (m: string) => ['Si ', m, ' está en una sala, te llegó un código.'] as [string, string, string],
+  reenviarEn: (s: number) => `Reenviar en 0:${String(s).padStart(2, '0')}`, reenviar: 'Reenviar código', cambiarMail: 'Cambiar mail',
+  errCodigo: (n: number) => n === 1 ? 'Te queda 1 intento.' : `Ese código no es. Te quedan ${n} intentos.`,
+  errCodigoVencido: 'Ese código venció.', errAgotado: 'Probaste demasiadas veces.', otroCodigo: 'Mandame otro código',
+  errLimite: 'Pediste muchos códigos. Probá de nuevo en unos minutos.', errMailInvalido: 'Ese mail no parece válido.',
+  errMailTomado: 'Ese mail ya es de otra persona de la sala.', errNoDisponible: 'Todavía no está disponible.',
+  elegirSala: '¿A cuál entrás?', entrasComo: (a: string) => `Entrás como ${a}`, sinSalasMail: 'No encontramos salas con ese mail.',
+  agregarMail: 'Sumar mi mail', sumaTuMail: 'Sumá tu mail', agregarMailAyuda: 'Para entrar desde otro dispositivo.',
+  lineaMail: 'Entrá desde otro dispositivo.', lineaMailCerrar: 'Ahora no',
+  mandarElCodigo: 'Mandame el código', codigoA: (m: string) => `Te mandamos un código a ${m}.`,
   descSala: (equipo: string[], personas: number, agentes: string[]) => {
     const partes = [listaDe('y')(equipo.length ? equipo : ['Mateo'])]
     if (personas > 0) partes.push(`${personas} ${personas === 1 ? 'persona' : 'personas'}`)
@@ -156,6 +170,20 @@ const es: Dict = {
   noReaccion: (e: string) => `No se pudo reaccionar: ${e}`,
   copiar: 'Copiar', tocarBajar: 'Toca para descargarlo', abrirOBajar: 'Abrir o descargar',
   sinAccesoLede: 'Para entrar hace falta el enlace de invitación. Pídeselo a Mateo.',
+  // entrar con correo + código (otro dispositivo) — copy de Felipe, 2026-11-06
+  tituloMail: 'Entra con tu correo', tuMail: 'Tu correo', phMail: 'nombre@empresa.com', mandarCodigo: 'Envíame un código',
+  sinSalaLink: '¿No estás en ninguna sala? Pídele el enlace a Mateo.', mandando: 'Enviando…',
+  tituloCodigo: 'Revisa tu correo', codigo: 'Código',
+  codigoMandado: (m: string) => ['Si ', m, ' está en una sala, te ha llegado un código.'] as [string, string, string],
+  reenviarEn: (s: number) => `Reenviar en 0:${String(s).padStart(2, '0')}`, reenviar: 'Reenviar código', cambiarMail: 'Cambiar correo',
+  errCodigo: (n: number) => n === 1 ? 'Te queda 1 intento.' : `Ese código no es correcto. Te quedan ${n} intentos.`,
+  errCodigoVencido: 'Ese código ha caducado.', errAgotado: 'Demasiados intentos.', otroCodigo: 'Envíame otro código',
+  errLimite: 'Has pedido muchos códigos. Inténtalo de nuevo en unos minutos.', errMailInvalido: 'Ese correo no parece válido.',
+  errMailTomado: 'Ese correo ya es de otra persona de la sala.', errNoDisponible: 'Todavía no está disponible.',
+  elegirSala: '¿A cuál entras?', entrasComo: (a: string) => `Entras como ${a}`, sinSalasMail: 'No hemos encontrado salas con ese correo.',
+  agregarMail: 'Añadir mi correo', sumaTuMail: 'Añade tu correo', agregarMailAyuda: 'Para entrar desde otro dispositivo.',
+  lineaMail: 'Entra desde otro dispositivo.', lineaMailCerrar: 'Ahora no',
+  mandarElCodigo: 'Envíame el código', codigoA: (m: string) => `Te hemos enviado un código a ${m}.`,
   descSala: (equipo: string[], personas: number, agentes: string[]) => {
     const partes = [listaDe('y')(equipo.length ? equipo : ['Mateo'])]
     if (personas > 0) partes.push(`${personas} ${personas === 1 ? 'persona' : 'personas'}`)
@@ -243,6 +271,19 @@ const en: Dict = {
   privacidad: 'Privacy',
   entrando: 'Joining the room…',
   sinAcceso: 'No access', sinAccesoLede: 'You need an invitation link to get in. Ask Mateo for one.',
+  tituloMail: 'Sign in with your email', tuMail: 'Your email', phMail: 'name@company.com', mandarCodigo: 'Send me a code',
+  sinSalaLink: 'Not in a room yet? Ask Mateo for the link.', mandando: 'Sending…',
+  tituloCodigo: 'Check your email', codigo: 'Code',
+  codigoMandado: (m: string) => ['If ', m, ' is in a room, a code is on its way.'] as [string, string, string],
+  reenviarEn: (s: number) => `Resend in 0:${String(s).padStart(2, '0')}`, reenviar: 'Resend code', cambiarMail: 'Change email',
+  errCodigo: (n: number) => n === 1 ? '1 attempt left.' : `That code isn’t right. ${n} attempts left.`,
+  errCodigoVencido: 'That code expired.', errAgotado: 'Too many attempts.', otroCodigo: 'Send me another code',
+  errLimite: 'Too many codes requested. Try again in a few minutes.', errMailInvalido: 'That email doesn’t look right.',
+  errMailTomado: 'That email belongs to someone else in the room.', errNoDisponible: 'Not available yet.',
+  elegirSala: 'Which room?', entrasComo: (a: string) => `You’re ${a}`, sinSalasMail: 'We couldn’t find any rooms for that email.',
+  agregarMail: 'Add my email', sumaTuMail: 'Add your email', agregarMailAyuda: 'To sign in from another device.',
+  lineaMail: 'Sign in from another device.', lineaMailCerrar: 'Not now',
+  mandarElCodigo: 'Send me the code', codigoA: (m: string) => `We sent a code to ${m}.`,
   descSala: (equipo: string[], personas: number, agentes: string[]) => {
     const partes = [listaDe('and')(equipo.length ? equipo : ['Mateo'])]
     if (personas > 0) partes.push(`${personas} ${personas === 1 ? 'person' : 'people'}`)

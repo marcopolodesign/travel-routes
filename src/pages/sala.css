@@ -525,3 +525,40 @@
   .sala .uso .quien-m { display: block; font-size: 13px; line-height: 18px; color: var(--muted); }
 }
 .sala .uso-top .seg { grid-template-columns: repeat(3, auto); }
+
+/* Entrar con mail + código (otro dispositivo) — propuesta de Felipe, 2026-11-06 */
+.sala .ecard form h1 + .fld { margin-top: 28px; }
+.sala .ecard .lede b { color: var(--ink); font-weight: 600; }
+.sala .casillas { position: relative; display: flex; gap: 8px; margin-top: 24px; }
+.sala .casilla { flex: 1; min-width: 0; height: 56px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); display: grid; place-items: center; font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink); transition: border-color .15s, opacity .15s; }
+.sala .casilla.gap { margin-left: 8px; }
+.sala .casilla.foco { border-color: var(--ink); box-shadow: 0 0 0 3px var(--hover); }
+.sala .casillas.error .casilla { border-color: var(--accent-ink); }
+.sala .casillas.enviando .casilla, .sala .casillas.apagado .casilla { opacity: .45; }
+.sala .casillas-inp { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; border: 0; font-size: 16px; caret-color: transparent; color: transparent; background: transparent; }
+.sala .fine.linea { min-height: 18px; margin-top: 10px; }
+.sala .fine.acciones { margin-top: 18px; }
+.sala .fine.acciones .num { font-variant-numeric: tabular-nums; }
+.sala .fine.acciones .lnk { font-size: 13px; }
+.sala .ecard .elegir { margin-top: 20px; display: grid; gap: 8px; }
+.sala .fila-sala { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r-ctl); background: var(--card); text-align: left; color: var(--ink); }
+.sala .fila-sala:hover { background: var(--row-active); }
+.sala .fila-sala b { display: block; font-size: 15px; font-weight: 600; }
+.sala .fila-sala small { display: block; font-size: 13px; color: var(--muted); }
+.sala .fila-sala svg { width: 18px; height: 18px; flex: none; }
+.sala .me-tx { min-width: 0; }
+.sala .me-tx .s { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sala .me .sumar-mail { padding: 0; border: 0; background: none; color: var(--accent-ink); font-weight: 600; cursor: pointer; text-align: left; }
+.sala .me .sumar-mail:hover { text-decoration: underline; }
+.sala .modal-mail { width: 420px; }
+.sala .modal-mail .casillas { margin-top: 4px; }
+.sala .linea-mail { margin: 0 0 8px; min-height: 44px; display: flex; align-items: center; gap: 4px; background: var(--sunken); border-radius: 14px; padding: 0 4px 0 14px; animation: lm-in .2s ease-out; }
+@keyframes lm-in { from { opacity: 0 } to { opacity: 1 } }
+.sala .linea-mail .lm-cta { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 0; border: 0; background: none; cursor: pointer; text-align: left; font-size: 14px; line-height: 20px; color: var(--ink-2); }
+.sala .linea-mail .lm-cta svg { width: 18px; height: 18px; color: var(--muted); flex: none; }
+.sala .linea-mail .lm-tx { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sala .linea-mail .lm-cta b { color: var(--accent-ink); font-weight: 600; white-space: nowrap; }
+.sala .linea-mail .lm-cta:hover b { text-decoration: underline; }
+.sala .linea-mail .lm-x { width: 44px; height: 44px; flex: none; border: 0; background: none; color: var(--muted); display: grid; place-items: center; border-radius: 10px; cursor: pointer; }
+.sala .linea-mail .lm-x:hover { color: var(--ink); }
+.sala .linea-mail .lm-x svg { width: 14px; height: 14px; }

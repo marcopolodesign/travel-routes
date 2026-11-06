@@ -38,7 +38,9 @@ type Miembro = { autor: string; tipo: string; dueno?: string | null; estado?: st
 type Yo = {
   sala: string; autor: string; tipo: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[]; decide?: 'dirigida' | 'todos'; admin?: boolean
   permisos?: { dueno?: boolean }; onboarding?: Onboarding; pedidos?: Pedidos
+  mail?: string | null   // undefined = servidor sin "entrar con mail"; null = sin mail todavía
 }
+type SalaPorMail = { sala: string; titulo: string; autor: string; tipo: string; clave: string }
 // "¿Qué necesitás?": tarjetas por sala (salas/<sala>.onboarding.json en el repo sala). En el ejemplo, el dato a cambiar va entre [ ].
 type Tarjeta = { id: string; tipo: string; titulo: string; ejemplo: string }
 type Onboarding = { titulo?: string; tarjetas: Tarjeta[] }
@@ -55,6 +57,14 @@ const guardar = (k: string, v: string | null) => {
 // Los errores del servidor llegan en rioplatense. Los que se muestran tal cual y son simples se mapean acá por
 // estado / bandera; el resto (permisos de dueño, "esa opción no existe", etc.) se muestra como lo manda el servidor.
 function mensajeDeError(status: number, c: Record<string, unknown>): string | null {
+  // Entrar con mail + código (van antes que los genéricos: un 410 acá es un código vencido, no un link)
+  if (c.incorrecto) return t.errCodigo(Number(c.restantes ?? 0))
+  if (c.vencido || c.sin_codigo) return t.errCodigoVencido
+  if (c.agotado) return t.errAgotado
+  if (c.limite) return t.errLimite
+  if (c.mail_invalido) return t.errMailInvalido
+  if (c.mail_tomado) return t.errMailTomado
+  if (status === 404 && c.error === 'ruta desconocida') return t.errNoDisponible
   if (c.limite_ia) return t.errLimiteIA
   if (c.invalido) return t.errNombreInvalido
   if (c.reservado) return status === 409 ? t.errNombreReservado : t.errNombreBot
@@ -104,6 +114,7 @@ const I = {
   dl: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 4v12M7 11l5 5 5-5M5 20h14" /></svg>,
   menu: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round"><path d="M4 7h16M4 12h16M4 17h16" /></svg>,
   moon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" /></svg>,
+  sobre: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5" /><path d="M4.5 7l7.5 6 7.5-6" /></svg>,
   x: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>,
   arrow: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>,
   spark: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4" /></svg>,
@@ -267,7 +278,7 @@ export default function Sala() {
         ? <Entrada codigo={codigo} onEntrar={(c) => { guardar(CLAVE_KEY, c); setClave(c); navigate('/sala', { replace: true }) }} />
         : clave
           ? <Chat clave={clave} tema={tema} alternarTema={alternarTema} onClaveInvalida={salir} />
-          : <SinAcceso />}
+          : <SinAcceso onEntrar={(c) => { guardar(CLAVE_KEY, c); setClave(c) }} />}
     </div>
   )
 }
@@ -287,16 +298,177 @@ function Cargando() {
   )
 }
 
-function SinAcceso() {
+// Sin clave en este dispositivo (otra compu, otro navegador): se entra con mail + código de 6 dígitos.
+// Diseño de Felipe (2026-11-06): el mail ES la entrada; quien no está en ninguna sala ve una línea para pedir el link.
+const MAIL_OK = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+const ESPERA_REENVIO = 30
+
+// Seis casillas que son UN solo campo (input transparente encima): pegar, autocompletar de Safari y "Desde Mail" de iOS.
+function Casillas({ valor, onValor, estado, label }: { valor: string; onValor: (v: string) => void; estado: 'ok' | 'error' | 'apagado' | 'enviando'; label: string }) {
+  const ref = useRef<HTMLInputElement>(null)
+  // Tras un error se borra todo y el foco vuelve a la primera casilla (no hay que hacer clic de nuevo).
+  useEffect(() => { if (estado === 'error') ref.current?.focus() }, [estado])
+  return (
+    <div className={`casillas ${estado}`}>
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <span key={i} className={`casilla ${i === 3 ? 'gap' : ''} ${i === Math.min(valor.length, 5) && estado === 'ok' ? 'foco' : ''}`}>{valor[i] ?? ''}</span>
+      ))}
+      <input className="casillas-inp" inputMode="numeric" autoComplete="one-time-code" pattern="\d*" autoFocus aria-label={label}
+        ref={ref} aria-invalid={estado === 'error'} disabled={estado === 'apagado'} readOnly={estado === 'enviando'} value={valor}
+        onChange={(e) => onValor(e.target.value.replace(/\D/g, '').slice(0, 6))} />
+    </div>
+  )
+}
+
+function useCuenta() {
+  const [quedan, setQuedan] = useState(0)
+  useEffect(() => {
+    if (quedan <= 0) return
+    const id = setTimeout(() => setQuedan((q) => q - 1), 1000)
+    return () => clearTimeout(id)
+  }, [quedan])
+  return [quedan, () => setQuedan(ESPERA_REENVIO)] as const
+}
+
+function SinAcceso({ onEntrar }: { onEntrar: (clave: string) => void }) {
   useEffect(() => { document.title = 'Sala · Marco Polo' }, [])
+  const [paso, setPaso] = useState<'mail' | 'codigo' | 'elegir'>('mail')
+  const [mail, setMail] = useState('')
+  const [codigo, setCodigo] = useState('')
+  const [salas, setSalas] = useState<SalaPorMail[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [muerto, setMuerto] = useState(false)   // vencido o sin intentos: hay que pedir otro
+  const [enviando, setEnviando] = useState(false)
+  const [quedan, arrancarCuenta] = useCuenta()
+  const limpio = mail.trim().toLowerCase()
+
+  const pedir = async (ev?: React.FormEvent) => {
+    ev?.preventDefault()
+    if (!MAIL_OK.test(limpio) || enviando) return
+    setEnviando(true); setError(null)
+    try {
+      await api('/acceso/pedir', null, { method: 'POST', body: JSON.stringify({ mail: limpio }) })
+      setPaso('codigo'); setCodigo(''); setMuerto(false); arrancarCuenta()
+    } catch (e) { setError((e as Error).message) }
+    setEnviando(false)
+  }
+  const canjear = async (valor: string) => {
+    setEnviando(true); setError(null)
+    try {
+      const r = await api<{ salas: SalaPorMail[] }>('/acceso/canjear', null, { method: 'POST', body: JSON.stringify({ mail: limpio, codigo: valor }) })
+      if (r.salas.length === 1) { onEntrar(r.salas[0].clave); return }
+      if (!r.salas.length) { setError(t.sinSalasMail); setCodigo(''); setEnviando(false); return }
+      setSalas(r.salas); setPaso('elegir')
+    } catch (e) {
+      const st = (e as { status?: number }).status
+      setError((e as Error).message); setCodigo('')
+      if (st === 410 || st === 429) setMuerto(true)
+    }
+    setEnviando(false)
+  }
+  const [pre, medio, post] = t.codigoMandado(limpio)
+
   return (
     <div className="entry"><div className="ecard">
       <div className="logo"><MarcopoloLogo /></div>
       <div className="label">{t.sala}</div>
-      <h1>{t.sinAcceso}</h1>
-      <p className="lede">{t.sinAccesoLede}</p>
+      {paso === 'mail' && (
+        <form onSubmit={pedir}>
+          <h1>{t.tituloMail}</h1>
+          <div className="fld">
+            <label htmlFor="sala-mail">{t.tuMail}</label>
+            <input id="sala-mail" className="inp" type="email" inputMode="email" autoComplete="email" autoFocus value={mail}
+              placeholder={t.phMail} onChange={(e) => { setMail(e.target.value); setError(null) }} />
+          </div>
+          <button className="cta" type="submit" disabled={!MAIL_OK.test(limpio) || enviando}>{enviando ? t.mandando : <>{t.mandarCodigo} {I.arrow}</>}</button>
+          <p className={`fine ${error ? 'err' : ''}`} role={error ? 'alert' : undefined}>{error ?? t.sinSalaLink}</p>
+        </form>
+      )}
+      {paso === 'codigo' && <>
+        <h1>{t.tituloCodigo}</h1>
+        <p className="lede">{pre}<b>{medio}</b>{post}</p>
+        <Casillas label={t.codigo} valor={codigo} estado={muerto ? 'apagado' : enviando ? 'enviando' : error ? 'error' : 'ok'}
+          onValor={(v) => { setCodigo(v); setError(null); if (v.length === 6) canjear(v) }} />
+        <p className={`fine linea ${error ? 'err' : ''}`} role={error ? 'alert' : 'status'}>{error ?? (enviando ? t.entrandoBtn : ' ')}</p>
+        {muerto && <button type="button" className="cta" onClick={() => pedir()} disabled={enviando}>{t.otroCodigo}</button>}
+        <p className="fine acciones">
+          {quedan > 0 ? <span className="num">{t.reenviarEn(quedan)}</span>
+            : <button type="button" className="lnk" onClick={() => pedir()} disabled={enviando}>{t.reenviar}</button>}
+          <span aria-hidden="true"> · </span>
+          <button type="button" className="lnk" onClick={() => { setPaso('mail'); setCodigo(''); setError(null); setMuerto(false) }}>{t.cambiarMail}</button>
+        </p>
+      </>}
+      {paso === 'elegir' && <>
+        <h1>{t.elegirSala}</h1>
+        <div className="elegir">{salas.map((x) => (
+          <button key={x.sala} type="button" className="fila-sala" onClick={() => onEntrar(x.clave)}>
+            <span><b>{x.titulo}</b><small>{t.entrasComo(x.autor)}</small></span>{I.arrow}
+          </button>
+        ))}</div>
+      </>}
       <p className="fine"><Link className="lnk" to="/sala/privacidad" state={{ desdeSala: true }}>{t.privacidad}</Link></p>
     </div></div>
+  )
+}
+
+// "Sumar mi mail" desde adentro: la línea bajo tu nombre abre un modal (mail → código). Con mail, la línea muestra el mail.
+function ModalMail({ clave, onListo, onCerrar }: { clave: string; onListo: (m: string) => void; onCerrar: () => void }) {
+  const [paso, setPaso] = useState<'mail' | 'codigo'>('mail')
+  const [mail, setMail] = useState('')
+  const [codigo, setCodigo] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [muerto, setMuerto] = useState(false)
+  const [enviando, setEnviando] = useState(false)
+  const [quedan, arrancarCuenta] = useCuenta()
+  const limpio = mail.trim().toLowerCase()
+  const pedir = async (ev?: React.FormEvent) => {
+    ev?.preventDefault()
+    if (!MAIL_OK.test(limpio) || enviando) return
+    setEnviando(true); setError(null)
+    try { await api('/acceso/mail', clave, { method: 'POST', body: JSON.stringify({ mail: limpio }) }); setPaso('codigo'); setCodigo(''); setMuerto(false); arrancarCuenta() }
+    catch (e) { setError((e as Error).message) }
+    setEnviando(false)
+  }
+  const confirmar = async (valor: string) => {
+    setEnviando(true); setError(null)
+    try { const r = await api<{ mail: string }>('/acceso/mail/confirmar', clave, { method: 'POST', body: JSON.stringify({ codigo: valor }) }); onListo(r.mail); return }
+    catch (e) {
+      const st = (e as { status?: number }).status
+      setError((e as Error).message); setCodigo('')
+      if (st === 410 || st === 429) setMuerto(true)
+    }
+    setEnviando(false)
+  }
+  return (
+    <div className="modal-bg" onClick={onCerrar}>
+      <div className="modal modal-mail" role="dialog" aria-modal="true" aria-labelledby="mm-t" onClick={(e) => e.stopPropagation()}>
+        <h2 id="mm-t">{t.sumaTuMail}</h2>
+        {paso === 'mail' ? (
+          <form onSubmit={pedir}>
+            <p>{t.agregarMailAyuda}</p>
+            <input className="inp" type="email" inputMode="email" autoComplete="email" autoFocus value={mail} placeholder={t.phMail}
+              aria-label={t.tuMail} onChange={(e) => { setMail(e.target.value); setError(null) }} />
+            <p className={`fine linea ${error ? 'err' : ''}`} role={error ? 'alert' : undefined}>{error ?? ' '}</p>
+            <div className="acts">
+              <button type="button" className="btn sec" onClick={onCerrar}>{t.cancelar}</button>
+              <button type="submit" className="btn" disabled={!MAIL_OK.test(limpio) || enviando}>{enviando ? t.mandando : t.mandarElCodigo}</button>
+            </div>
+          </form>
+        ) : <>
+          <p>{t.codigoA(limpio)}</p>
+          <Casillas label={t.codigo} valor={codigo} estado={muerto ? 'apagado' : enviando ? 'enviando' : error ? 'error' : 'ok'}
+            onValor={(v) => { setCodigo(v); setError(null); if (v.length === 6) confirmar(v) }} />
+          <p className={`fine linea ${error ? 'err' : ''}`} role={error ? 'alert' : 'status'}>{error ?? ' '}</p>
+          {muerto && <button type="button" className="cta" onClick={() => pedir()} disabled={enviando}>{t.otroCodigo}</button>}
+          <p className="fine acciones">
+            {quedan > 0 ? <span className="num">{t.reenviarEn(quedan)}</span>
+              : <button type="button" className="lnk" onClick={() => pedir()} disabled={enviando}>{t.reenviar}</button>}
+            <span aria-hidden="true"> · </span>
+            <button type="button" className="lnk" onClick={() => { setPaso('mail'); setCodigo(''); setError(null); setMuerto(false) }}>{t.cambiarMail}</button>
+          </p>
+        </>}
+      </div>
+    </div>
   )
 }
 
@@ -1320,6 +1492,16 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     } catch (e) { manejar(e); setAviso((e as Error).message) }
   }
 
+  const [modalMail, setModalMail] = useState(false)
+  // "Sumá tu mail" en el chat (Felipe, OK de Mateo 2026-11-06): a una persona sin mail, hasta que lo suma o la descarta.
+  // Se recuerda por sala y nombre en este dispositivo.
+  const claveLinea = yo ? `sala.lineaMail.${yo.sala}` : ''
+  const [lineaFuera, setLineaFuera] = useState(false)
+  useEffect(() => { setLineaFuera(!!claveLinea && leer(claveLinea) === '1') }, [claveLinea])
+  // No con un hilo abierto ni con una decisión esperándome (esa va primero).
+  const decisionParaMi = !!yo && Object.values(porId).some((m) => m.opciones && !m.decision && !m.borrado && (m.pregunta_para ?? []).includes(yo.autor))
+  const lineaMail = !!yo && yo.tipo === 'persona' && yo.mail === null && !lineaFuera && hiloId == null && !decisionParaMi
+  const descartarLinea = () => { guardar(claveLinea, '1'); setLineaFuera(true) }
   const sumarClaude = async () => {
     try {
       const r = await api<{ comando: string }>('/agente', clave, { method: 'POST', body: '{}' })
@@ -1413,7 +1595,11 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
       <div className="me">
         <div className="me-row">
           <Avatar autor={yo.autor} tipo={yo.tipo} equipo={equipo} size={32} />
-          <div><div className="t">{yo.autor}</div><div className="s">{t.conectadoDesde}</div></div>
+          <div className="me-tx"><div className="t">{yo.autor}</div>
+            {yo.tipo === 'persona' && yo.mail === null
+              ? <button type="button" className="s sumar-mail" onClick={() => setModalMail(true)}>{t.agregarMail}</button>
+              : <div className="s" title={yo.mail ? t.agregarMailAyuda : undefined}>{yo.mail ?? t.conectadoDesde}</div>}
+          </div>
         </div>
         {permiso === 'default' && <button className="ghost" onClick={pedirPermiso}>{I.bell} {t.avisarme}</button>}
         {permiso === 'granted' && <div className="fine-s">{I.bell} {t.avisamos}</div>}
@@ -1474,6 +1660,14 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
           {!abajo && noLeidos > 0 && (
             <button className="jump" onClick={() => { const el = streamRef.current; if (el) { pegado.current = true; el.scrollTop = el.scrollHeight } }}>{noLeidos} {noLeidos === 1 ? t.mensajeNuevo : t.mensajesNuevos} ↓</button>
           )}
+          {lineaMail && (
+            <div className="linea-mail" role="note">
+              <button type="button" className="lm-cta" onClick={() => setModalMail(true)}>
+                {I.sobre}<span className="lm-tx">{t.lineaMail}</span><b>{t.agregarMail}</b>
+              </button>
+              <button type="button" className="lm-x" onClick={descartarLinea} aria-label={t.lineaMailCerrar}>{I.x}</button>
+            </div>
+          )}
           {pista && <p className="agent-hint" id="sala-pista">{pista}</p>}
           {tira && <div className="otira" role="list" aria-label={t.queNecesitas}>{tarjetas.map((tj) => <TarjetaBtn key={tj.id} tj={tj} on={relleno?.tarjeta === tj.id} onClick={() => elegirTarjeta(tj)} />)}</div>}
           <Composer placeholder={phCanal} onAviso={setAviso} menciones={mencionesCanal} relleno={relleno}
@@ -1517,6 +1711,7 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
         <aside className="sheet side">{lateral}</aside>
       </>}
 
+      {modalMail && <ModalMail clave={clave} onCerrar={() => setModalMail(false)} onListo={(m) => { setModalMail(false); setYo((y) => y ? { ...y, mail: m } : y) }} />}
       {comandoClaude && (
         <div className="modal-bg" onClick={() => setComandoClaude(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
