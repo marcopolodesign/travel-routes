@@ -36,6 +36,7 @@ Call the endpoint with this JSON body:
 **Required fields:** `client`, `amount`, `month`  
 **Optional fields:**
 - `date` — defaults to today formatted as `D | M | YYYY`
+- `currency` — `USD` (default, shows `U$` and the USD account) or `EUR` (shows `€` and the Wise EUR account: IBAN BE43…, for SEPA transfers)
 - `services` — cover page subtitle line, defaults to `PLATFORM UX UI / BRANDING / DEVELOPMENT`
 - `items` — object where each key is a section heading and the value is an array of deliverable strings. Omit entirely if no breakdown needed.
 
@@ -45,7 +46,7 @@ Call the endpoint with this JSON body:
 
 - **Page 1 — Cover:** Big red "PAYMENT REQUEST" heading, services description, total amount in a bordered box.
 - **Page 2 — Overview:** Month overview with sections and their deliverable items.
-- **Page 3 — Bank Details:** Hardcoded USD wire transfer details for Mateo Aldao Suaya (never changes).
+- **Page 3 — Bank Details:** Mateo Aldao Suaya's account — USD (Community Federal) or, with `currency: "EUR"`, EUR (Wise, Brussels).
 
 ### Fonts used
 

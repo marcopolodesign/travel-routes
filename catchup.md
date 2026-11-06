@@ -1,5 +1,12 @@
 # Marco Polo — Catchup
 
+## 2026-11-05 — TAG: Payment Request de la sala (€150) enviado; el generador acepta euros
+
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 21:04 → 21:29 (25 min)
+
+`api/payment-request.tsx` suma el campo `currency`: `USD` por defecto (U$ + cuenta Community Federal) o `EUR` (€ + cuenta Wise en euros, IBAN BE43 9670 5737 9001, que pasó Mateo). Documentado en `CLAUDE.md`. Se generó el PDF de TAG (`client: TAG`, 150 EUR, NOV, 5/11/2026, ítem "Uso de la sala de TAG"), revisado página por página, y se mandó desde m@marcopolo.agency a Andrés (andresvicente75@gmail.com) y Tony (corvillotony@gmail.com), asunto "Payment Request sala de TAG". Salió de m@ y no de Gmail porque el conector de Gmail no adjunta archivos locales; Mateo lo aprobó. Copia en INBOX.Sent Items.
+
 ## 2026-09-25 — Healthier: sección Notificaciones en /updates/healthier
 
 **Source:** Claude Code — Macbook Pro

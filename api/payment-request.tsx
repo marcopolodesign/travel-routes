@@ -211,7 +211,7 @@ const OverviewPage = ({ client, month, items, date }: Pick<DocProps, 'client' | 
 
 const CURRENCY_SYMBOLS: Record<string, string> = { USD: 'U$', EUR: '€' }
 
-const BANK_FIELDS: [string, string][] = [
+const USD_BANK_FIELDS: [string, string][] = [
   ['Account Holder', 'Mateo Aldao Suaya'],
   ['Account number', '8312071894'],
   ['Account type', 'Checking'],
@@ -220,21 +220,31 @@ const BANK_FIELDS: [string, string][] = [
   ['Bank name and address', 'Community Federal Savings Bank\n89-16 Jamaica Ave, Woodhaven, NY, 11421\nUnited States'],
 ]
 
-const BankPage = ({ client, date }: Pick<DocProps, 'client' | 'date'>) => (
-  <Page size="A4" style={s.page}>
-    <DocHeader date={date} client={client} />
-    <Text style={s.bankTitle}>BANK{'\n'}DETAILS</Text>
-    <Text style={s.bankSubtitle}>USD account details.</Text>
-    {BANK_FIELDS.map(([label, value]) => (
-      <View key={label} style={s.bankField}>
-        <Text style={s.bankLabel}>{label}</Text>
-        <Text style={s.bankValue}>{value}</Text>
-      </View>
-    ))}
-    <View style={s.divider} />
-    <DocFooter />
-  </Page>
-)
+const EUR_BANK_FIELDS: [string, string][] = [
+  ['Account Holder', 'Mateo Aldao Suaya'],
+  ['IBAN', 'BE43 9670 5737 9001'],
+  ['Swift/BIC', 'TRWIBEB1XXX (only for transfers from outside SEPA)'],
+  ['Bank name and address', 'Wise\nRue du Trône 100, 3rd floor, Brussels, 1050\nBelgium'],
+]
+
+const BankPage = ({ client, currency, date }: Pick<DocProps, 'client' | 'currency' | 'date'>) => {
+  const isEur = currency === CURRENCY_SYMBOLS.EUR
+  return (
+    <Page size="A4" style={s.page}>
+      <DocHeader date={date} client={client} />
+      <Text style={s.bankTitle}>BANK{'\n'}DETAILS</Text>
+      <Text style={s.bankSubtitle}>{isEur ? 'EUR account details.' : 'USD account details.'}</Text>
+      {(isEur ? EUR_BANK_FIELDS : USD_BANK_FIELDS).map(([label, value]) => (
+        <View key={label} style={s.bankField}>
+          <Text style={s.bankLabel}>{label}</Text>
+          <Text style={s.bankValue}>{value}</Text>
+        </View>
+      ))}
+      <View style={s.divider} />
+      <DocFooter />
+    </Page>
+  )
+}
 
 const PaymentRequestDoc = (props: DocProps) => {
   const hasItems = Object.keys(props.items).length > 0
@@ -244,7 +254,7 @@ const PaymentRequestDoc = (props: DocProps) => {
       {hasItems && (
         <OverviewPage client={props.client} month={props.month} items={props.items} date={props.date} />
       )}
-      <BankPage client={props.client} date={props.date} />
+      <BankPage client={props.client} currency={props.currency} date={props.date} />
     </Document>
   )
 }
