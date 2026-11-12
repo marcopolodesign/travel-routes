@@ -31,6 +31,7 @@ const HealthierFase1 = lazy(() => import('./pages/HealthierFase1'))
 const PacerAvances = lazy(() => import('./pages/PacerAvances'))
 const KiwellWearable = lazy(() => import('./pages/KiwellWearable'))
 const HealthierAvancesOctubre = lazy(() => import('./pages/HealthierAvancesOctubre'))
+const HealthierAvancesNoviembre = lazy(() => import('./pages/HealthierAvancesNoviembre'))
 const Sala = lazy(() => import('./pages/Sala'))
 const SalaPrivacidad = lazy(() => import('./pages/SalaPrivacidad'))
 
@@ -280,6 +281,16 @@ export default function App() {
             whatLabel="Informe de avance"
           >
             <HealthierAvancesOctubre />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/healthier-avances-29-oct-12-nov" element={
+          <BudgetTemplate
+            title="Avances — Healthier"
+            timeline="Del 29 de octubre al 12 de noviembre de 2026"
+            stack="Plataforma web · App iPhone y Android · Super admin"
+            whatLabel="Informe de avance"
+          >
+            <HealthierAvancesNoviembre />
           </BudgetTemplate>
         } />
         {/* informes de avance por proyecto: /updates/<proyecto> */}
