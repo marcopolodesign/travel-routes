@@ -241,7 +241,7 @@ export default function HealthierAvancesNoviembre() {
           </div>
         </div>
         <p className="max-w-2xl text-black/60 text-[15px]">
-          Todo lo de este documento ya está publicado en{' '}
+          Salvo lo que figura en esta sección, todo lo de este documento ya está publicado en{' '}
           <a href={WEB} target="_blank" rel="noreferrer" className="text-[var(--marco-accent)] underline underline-offset-2">
             healthier.com.ar
           </a>{' '}
