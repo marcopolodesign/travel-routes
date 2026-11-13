@@ -404,6 +404,13 @@ escritorio. Barra de avance arriba, numeración y la firma de Marco Polo abajo.
 **Ruta sin `BudgetTemplate`** (`/deck/picnic`, junto a `/agent` y `/monotributo`): el
 encabezado de documento no tiene sentido en un deck, acá la presentación es la página.
 
+### 2026-11-13 — Copia estática de dos propuestas de Kontext para la prueba de Taste Labs
+**Source:** Claude Code — Macbook Pro
+**Tiempo:** 08:49 → 09:17 (28 min)
+
+- Pedido de Mateo: subir a travels las propuestas de Kontext para Quiero Terapia, porque `/api/propuesta` de Kontext sirve con CSP `sandbox; default-src 'none'` y el capturador de Taste Labs da "Capture unavailable".
+- `public/kontext-taste-qt7k2/{consultorio,producto}.html` (noindex), commit 534ef8f directo a main desde un worktree limpio de origin/main (borrado después). Se puede borrar cuando ya no haga falta.
+
 ### 2026-10-29 — Mail a Cande con la factura de Picnic de octubre y el estado de su monotributo
 
 **Source:** Claude Code — Macbook Pro
