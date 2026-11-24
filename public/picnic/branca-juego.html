@@ -69,6 +69,7 @@ p.dek{color:var(--muted);margin:0 0 20px;font-size:14.5px}
 @media (prefers-color-scheme:dark){.card{box-shadow:0 10px 30px rgba(0,0,0,.4)}}
 .gondola{width:100%;height:auto;display:block;border-radius:10px;background:linear-gradient(#efe9e1,#e7e0d6);border:1px solid var(--border)}
 @media (prefers-color-scheme:dark){.gondola{background:linear-gradient(#211e1a,#1a1714)}}
+.fotoimg{width:100%;height:auto;max-height:44vh;object-fit:contain;display:block;border-radius:10px;background:#0a0a0a}
 .legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px}
 .legend span{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted)}
 .legend i{width:10px;height:10px;border-radius:3px}
@@ -291,7 +292,34 @@ const UNITS=[
     explica:'Las reglas de altura son para la góndola. En <b>mayorista, el palet en volumen</b> es una excepción válida.'},
   ]},
 
- {id:5,emoji:'📷',nombre:'Fotos reales',sub:'Próximamente',proximamente:true,ej:[]},
+ {id:5,emoji:'📷',nombre:'Fotos reales',sub:'Góndolas de verdad',
+  intro:'Lo mismo, con fotos reales de tiendas. Son todas exhibiciones bien hechas: confirmá y, sobre todo, decí por qué.',
+  ej:[
+   {tipo:'foto',ctx:'Fernet · Coto Nordelta',foto:'https://lh3.googleusercontent.com/d/1teFziiMagMVk28EEda7oAu2JoXS-buWC=w1000',
+    escena:'Góndola real de Fernet: la marca arriba, Fernet Branca 750 al frente y la Coca en combo en el medio.',correcto:'bien',
+    motivos:[{t:'Góndola de fernet con su marca y la Coca cruzada en combo',ok:true},{t:'El Fernet tendría que ir más abajo',ok:false},{t:'La Coca no debería estar acá',ok:false}],
+    explica:'Góndola de fernet bien resuelta: marca Branca, Fernet 750 al frente y la <b>Coca cruzada en combo</b>, entre el Fernet.'},
+   {tipo:'foto',ctx:'Fernet + Coca · Disco',foto:'https://lh3.googleusercontent.com/d/1dE3EO9yA8IZn0wrttKwVnLYs_UcP97he=w1000',
+    escena:'Un combo real: Fernet Branca 750 con Coca-Cola 2,25 a los dos lados, con cartel de oferta.',correcto:'bien',
+    motivos:[{t:'La Coca va cruzada con el Fernet y el combo tiene oferta activa',ok:true},{t:'El combo va siempre, haya oferta o no',ok:false},{t:'La Coca no debería estar',ok:false}],
+    explica:'Exhibición cruzada con Coca, y el <b>combo está bien porque hay oferta activa</b> (cartel Superoferta).'},
+   {tipo:'foto',ctx:'Vermut · Coto Morón',foto:'https://lh3.googleusercontent.com/d/1AjqmULebJiDRpRw_fxxr_LvGASDgonjL=w1000',
+    escena:'El exhibidor propio de Carpano: Rosso y Bianco, separado de la góndola de fernet.',correcto:'bien',
+    motivos:[{t:'El vermut (Carpano) tiene su exhibidor propio, aparte del fernet',ok:true},{t:'Carpano tendría que estar pegado al Fernet',ok:false},{t:'Está mal sin el Punt e Mes',ok:false}],
+    explica:'Es la <b>góndola de aperitivos</b>, separada del fernet: Carpano con su exhibidor de marca, Rosso y Bianco.'},
+   {tipo:'foto',ctx:'Vodka · Jumbo',foto:'https://lh3.googleusercontent.com/d/1vnJ5ZancV3eEpayDGxxqRHMj7Ekuu4T3=w1000',
+    escena:'La góndola de vodka: fijate dónde quedó Sernova respecto de Skyy y Smirnoff.',correcto:'bien',
+    motivos:[{t:'Sernova quedó entre Skyy y Smirnoff, los líderes',ok:true},{t:'Sernova tendría que ir pegado a Absolut',ok:false},{t:'Sernova está lejos de los líderes',ok:false}],
+    explica:'<b>Sernova entre Skyy y Smirnoff</b>: pegado a los líderes, como va en el súper.'},
+   {tipo:'foto',ctx:'Fernet · Inc Solei',foto:'https://lh3.googleusercontent.com/d/1KnsRBQ0tkeo63Z54ploxOltWjjf8WCc5=w1000',
+    escena:'Exhibición secundaria de Fernet con combo Coca, sobre el mueble de madera (el modelo viejo).',correcto:'bien',
+    motivos:[{t:'Buena exhibición con combo; lo único a mejorar es pasar al mueble nuevo',ok:true},{t:'Está mal: el Fernet nunca va en isla',ok:false},{t:'Le falta la Coca',ok:false}],
+    explica:'La exhibición está bien: Fernet cargado y combo con Coca. El detalle a mejorar es <b>cambiar el mueble viejo por el exhibidor nuevo</b>.'},
+   {tipo:'foto',ctx:'Vermut · Coto La Horqueta',foto:'https://lh3.googleusercontent.com/d/1mdz9ntxeKVSCMSyXw7HdpfiTodQ-8fyK=w1000',
+    escena:'Otro exhibidor de Carpano (Rosso y Bianco), en la zona de aperitivos y vinos.',correcto:'bien',
+    motivos:[{t:'Carpano con su stand, Rosso y Bianco, en la zona de aperitivos',ok:true},{t:'Carpano tendría que estar en la góndola de fernet',ok:false},{t:'El Rosso no debería estar',ok:false}],
+    explica:'Carpano con su <b>stand propio</b> en la zona de aperitivos, separado del fernet. Rosso y Bianco presentes.'},
+  ]},
 ];
 
 // ---------- Estado ----------
@@ -341,14 +369,16 @@ function renderEx(){
   if(ex.ctx){ctx.textContent='📍 '+ex.ctx;ctx.classList.remove('hide')}else ctx.classList.add('hide');
   const body=document.getElementById('body'), ctr=document.getElementById('controls');
   body.innerHTML='';ctr.innerHTML='';
-  if(ex.tipo==='swipe') renderSwipe(ex,body,ctr);
+  if(ex.tipo==='swipe'||ex.tipo==='foto') renderSwipe(ex,body,ctr);
   else if(ex.tipo==='order') renderOrder(ex,body,ctr);
   else if(ex.tipo==='pct') renderPct(ex,body,ctr);
 }
 
 function renderSwipe(ex,body,ctr){
-  const shelves=ex.shelves.map(r=>r.map(t=>t==='?'?'G':t));
-  body.innerHTML=`<div class="card" id="card"><div class="consigna">${ex.escena}</div>${gondola(shelves,{entrada:ex.entrada,rowH:ex.rowH})}${legend(shelves)}
+  let visual;
+  if(ex.foto){ visual=`<img class="fotoimg" src="${ex.foto}" alt="">`; }
+  else { const shelves=ex.shelves.map(r=>r.map(t=>t==='?'?'G':t)); visual=gondola(shelves,{entrada:ex.entrada,rowH:ex.rowH})+legend(shelves); }
+  body.innerHTML=`<div class="card" id="card"><div class="consigna">${ex.escena}</div>${visual}
     <div class="swipehint"><span class="l">‹ Mal</span><span class="r">Bien ›</span></div></div>`;
   ctr.innerHTML=`<div class="verdict"><button class="no" onclick="swipeAns('mal')">‹ Está mal</button><button class="si" onclick="swipeAns('bien')">Está bien ›</button></div>`;
   setupDrag(document.getElementById('card'));
