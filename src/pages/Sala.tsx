@@ -64,6 +64,7 @@ function mensajeDeError(status: number, c: Record<string, unknown>): string | nu
   if (c.limite) return t.errLimite
   if (c.mail_invalido) return t.errMailInvalido
   if (c.mail_tomado) return t.errMailTomado
+  if (c.mail_requerido) return t.errMailRequerido
   if (status === 404 && c.error === 'ruta desconocida') return t.errNoDisponible
   if (c.limite_ia) return t.errLimiteIA
   if (c.invalido) return t.errNombreInvalido
@@ -476,9 +477,13 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
   const [inv, setInv] = useState<Invitacion | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [nombre, setNombre] = useState('')
+  // Mail obligatorio para una persona (2026-11-24): con él vuelve a entrar desde otro dispositivo (mail + código).
+  const [mail, setMail] = useState('')
   const [tipo, setTipo] = useState<'persona' | 'agente'>('persona')
   const [enviando, setEnviando] = useState(false)
   const pareceBot = tipo === 'persona' && esNombreDeBot(nombre)
+  const mailLimpio = mail.trim().toLowerCase()
+  const faltaMail = tipo === 'persona' && !MAIL_OK.test(mailLimpio)
 
   useEffect(() => {
     api<Invitacion>(`/invitacion?codigo=${encodeURIComponent(codigo)}`, null)
@@ -490,8 +495,10 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
     ev.preventDefault()
     if (nombre.trim().length < 2 || enviando || pareceBot) return
     if (/[<>]/.test(nombre)) { setError(t.errNombreInvalido); return }
+    if (faltaMail) { setError(mailLimpio ? t.errMailInvalido : t.errMailRequerido); return }
     setEnviando(true); setError(null)
-    const canjear = (cuerpo: Record<string, unknown>) => api<{ clave: string }>('/canjear', null, { method: 'POST', body: JSON.stringify(cuerpo) })
+    const conMail = tipo === 'persona' ? { mail: mailLimpio } : {}
+    const canjear = (cuerpo: Record<string, unknown>) => api<{ clave: string }>('/canjear', null, { method: 'POST', body: JSON.stringify({ ...cuerpo, ...conMail }) })
     try {
       let r: { clave: string }
       try { r = await canjear({ codigo, autor: nombre.trim(), tipo }) } catch (e) {
@@ -545,7 +552,14 @@ function Entrada({ codigo, onEntrar }: { codigo: string; onEntrar: (clave: strin
               <p className="fld-hint">{t.pareceBot} <button type="button" className="lnk" onClick={() => setTipo('agente')}>{t.entrarComoAgente}</button></p>
             )}
           </div>
-          <button className="cta" type="submit" disabled={nombre.trim().length < 2 || enviando || pareceBot || !inv}>{enviando ? t.entrandoBtn : <>{tipo === 'agente' ? t.sumarAgente : t.entrarSala} {I.arrow}</>}</button>
+          {tipo === 'persona' && (
+            <div className="fld">
+              <label htmlFor="sala-mail-entrada">{t.tuMail}</label>
+              <input id="sala-mail-entrada" className="inp" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false}
+                value={mail} onChange={(e) => { setMail(e.target.value); setError(null) }} placeholder={t.phMail} maxLength={254} />
+            </div>
+          )}
+          <button className="cta" type="submit" disabled={nombre.trim().length < 2 || faltaMail || enviando || pareceBot || !inv}>{enviando ? t.entrandoBtn : <>{tipo === 'agente' ? t.sumarAgente : t.entrarSala} {I.arrow}</>}</button>
         </>}
         <p className={`fine ${error ? 'err' : ''}`} role={error ? 'alert' : undefined}>{error ?? (tipo === 'agente'
           ? t.fineAgente
