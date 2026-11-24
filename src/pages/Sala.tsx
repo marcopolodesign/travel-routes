@@ -7,6 +7,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import MarcopoloLogo from '../components/MarcopoloLogo'
 import { T } from './sala-i18n'
 import Uso, { type DatosUso } from './SalaUso'
+import { escucharSala, type TimbreInfo } from './sala-escucha'
 import './sala.css'
 
 const t = T()
@@ -39,6 +40,7 @@ type Yo = {
   sala: string; autor: string; tipo: string; titulo: string; subtitulo: string | null; anfitrion: string; equipo: string[]; decide?: 'dirigida' | 'todos'; admin?: boolean
   permisos?: { dueno?: boolean }; onboarding?: Onboarding; pedidos?: Pedidos
   mail?: string | null   // undefined = servidor sin "entrar con mail"; null = sin mail todavía
+  timbre?: TimbreInfo   // canal de Realtime de la sala (sala-escucha.ts)
 }
 type SalaPorMail = { sala: string; titulo: string; autor: string; tipo: string; clave: string }
 // "¿Qué necesitás?": tarjetas por sala (salas/<sala>.onboarding.json en el repo sala). En el ejemplo, el dato a cambiar va entre [ ].
@@ -1106,38 +1108,28 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     return () => { vivo = false }
   }, [clave, sumar, manejar])
 
-  // Long-poll por versión: el servidor responde apenas hay algo nuevo o un cambio (o a los 25 s).
+  // Lo nuevo y la presencia: timbre por Realtime (sala-escucha.ts). Se pide /recibir y /presencia sólo cuando suena,
+  // con respaldo cada 2,5 min; sin websocket, long-poll; con la pestaña oculta no se llama (salvo avisos del navegador).
+  const permisoRef = useRef(permiso)
+  useEffect(() => { permisoRef.current = permiso }, [permiso])
+  const hayYo = !!yo, timbreYo = yo?.timbre   // cambiar `decide` rehace yo: no por eso se reabre el canal
   useEffect(() => {
-    if (!yo) return
-    let vivo = true
-    ;(async () => {
-      let pausa = 1000
-      while (vivo) {
-        try {
-          const r = await api<{ mensajes: Mensaje[]; version: number }>(`/recibir?v=${version.current}&espera=25&todos=1`, clave)
-          if (!vivo) return
-          version.current = Math.max(version.current, r.version ?? 0)
-          sumar(r.mensajes)
-          pausa = 1000; setAviso((a) => (a === t.sinConexion ? null : a))
-        } catch (e) {
-          manejar(e)
-          if (!vivo) return
-          setAviso(t.sinConexion)
-          await new Promise((res) => setTimeout(res, pausa)); pausa = Math.min(pausa * 2, 15000)
-        }
-      }
-    })()
-    return () => { vivo = false }
-  }, [yo, clave, sumar, manejar])
-
-  // Presencia y "trabajando…": cada 4 s.
-  useEffect(() => {
-    if (!yo) return
-    const traer = () => api<{ miembros: Miembro[]; pedidos?: Pedidos }>('/presencia', clave).then((r) => { setMiembros(r.miembros); setPresenciaLista(true); if (r.pedidos) setPedidos(r.pedidos) }).catch(manejar)
-    traer()
-    const t = setInterval(traer, 4000)
-    return () => clearInterval(t)
-  }, [yo, clave, manejar])
+    if (!hayYo) return
+    const e = escucharSala({
+      timbre: timbreYo,
+      version: () => version.current,
+      recibir: async (espera, signal) => {
+        const r = await api<{ mensajes: Mensaje[]; version: number }>(`/recibir?v=${version.current}&espera=${espera}&todos=1`, clave, { signal })
+        version.current = Math.max(version.current, r.version ?? 0)
+        sumar(r.mensajes)
+      },
+      presencia: () => api<{ miembros: Miembro[]; pedidos?: Pedidos }>('/presencia', clave).then((r) => { setMiembros(r.miembros); setPresenciaLista(true); if (r.pedidos) setPedidos(r.pedidos) }),
+      avisosOcultos: () => permisoRef.current === 'granted',
+      conexion: (ok) => setAviso((a) => (ok ? (a === t.sinConexion ? null : a) : t.sinConexion)),
+      fatal: manejar,
+    })
+    return () => e.cerrar()
+  }, [hayYo, timbreYo, clave, sumar, manejar])
 
   // Pestaña visible/oculta: al irse, lo leído hasta ahí pasa a ser la marca de "Nuevos" para la vuelta.
   useEffect(() => {
@@ -1549,7 +1541,8 @@ function Chat({ clave, tema, alternarTema, onClaveInvalida }: { clave: string; t
     return quienes.length ? quienes : null
   })() : null
   const archivos = canal.filter((m) => m.archivo_nombre && m.archivo_url && !m.borrado)
-  const conectado = (m: Miembro) => m.visto && Date.now() - new Date(m.visto).getTime() < 90_000
+  // Con el timbre, una pestaña abierta llama a la función cada 2,5 min (respaldo), no cada 4 s: 5 min de margen.
+  const conectado = (m: Miembro) => m.visto && Date.now() - new Date(m.visto).getTime() < 5 * 60_000
   const miClaude = yo ? miembros.find((m) => m.autor === `Claude de ${yo.autor}`) : undefined
   // "@": miembros activos; primero quienes ya escribieron en el canal o en el hilo abierto.
   const participanCanal = useMemo(() => [...new Set(canal.filter((m) => !m.sistema).map((m) => m.autor))], [canal])
