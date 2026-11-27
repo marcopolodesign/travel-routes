@@ -49,11 +49,11 @@ export default function TecnoFitPagos() {
           </div>
           <div>
             <span className="text-xs uppercase tracking-wide text-black/50">Inversión total</span>
-            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">U$20.000 a 25.000</p>
+            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">U$25.000</p>
           </div>
           <div>
             <span className="text-xs uppercase tracking-wide text-black/50">Saldo</span>
-            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">U$5.000 a 10.000</p>
+            <p className="font-thunder text-2xl md:text-3xl text-black mt-1">U$10.000</p>
           </div>
           <div>
             <span className="text-xs uppercase tracking-wide text-black/50">Pagos</span>
@@ -103,16 +103,12 @@ export default function TecnoFitPagos() {
 
       <TwoColumnSection title="Saldo" id="saldo">
         <p className="max-w-2xl">
-          La propuesta fija la inversión entre U$20.000 y U$25.000, en cuotas de U$5.000. Con agosto, septiembre y
-          octubre completos, el saldo queda entre U$5.000 y U$10.000.
-        </p>
-        <p className="max-w-2xl">
-          El monto final se define al cerrar la implementación en la sala: las TVs de las dos líneas corriendo con la
-          lista de espera y las rutinas nuevas.
+          La inversión total de Fitness Central es de U$25.000, en cuotas de U$5.000. Con agosto, septiembre y
+          octubre completos, quedan U$10.000.
         </p>
         <ul className="space-y-2 text-black/80 text-[15px] max-w-2xl">
-          <li>— Noviembre: U$5.000, con lo que se llega a U$20.000.</li>
-          <li>— Cierre: hasta U$5.000 más, según el monto final de la implementación.</li>
+          <li>— Noviembre: U$5.000.</li>
+          <li>— Diciembre: U$5.000, con el cierre de la implementación en la sala.</li>
         </ul>
       </TwoColumnSection>
     </>
