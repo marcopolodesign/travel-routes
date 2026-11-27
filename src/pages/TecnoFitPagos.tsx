@@ -35,7 +35,7 @@ export default function TecnoFitPagos() {
           TecnoFit · Fitness Central
         </span>
         <h1 className="font-thunder text-[15vw] md:text-[8.5vw] leading-[0.88] uppercase text-[var(--marco-accent)] text-balance mt-3">
-          Tres meses<br />al día
+          Resumen<br />de cuentas
         </h1>
         <p className="mt-8 md:mt-10 text-black/80 text-lg md:text-xl max-w-2xl">
           Pagos de Fitness Central (TVs de la sala, lista de espera y rutinas) registrados hasta el 27 de noviembre
