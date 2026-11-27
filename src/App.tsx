@@ -4,6 +4,7 @@ import BudgetTemplate from './components/BudgetTemplate'
 const HealthMvp = lazy(() => import('./pages/HealthMvp'))
 const TecnoFit = lazy(() => import('./pages/TecnoFit'))
 const TecnoFitTVs = lazy(() => import('./pages/TecnoFitTVs'))
+const TecnoFitPagos = lazy(() => import('./pages/TecnoFitPagos'))
 const TecnoFitSprint1 = lazy(() => import('./pages/TecnoFitSprint1'))
 const TecnoFitSprint1Mcp = lazy(() => import('./pages/TecnoFitSprint1Mcp'))
 const TecnoFitSprint1Cierre = lazy(() => import('./pages/TecnoFitSprint1Cierre'))
@@ -70,6 +71,16 @@ export default function App() {
             whatLabel="Budget & Remainder"
           >
             <TecnoFit />
+          </BudgetTemplate>
+        } />
+        <Route path="/budget/tecnofit-pagos" element={
+          <BudgetTemplate
+            title="Estado de pagos — TecnoFit"
+            timeline="Agosto a noviembre 2026"
+            stack="Fitness Central: TVs, lista de espera y rutinas"
+            whatLabel="Pagos"
+          >
+            <TecnoFitPagos />
           </BudgetTemplate>
         } />
         <Route path="/budget/tecnofit-tvs" element={
